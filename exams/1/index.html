@@ -187,6 +187,9 @@ select:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
 .summary.ok{background:#14301f;color:#5ecb82}.summary.no{background:#2e1815;color:#f08a80}.summary.warn{background:#2e2413;color:#d9a441}
 pre.raw{margin:0;padding:10px 12px;white-space:pre-wrap;word-break:break-word;color:#d6dae2}
 pre.raw .err{color:#f0645a}
+pre.raw .warnmsg{color:#d9a441}
+pre.raw .hintmsg{color:#6f8199}
+pre.raw .hintmsg b{color:#a9b0bd}
 .stdin{display:flex;flex-direction:column;gap:6px;padding:9px 12px}
 .stdin label{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#6f7c8f}
 .stdin textarea{width:100%;height:74px;resize:vertical;background:#0b0d11;color:#d6dae2;border:1px solid #2b313d;
@@ -703,7 +706,7 @@ async function gcc(code, stdin){
     method:"POST", headers:{"Content-Type":"application/json"},
     body: JSON.stringify({
       compiler:"gcc-13.2.0-c", code, stdin: stdin || "",
-      options:"warning", "compiler-option-raw":"-std=c99\n-lm"
+      "compiler-option-raw":"-std=c99\n-Wall\n-lm"
     })
   });
   if(!r.ok) throw new Error("שרת ההידור החזיר " + r.status);
@@ -712,6 +715,8 @@ async function gcc(code, stdin){
 function compileErrText(j){
   return (j.compiler_error || "").trim() || (j.compiler_message || "").trim();
 }
+/* gcc writes warnings and errors to the same stream; only "error:" is fatal */
+function isCompileError(text){ return String(text || "").indexOf("error:") !== -1; }
 
 /* strip comments + string literals, for the constraint scan */
 function bareCode(src){
@@ -820,11 +825,20 @@ document.getElementById("runBtn").addEventListener("click", async function(){
   try{
     const j = await gcc(STATE.code[STATE.active], stdinBox.value);
     const cerr = compileErrText(j);
+    const fatal = isCompileError(cerr);
     let html = "";
-    if(cerr) html += '<span class="err">' + esc(cerr) + "</span>\n";
+    if(cerr) html += '<span class="' + (fatal ? "err" : "warnmsg") + '">' + esc(cerr) + "</span>\n";
+    if(fatal){
+      rawOut.innerHTML = html + '\n<span class="err">ההידור נכשל — התוכנית לא רצה.</span>';
+      return;
+    }
     html += esc(j.program_output || "");
     if(j.program_error) html += '<span class="err">' + esc(j.program_error) + "</span>";
     html += "\n\n[exit " + (j.status === undefined ? "?" : j.status) + (j.signal ? " · " + esc(j.signal) : "") + "]";
+    if(j.status !== "0" && !stdinBox.value.trim()){
+      html += '\n<span class="hintmsg">תיבת ה-stdin ריקה, לכן scanf ב-main נכשל ו-main החזיר 1. ' +
+              'הכנס קלט למעלה — למשל <b>6</b> / <b>1 3 7 9 6 2</b> / <b>5</b>, כל אחד בשורה — והרץ שוב.</span>';
+    }
     rawOut.innerHTML = html;
   }catch(e){
     rawOut.innerHTML = '<span class="err">' + esc(e.message) + "</span>\n\nאין חיבור לשרת ההידור. בדוק את החיבור לאינטרנט ונסה שוב.";
@@ -849,7 +863,7 @@ async function runTests(q, pick){
     return;
   }
   const cerr = compileErrText(j);
-  if(cerr && !(j.program_output || "").trim()){
+  if(isCompileError(cerr)){
     out.innerHTML = "";
     out.appendChild(line("compile","no","<em>שגיאת הידור:</em>"));
     const pre = document.createElement("pre");
