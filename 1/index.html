@@ -172,6 +172,8 @@ select:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
   border-radius:4px;padding:4px 7px;cursor:pointer;margin-left:4px}
 .iconbtn:hover{background:#262c37}
 .iconbtn[aria-pressed="true"]{background:#2f4a6b;border-color:#43607f}
+#wrapOut{display:flex;flex-direction:column;overflow:hidden}
+#wrapOut .raw{flex:1;overflow:auto;margin:0}
 .cwrap{flex:1;overflow:auto;font-family:"JetBrains Mono",monospace;font-size:12px;line-height:1.55;color:var(--term-fg)}
 .cbody{padding:9px 12px 16px}
 .empty{color:#5b6270;padding:12px}
@@ -190,6 +192,17 @@ pre.raw .err{color:#f0645a}
 pre.raw .warnmsg{color:#d9a441}
 pre.raw .hintmsg{color:#6f8199}
 pre.raw .hintmsg b{color:#a9b0bd}
+pre.raw .okmsg{color:#5ecb82}
+pre.raw .echo{color:#7fb2e5}
+.promptrow{display:flex;align-items:center;gap:8px;padding:7px 12px;border-top:1px solid #232833;background:#0b0d11}
+.promptrow .caret{color:#5ecb82;font-weight:700}
+.promptrow input{flex:1;background:transparent;border:0;outline:none;color:#e8eaf0;
+  font-family:"JetBrains Mono",monospace;font-size:12.5px;padding:3px 0}
+.promptrow input::placeholder{color:#4d5563}
+.sentrow{display:flex;align-items:center;gap:9px;padding:5px 12px;border-top:1px solid #232833;
+  background:#0b0d11;font-size:11px;flex-wrap:wrap}
+.sentrow .lbl{color:#6f7c8f;letter-spacing:.05em;text-transform:uppercase}
+.sentrow .sentlist{color:#7fb2e5;font-family:"JetBrains Mono",monospace;word-break:break-all}
 .stdin{display:flex;flex-direction:column;gap:6px;padding:9px 12px}
 .stdin label{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#6f7c8f}
 .stdin textarea{width:100%;height:74px;resize:vertical;background:#0b0d11;color:#d6dae2;border:1px solid #2b313d;
@@ -304,11 +317,16 @@ textarea.paste{width:100%;height:130px;font-family:"JetBrains Mono",monospace;fo
         <button class="iconbtn" id="expandBtn" title="הגדל / הקטן">⤢</button>
       </div>
       <div class="cwrap" id="wrapOut">
-        <div class="stdin">
-          <label for="stdinBox">Standard input (stdin)</label>
-          <textarea id="stdinBox" spellcheck="false" placeholder="6&#10;1 3 7 9 6 2&#10;5"></textarea>
+        <pre class="raw" id="rawOut">לחץ ▶ Run כדי להדר ולהריץ את הקובץ. אם התוכנית תבקש קלט, תוכל להקליד אותו כאן למטה.</pre>
+        <div class="sentrow" id="sentRow" hidden>
+          <span class="lbl">נשלח ל-stdin</span>
+          <span class="sentlist" id="sentList"></span>
+          <button class="iconbtn" id="clearStdin">התחל קלט מחדש</button>
         </div>
-        <pre class="raw" id="rawOut">לחץ ▶ Run כדי להדר ולהריץ את הקובץ עם הקלט שלמעלה — בדיוק כמו ב-CLion.</pre>
+        <div class="promptrow" id="promptRow" hidden>
+          <span class="caret">&gt;</span>
+          <input id="stdinLine" spellcheck="false" autocomplete="off" placeholder="הקלד שורת קלט ולחץ Enter">
+        </div>
       </div>
       <div class="cwrap" id="wrapTests" hidden><div class="cbody" id="out"><div class="empty">לחץ "בדוק מול המקרים" כדי להריץ את הפונקציה מול כל מקרי הבדיקה.</div></div></div>
       <div class="cwrap" id="wrapCases" hidden><div class="cbody" id="cases"></div></div>
@@ -700,17 +718,35 @@ function openTab(q){
 document.querySelectorAll(".tab").forEach(t => t.addEventListener("click", () => openTab(t.dataset.q)));
 
 /* ================= gcc via Wandbox ================= */
-const WANDBOX = "https://wandbox.org/api/compile.json";
-async function gcc(code, stdin){
-  const r = await fetch(WANDBOX, {
-    method:"POST", headers:{"Content-Type":"application/json"},
+const CE = "https://godbolt.org/api/compiler/cg132/compile";
+const joinText = a => (a || []).map(x => x.text).join("\n");
+/* Compiler Explorer: same gcc 13.2, but ~180ms instead of ~1.9s. */
+async function gcc(code, stdin, args){
+  const r = await fetch(CE, {
+    method:"POST",
+    headers:{"Content-Type":"application/json", "Accept":"application/json"},
     body: JSON.stringify({
-      compiler:"gcc-13.2.0-c", code, stdin: stdin || "",
-      "compiler-option-raw":"-std=c99\n-Wall\n-lm"
+      source: code,
+      options:{
+        userArguments: args || "-std=c99 -Wall -fno-diagnostics-color -lm",
+        executeParameters:{args:[], stdin: stdin || ""},
+        filters:{execute:true},
+        compilerOptions:{executorRequest:true}
+      }
     })
   });
   if(!r.ok) throw new Error("שרת ההידור החזיר " + r.status);
-  return r.json();
+  const j = await r.json();
+  const build = j.buildResult || {};
+  return {
+    buildFailed: build.code !== undefined && build.code !== 0,
+    diagnostics: (joinText(build.stderr) + "\n" + joinText(build.stdout)).trim(),
+    stdout: joinText(j.stdout),
+    stderr: joinText(j.stderr),
+    exit: j.code,
+    timedOut: !!j.timedOut,
+    didExecute: !!j.didExecute
+  };
 }
 function compileErrText(j){
   return (j.compiler_error || "").trim() || (j.compiler_message || "").trim();
@@ -801,9 +837,7 @@ function driverStdin(q, cases){
 
 /* ================= panels ================= */
 const out = document.getElementById("out"), chsum = document.getElementById("chsum");
-const rawOut = document.getElementById("rawOut"), stdinBox = document.getElementById("stdinBox");
-stdinBox.value = STATE.stdin;
-stdinBox.addEventListener("input", () => { STATE.stdin = stdinBox.value; save(); });
+const rawOut = document.getElementById("rawOut");
 
 function line(tag, cls, msg){
   const d = document.createElement("div");
@@ -818,31 +852,91 @@ function fmtArgs(q, a){
 }
 
 /* ---- ▶ Run : their own file, their own stdin ---- */
-document.getElementById("runBtn").addEventListener("click", async function(){
-  const b = this; b.disabled = true; b.textContent = "מהדר…";
-  showPanel("out");
-  rawOut.textContent = "מהדר עם gcc 13.2…";
-  try{
-    const j = await gcc(STATE.code[STATE.active], stdinBox.value);
-    const cerr = compileErrText(j);
-    const fatal = isCompileError(cerr);
-    let html = "";
-    if(cerr) html += '<span class="' + (fatal ? "err" : "warnmsg") + '">' + esc(cerr) + "</span>\n";
-    if(fatal){
-      rawOut.innerHTML = html + '\n<span class="err">ההידור נכשל — התוכנית לא רצה.</span>';
-      return;
-    }
-    html += esc(j.program_output || "");
-    if(j.program_error) html += '<span class="err">' + esc(j.program_error) + "</span>";
-    html += "\n\n[exit " + (j.status === undefined ? "?" : j.status) + (j.signal ? " · " + esc(j.signal) : "") + "]";
-    if(j.status !== "0" && !stdinBox.value.trim()){
-      html += '\n<span class="hintmsg">תיבת ה-stdin ריקה, לכן scanf ב-main נכשל ו-main החזיר 1. ' +
-              'הכנס קלט למעלה — למשל <b>6</b> / <b>1 3 7 9 6 2</b> / <b>5</b>, כל אחד בשורה — והרץ שוב.</span>';
-    }
+/* ---- interactive run ------------------------------------------------
+   The program cannot be paused mid-execution over HTTP, so each line you
+   type is appended to stdin and the program is re-run from the start.
+   These programs are deterministic, so the transcript is identical to a
+   real interactive session - and at ~180ms a round trip it feels live. */
+let RUN = {lines:[], busy:false, everRun:false};
+
+function renderRun(res, ms){
+  const sent = RUN.lines;
+  let html = "";
+  if(res === null){
+    html = '<span class="hintmsg">לחץ ▶ Run כדי להדר ולהריץ.</span>';
     rawOut.innerHTML = html;
+    return;
+  }
+  if(res.diagnostics){
+    html += '<span class="' + (res.buildFailed ? "err" : "warnmsg") + '">' + esc(res.diagnostics) + "</span>\n";
+  }
+  if(res.buildFailed){
+    rawOut.innerHTML = html + '\n<span class="err">ההידור נכשל — התוכנית לא רצה.</span>';
+    setPrompt(false);
+    return;
+  }
+  html += '<span class="okmsg">✓ הודר ב-gcc 13.2' + (ms ? " · " + ms + "ms" : "") + "</span>\n\n";
+  if(sent.length){
+    html += sent.map(l => '<span class="echo">' + esc(l) + "</span>").join("\n") + "\n";
+  }
+  html += esc(res.stdout || "");
+  if(res.stderr) html += '\n<span class="err">' + esc(res.stderr) + "</span>";
+  html += "\n\n[exit " + res.exit + (res.timedOut ? " · חריגת זמן" : "") + "]";
+  if(res.timedOut){
+    html += '\n<span class="err">התוכנית נעצרה בכפייה — כנראה לולאה אינסופית.</span>';
+  }else if(res.exit !== 0 && !sent.length){
+    html += '\n<span class="hintmsg">התוכנית ביקשה קלט ולא קיבלה: scanf ב-main נכשל ולכן main החזיר ' +
+            res.exit + '. הקלד שורה למטה ולחץ Enter.</span>';
+  }
+  rawOut.innerHTML = html;
+  setPrompt(!res.timedOut);
+}
+
+function setPrompt(on){
+  document.getElementById("promptRow").hidden = !on;
+  document.getElementById("sentRow").hidden = !RUN.lines.length;
+  document.getElementById("sentList").textContent = RUN.lines.join(" ⏎ ");
+  if(on) setTimeout(() => stdinLine.focus(), 0);
+}
+
+async function doRun(){
+  if(RUN.busy) return;
+  RUN.busy = true;
+  const b = document.getElementById("runBtn");
+  b.disabled = true; b.textContent = "מהדר…";
+  showPanel("out");
+  if(!RUN.everRun) rawOut.textContent = "מהדר עם gcc 13.2…";
+  const t0 = Date.now();
+  try{
+    const res = await gcc(STATE.code[STATE.active], RUN.lines.length ? RUN.lines.join("\n") + "\n" : "");
+    RUN.everRun = true;
+    renderRun(res, Date.now() - t0);
   }catch(e){
     rawOut.innerHTML = '<span class="err">' + esc(e.message) + "</span>\n\nאין חיבור לשרת ההידור. בדוק את החיבור לאינטרנט ונסה שוב.";
-  }finally{ b.disabled = false; b.textContent = "▶ Run"; }
+  }finally{
+    RUN.busy = false;
+    b.disabled = false; b.textContent = "▶ Run";
+  }
+}
+
+const stdinLine = document.getElementById("stdinLine");
+stdinLine.addEventListener("keydown", e => {
+  if(e.key !== "Enter") return;
+  e.preventDefault();
+  RUN.lines.push(stdinLine.value);
+  stdinLine.value = "";
+  STATE.stdin = RUN.lines.join("\n"); save();
+  doRun();
+});
+document.getElementById("clearStdin").addEventListener("click", () => {
+  RUN.lines = [];
+  STATE.stdin = ""; save();
+  doRun();
+});
+document.getElementById("runBtn").addEventListener("click", function(){
+  RUN.lines = [];
+  STATE.stdin = ""; save();
+  doRun();
 });
 
 /* ---- test all cases in one compile ---- */
@@ -856,14 +950,14 @@ async function runTests(q, pick){
   const violations = constraintCheck(q, STATE.code[q]);
   const prog = renameMain(STATE.code[q]) + "\n" + driverFor(q, cases);
   let j;
-  try{ j = await gcc(prog, driverStdin(q, cases)); }
+  try{ j = await gcc(prog, driverStdin(q, cases), "-std=c99 -w -fno-diagnostics-color -lm"); }
   catch(e){
     out.innerHTML = "";
     out.appendChild(line("שגיאה","no","<em>" + esc(e.message) + "</em> — אין חיבור לשרת ההידור."));
     return;
   }
-  const cerr = compileErrText(j);
-  if(isCompileError(cerr)){
+  const cerr = j.diagnostics;
+  if(j.buildFailed){
     out.innerHTML = "";
     out.appendChild(line("compile","no","<em>שגיאת הידור:</em>"));
     const pre = document.createElement("pre");
@@ -874,7 +968,7 @@ async function runTests(q, pick){
     return;
   }
 
-  const lines = (j.program_output || "").trim().split("\n").filter(x => x.length);
+  const lines = (j.stdout || "").trim().split("\n").filter(x => x.length);
   out.innerHTML = "";
   let pass = 0, fail = 0, mutated = false;
   const frag = document.createDocumentFragment();
