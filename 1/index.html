@@ -74,15 +74,15 @@ body{margin:0;background:var(--paper);color:var(--ink);
 .btn.primary:hover{filter:brightness(1.1);color:#fff}
 .btn:disabled{opacity:.45;cursor:not-allowed}
 
-.split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);height:calc(100vh - 51px)}
+.split{display:grid;grid-template-columns:var(--ide-w,1fr) 6px 1fr;height:calc(100vh - 51px)}
 @media (max-width:1000px){.split{grid-template-columns:1fr;height:auto}
-  .pane[data-hide="1"]{display:none}.swap{display:flex!important}}
+  .pane[data-hide="1"]{display:none}.swap{display:flex!important}.vresizer,.hresizer{display:none!important}}
 .swap{display:none;gap:6px;width:100%;margin-top:6px}
 .swap .btn{flex:1}
 .swap .btn[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
 
 /* paper */
-.pane.paper{direction:rtl;overflow-y:auto;border-inline-start:1px solid var(--rule);padding:0 0 80px;order:2}
+.pane.paper{direction:rtl;overflow-y:auto;border-inline-start:1px solid var(--rule);padding:0 0 80px;font-size:var(--paper-fs,15px)}
 .sheet{max-width:var(--measure);margin:0 auto;padding:26px 24px 0}
 .hdr{text-align:center;border-bottom:2.5px solid var(--ink);padding-bottom:14px;margin-bottom:8px}
 .hdr h1{font-family:"Frank Ruhl Libre",Georgia,serif;font-weight:900;font-size:25px;margin:0 0 2px;text-wrap:balance}
@@ -125,7 +125,7 @@ select:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
 .q1score{margin-top:6px;font-size:12.5px;font-weight:700;color:var(--ink-soft)}
 
 /* ===== IDE, OnlineGDB flavour ===== */
-.pane.ide{direction:ltr;order:1;display:flex;flex-direction:column;min-height:0;background:var(--ide-bg)}
+.pane.ide{direction:ltr;display:flex;flex-direction:column;min-height:0;background:var(--ide-bg)}
 @media (max-width:1000px){.pane.ide{min-height:88vh}}
 .tabs{display:flex;background:var(--ide-chrome);border-bottom:1px solid var(--ide-edge);flex-shrink:0}
 .tab{font:inherit;font-size:12.5px;font-family:"JetBrains Mono",monospace;padding:8px 15px;background:none;border:0;
@@ -145,11 +145,11 @@ select:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
 .tbtn:disabled{opacity:.55;cursor:not-allowed}
 .gcc{margin-left:auto;font-size:11px;color:var(--ink-faint);font-family:"JetBrains Mono",monospace}
 .edwrap{position:relative;flex:1 1 auto;min-height:200px;overflow:hidden;display:flex;background:var(--ide-bg)}
-.gutter{flex-shrink:0;padding:12px 8px 12px 14px;text-align:right;font-family:"JetBrains Mono",monospace;font-size:13px;
+.gutter{flex-shrink:0;padding:12px 8px 12px 14px;text-align:right;font-family:"JetBrains Mono",monospace;font-size:var(--ide-fs,13px);
   line-height:1.55;color:var(--gut-fg);background:var(--gut-bg);border-right:1px solid var(--ide-edge);overflow:hidden;
   user-select:none;font-variant-numeric:tabular-nums;white-space:pre}
 .edbox{position:relative;flex:1;overflow:auto}
-.edbox pre,.edbox textarea{margin:0;padding:12px 14px;font-family:"JetBrains Mono",ui-monospace,monospace;font-size:13px;
+.edbox pre,.edbox textarea{margin:0;padding:12px 14px;font-family:"JetBrains Mono",ui-monospace,monospace;font-size:var(--ide-fs,13px);
   line-height:1.55;tab-size:4;white-space:pre;word-wrap:normal;border:0}
 .edbox pre{position:absolute;inset:0;pointer-events:none;color:var(--ide-text);min-height:100%}
 .edbox textarea{position:absolute;inset:0;width:100%;height:100%;resize:none;background:transparent;color:transparent;
@@ -158,9 +158,6 @@ select:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
 .k{color:var(--kw);font-weight:600}.t{color:var(--ty)}.s{color:var(--str)}.n{color:var(--num)}
 .c{color:var(--com);font-style:italic}.f{color:var(--fn)}.p{color:var(--pp)}
 
-.console{flex-shrink:0;height:36%;min-height:170px;max-height:60%;display:flex;flex-direction:column;
-  background:var(--term-bg);border-top:1px solid var(--ide-edge)}
-.console.tall{height:66%;max-height:76%}
 .chead{display:flex;align-items:center;gap:0;padding:0 8px;background:#0b0d11;border-bottom:1px solid #232833;flex-shrink:0}
 .ctab{font:inherit;font-size:11px;letter-spacing:.08em;text-transform:uppercase;background:none;border:0;padding:7px 11px;
   color:#6f7c8f;cursor:pointer;border-bottom:2px solid transparent}
@@ -174,7 +171,7 @@ select:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
 .iconbtn[aria-pressed="true"]{background:#2f4a6b;border-color:#43periodo}
 #wrapOut{display:flex;flex-direction:column;overflow:hidden}
 #wrapOut .raw{flex:1;overflow:auto;margin:0}
-.cwrap{flex:1;overflow:auto;font-family:"JetBrains Mono",monospace;font-size:12px;line-height:1.55;color:var(--term-fg)}
+.cwrap{flex:1;overflow:auto;font-family:"JetBrains Mono",monospace;font-size:var(--ide-fs,13px);line-height:1.55;color:var(--term-fg)}
 .cbody{padding:9px 12px 16px}
 .empty{color:#5b6270;padding:12px}
 .ln{display:flex;gap:9px;padding:2px 0;align-items:flex-start}
@@ -257,6 +254,50 @@ pre.raw .echo{color:#7fb2e5}
 .tally .sc{font-family:"JetBrains Mono",monospace;font-variant-numeric:tabular-nums;font-size:12px}
 textarea.paste{width:100%;height:130px;font-family:"JetBrains Mono",monospace;font-size:11px;border:1px solid var(--rule);
   border-radius:6px;padding:8px;background:var(--paper);color:var(--ink);direction:ltr}
+
+/* ---- resizable panes ---- */
+.vresizer{cursor:col-resize;background:var(--rule);position:relative;touch-action:none}
+.vresizer:hover,.vresizer.active{background:var(--accent)}
+.vresizer::after{content:"";position:absolute;top:0;bottom:0;left:-4px;right:-4px}
+.hresizer{height:6px;flex-shrink:0;cursor:row-resize;background:var(--ide-edge);touch-action:none}
+.hresizer:hover,.hresizer.active{background:var(--accent)}
+.console{flex-shrink:0;height:36%;min-height:170px;max-height:calc(100% - 160px);display:flex;flex-direction:column;
+  background:var(--term-bg);border-top:1px solid var(--ide-edge)}
+
+/* ---- toolbar: line-length readout + font zoom ---- */
+.linelen{font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--ink-faint);
+  padding:2px 7px;border-radius:4px;background:var(--rule-soft);font-variant-numeric:tabular-nums}
+.linelen.over{color:#fff;background:var(--bad)}
+.fsize{display:flex;gap:4px;margin-inline-start:auto}
+.toolbar .fsize{margin-inline-start:0}
+.gcc{margin-left:0}
+
+/* ---- 50-char print margin ---- */
+.ruler50{position:absolute;top:0;bottom:0;left:calc(14px + 50ch);width:1px;
+  background:var(--bad);opacity:.28;pointer-events:none;
+  font-family:"JetBrains Mono",monospace;font-size:var(--ide-fs,13px)}
+
+/* ---- simple word-autocomplete popup ---- */
+.ac-pop{position:absolute;z-index:20;min-width:120px;max-width:260px;
+  background:var(--ide-chrome);border:1px solid var(--ide-edge);border-radius:6px;
+  box-shadow:0 6px 20px rgba(0,0,0,.25);overflow:hidden;font-family:"JetBrains Mono",monospace;font-size:12.5px}
+.ac-item{padding:5px 10px;cursor:pointer;color:var(--ink)}
+.ac-item.sel,.ac-item:hover{background:var(--accent);color:#fff}
+
+/* ---- paper: font-size control bar ---- */
+.papertools{position:sticky;top:0;z-index:6;display:flex;gap:8px;align-items:center;justify-content:flex-start;
+  padding:6px 20px;background:var(--card);border-bottom:1px solid var(--rule);direction:rtl}
+.papertools .fsizeLabel{font-size:11.5px;color:var(--ink-faint);letter-spacing:.03em}
+
+/* ---- extra-time select ---- */
+.extratime{direction:rtl;text-align:right;font:inherit;font-size:12px;font-family:"Assistant",sans-serif;
+  padding:5px 8px;border-radius:6px;border:1px solid var(--rule);background:var(--card);color:var(--ink-soft);cursor:pointer}
+
+/* ---- RTL fix: Hebrew count phrases inside the (LTR) IDE pane must not
+   get their two halves reordered by the bidi algorithm. Isolate them. ---- */
+.summary, .q1score, .sentrow .lbl{direction:rtl;text-align:right;unicode-bidi:isolate}
+.summary bdi, pre.raw bdi{unicode-bidi:isolate;font-variant-numeric:tabular-nums}
+
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
 </head>
@@ -269,6 +310,17 @@ textarea.paste{width:100%;height:130px;font-family:"JetBrains Mono",monospace;fo
   </div>
   <div class="pills" id="pills"></div>
   <div class="clock off" id="clock">3:00:00</div>
+  <select class="extratime" id="extraTime" title="זמן נוסף (התאמות)">
+    <option value="0">ללא זמן נוסף</option>
+    <option value="10">+10 דק'</option>
+    <option value="15">+15 דק'</option>
+    <option value="20">+20 דק'</option>
+    <option value="25">+25 דק'</option>
+    <option value="30">+30 דק'</option>
+    <option value="45">+45 דק'</option>
+    <option value="60">+60 דק'</option>
+    <option value="90">+90 דק'</option>
+  </select>
   <button class="btn" id="startBtn">התחל מבחן</button>
   <button class="btn primary" id="submitBtn">סיום והגשה</button>
   <div class="swap">
@@ -290,14 +342,22 @@ textarea.paste{width:100%;height:130px;font-family:"JetBrains Mono",monospace;fo
       <button class="tbtn" id="resetBtn">אפס קובץ</button>
       <button class="tbtn" id="dlBtn">שמור .c</button>
       <span class="gcc" id="gccLabel">gcc 13.2 · -std=c99</span>
+      <span class="linelen" id="lineLen" title="אורך השורה הנוכחית">0/50</span>
+      <span class="fsize" title="גודל גופן בעורך">
+        <button class="iconbtn" id="codeFsMinus" title="הקטן גופן">A-</button>
+        <button class="iconbtn" id="codeFsPlus" title="הגדל גופן">A+</button>
+      </span>
     </div>
     <div class="edwrap">
       <div class="gutter" id="gutter">1</div>
       <div class="edbox" id="edbox">
+        <div class="ruler50" id="ruler50" aria-hidden="true"></div>
         <pre id="hl" aria-hidden="true"></pre>
         <textarea id="ed" spellcheck="false" autocapitalize="off" autocorrect="off" aria-label="עורך קוד C"></textarea>
+        <div class="ac-pop" id="acPop" hidden></div>
       </div>
     </div>
+    <div class="hresizer" id="hResizer" title="גרור לשינוי גובה המסוף"></div>
     <div class="console" id="console">
       <div class="chead">
         <button class="ctab" id="tabOut"    aria-selected="true">Output</button>
@@ -337,7 +397,13 @@ textarea.paste{width:100%;height:130px;font-family:"JetBrains Mono",monospace;fo
     </div>
   </div>
 
+  <div class="vresizer" id="vResizer" title="גרור לשינוי הרוחב"></div>
   <div class="pane paper" id="panePaper">
+    <div class="papertools">
+      <button class="iconbtn" id="paperFsMinus" title="הקטן טקסט">A-</button>
+      <span class="fsizeLabel">גודל טקסט</span>
+      <button class="iconbtn" id="paperFsPlus" title="הגדל טקסט">A+</button>
+    </div>
   <div class="sheet">
     <div class="hdr">
       <h1>מבוא למדעי המחשב מ'/ח'</h1>
@@ -497,9 +563,13 @@ textarea.paste{width:100%;height:130px;font-family:"JetBrains Mono",monospace;fo
 <script>
 "use strict";
 const Q1_KEY = JSON.parse(decodeURIComponent(atob("JTdCJTIyYSUyMiUzQSUyMCU3QiUyMnRpbWUlMjIlM0ElMjAlMjIlQ0UlOTglMjhsb2clMjBuJTIwJUMyJUI3JTIwbG9nJTIwbG9nJTIwbiUyOSUyMiUyQyUyMCUyMnNwYWNlJTIyJTNBJTIwJTIyJUNFJTk4JTI4MSUyOSUyMiU3RCUyQyUyMCUyMmIlMjIlM0ElMjAlN0IlMjJ0aW1lJTIyJTNBJTIwJTIyJUNFJTk4JTI4biUyMGxvZyUyMG4lMjklMjIlMkMlMjAlMjJzcGFjZSUyMiUzQSUyMCUyMiVDRSU5OCUyOG4lMjklMjIlN0QlMkMlMjAlMjJjJTIyJTNBJTIwJTdCJTIydGltZSUyMiUzQSUyMCUyMiVDRSU5OCUyOG4lQzIlQjIlMjklMjIlMkMlMjAlMjJzcGFjZSUyMiUzQSUyMCUyMiVDRSU5OCUyODElMjklMjIlN0QlN0Q=")));
-const LS_KEY = "moedbet-001-gcc-v1";
-const EXAM_ID = "trainer/rounds/001";
-const PAPER_ID = "234114 Moed Bet, Spring 5787 (generated practice)";
+/* Every exam page shares this ONE origin (blueapple12.github.io), so
+   localStorage is shared across /exam/<n>/ paths too. Key everything to
+   the page's own path, or exam 2's save would clobber exam 1's. */
+const PAGE_ID = (location.pathname.replace(/\/index\.html$/, "").replace(/\/+$/, "").split("/").filter(Boolean).pop()) || "exam";
+const LS_KEY = "examstate-" + PAGE_ID + "-v1";
+const EXAM_ID = "exam/" + PAGE_ID;
+const PAPER_ID = document.querySelector(".brand b").textContent.trim() + " — " + document.querySelector(".brand span").textContent.trim();
 
 const SKELETONS = {
 q2: `#include <stdio.h>
@@ -629,6 +699,76 @@ int examT_q4(int* arr, int n, int k) {
 `
 };
 
+/* ==== EXAM-SPECIFIC: SOLUTIONS (replace) ==== */
+const SOLUTIONS = {
+q2: {
+  archetype: "בינארי על מבנה עולה-יורד (מערך הררי)",
+  complexity: "דרישה: זמן Θ(log n) · מקום Θ(1)",
+  code: `int examT_q2(int arr[], int n, int x) {
+    int low = 0, high = n - 1;
+    while (low < high) {
+        int mid = (low + high) / 2;
+        if (arr[mid] < arr[mid + 1]) low = mid + 1;
+        else high = mid;
+    }
+    int p = low, count = 0;
+    int lo = 0, hi = p, L = -1;
+    while (lo <= hi) {
+        int mid = (lo + hi) / 2;
+        if (arr[mid] > x) { L = mid; hi = mid - 1; }
+        else lo = mid + 1;
+    }
+    if (L != -1) count += p - L + 1;
+    lo = p + 1; hi = n - 1;
+    int R = -1;
+    while (lo <= hi) {
+        int mid = (lo + hi) / 2;
+        if (arr[mid] > x) { R = mid; lo = mid + 1; }
+        else hi = mid - 1;
+    }
+    if (R != -1) count += R - p;
+    return count;
+}`
+},
+q3: {
+  archetype: "היסטוגרמה על כל תת-המחרוזות",
+  complexity: "דרישה: זמן O(n²) · מקום נוסף O(1)",
+  code: `int examT_q3(char* s, int k) {
+    int n = 0;
+    while (s[n] != '\\0') n++;
+    int count = 0;
+    for (int start = 0; start < n; start++) {
+        int hist[26];
+        for (int i = 0; i < 26; i++) hist[i] = 0;
+        int distinct = 0, exactK = 0;
+        for (int end = start; end < n; end++) {
+            int c = s[end] - 'a';
+            if (hist[c] == 0) distinct++;
+            if (hist[c] == k) exactK--;
+            hist[c]++;
+            if (hist[c] == k) exactK++;
+            if (distinct == exactK) count++;
+        }
+    }
+    return count;
+}`
+},
+q4: {
+  archetype: "ספירה רקורסיבית ללא עטיפה",
+  complexity: "אין דרישת סיבוכיות בשאלה זו",
+  code: `int countPrefixes(int* arr, int n, int k) {
+    if (n == 0) return 0;
+    return (arr[0] == k ? 1 : 0) + countPrefixes(arr + 1, n - 1, k - arr[0]);
+}
+
+int examT_q4(int* arr, int n, int k) {
+    if (n <= 0) return 0;
+    return countPrefixes(arr, n, k) + examT_q4(arr + 1, n - 1, k);
+}`
+}
+};
+
+/* ==== /END SOLUTIONS ==== */
 const COMPLEXITY_OPTS = ["— בחר —","Θ(1)","Θ(log log n)","Θ(log n)","Θ(log n · log log n)","Θ(√n)","Θ(n)","Θ(n log n)","Θ(n log log n)","Θ(n²)","Θ(n² log n)","Θ(n³)","Θ(2ⁿ)"];
 const Q1_PARTS = [{id:"a",label:"סעיף א'"},{id:"b",label:"סעיף ב'"},{id:"c",label:"סעיף ג'"}];
 const KEYWORDS = new Set(["if","else","for","while","do","return","break","continue","switch","case","default","sizeof","struct","typedef","const","static","goto","union","enum","extern","register","volatile"]);
@@ -639,14 +779,20 @@ let CUSTOM = {};
 const effTests = q => (CUSTOM[q] && CUSTOM[q].length) ? CUSTOM[q] : BASE_TESTS[q];
 const isCustom = q => !!(CUSTOM[q] && CUSTOM[q].length);
 
+const UI_KEY = "examUiPrefsV1";
+const UIPREFS = Object.assign({ideW:50, consoleH:null, codeFs:13, paperFs:15}, (() => {
+  try{ return JSON.parse(localStorage.getItem(UI_KEY) || "{}"); }catch(e){ return {}; }
+})());
+function saveUI(){ try{ localStorage.setItem(UI_KEY, JSON.stringify(UIPREFS)); }catch(e){} }
+
 const STATE = {
   code:{q2:SKELETONS.q2, q3:SKELETONS.q3, q4:SKELETONS.q4},
   q1:{a:{time:"",space:""}, b:{time:"",space:""}, c:{time:"",space:""}},
-  results:{}, startedAt:null, active:"q2", stdin:""
+  results:{}, startedAt:null, active:"q2", stdin:"", extraMs:0
 };
 let q1Revealed = false;
 
-function save(){ try{ localStorage.setItem(LS_KEY, JSON.stringify({code:STATE.code,q1:STATE.q1,startedAt:STATE.startedAt,stdin:STATE.stdin})); }catch(e){} }
+function save(){ try{ localStorage.setItem(LS_KEY, JSON.stringify({code:STATE.code,q1:STATE.q1,startedAt:STATE.startedAt,stdin:STATE.stdin,extraMs:STATE.extraMs})); }catch(e){} }
 (function load(){
   try{
     const d = JSON.parse(localStorage.getItem(LS_KEY) || "null");
@@ -655,6 +801,7 @@ function save(){ try{ localStorage.setItem(LS_KEY, JSON.stringify({code:STATE.co
       if(d.q1) STATE.q1 = d.q1;
       if(d.startedAt) STATE.startedAt = d.startedAt;
       if(typeof d.stdin === "string") STATE.stdin = d.stdin;
+      if(typeof d.extraMs === "number") STATE.extraMs = d.extraMs;
     }
     CUSTOM = JSON.parse(localStorage.getItem(LS_KEY + "-tests") || "{}") || {};
   }catch(e){}
@@ -699,21 +846,211 @@ function syncEditor(){
   ed.style.height = h + "px"; hl.style.minHeight = h + "px";
 }
 edbox.addEventListener("scroll", () => { gutter.scrollTop = edbox.scrollTop; });
-ed.addEventListener("input", () => { STATE.code[STATE.active] = ed.value; syncEditor(); save(); });
+
+/* ---------- line-length readout (the "you hit 50 characters" ask) ---------- */
+const lineLenEl = document.getElementById("lineLen");
+function updateLineLen(){
+  const v = ed.value, a = ed.selectionStart;
+  const s0 = v.lastIndexOf("\n", a - 1) + 1;
+  let e0 = v.indexOf("\n", a); if(e0 === -1) e0 = v.length;
+  const len = e0 - s0;
+  lineLenEl.textContent = len + "/50";
+  lineLenEl.classList.toggle("over", len > 50);
+}
+
+/* ---------- same-file word autocomplete (no AI - just words already
+   in the file, plus the C keywords/types this page already knows) ---------- */
+const acPop = document.getElementById("acPop");
+const AC_BASE = [...KEYWORDS, ...TYPES, "NULL","printf","scanf","malloc","free","sizeof","strlen","main","return"];
+let acItems = [], acIndex = 0;
+function currentWordRange(){
+  if(ed.selectionStart !== ed.selectionEnd) return null;
+  const v = ed.value, pos = ed.selectionStart;
+  let s0 = pos;
+  while(s0 > 0 && /[A-Za-z0-9_]/.test(v[s0 - 1])) s0--;
+  if(s0 === pos) return null;
+  return {start:s0, end:pos, word:v.slice(s0, pos)};
+}
+function hideAC(){ acItems = []; acPop.hidden = true; }
+let acMirror = null;
+function acCaretXY(){
+  if(!acMirror){
+    acMirror = document.createElement("div");
+    const cs = getComputedStyle(ed);
+    ["fontFamily","fontSize","lineHeight","letterSpacing","paddingTop","paddingRight","paddingBottom","paddingLeft","borderWidth","boxSizing"]
+      .forEach(p => acMirror.style[p] = cs[p]);
+    Object.assign(acMirror.style, {position:"absolute", visibility:"hidden", whiteSpace:"pre-wrap", wordWrap:"break-word", top:"0", left:"-9999px", tabSize:"4"});
+    document.body.appendChild(acMirror);
+  }
+  acMirror.style.width = ed.clientWidth + "px";
+  acMirror.textContent = ed.value.slice(0, ed.selectionStart);
+  const marker = document.createElement("span");
+  marker.textContent = "​";
+  acMirror.appendChild(marker);
+  const x = marker.offsetLeft, y = marker.offsetTop;
+  acMirror.removeChild(marker);
+  return {x, y};
+}
+function renderAC(){
+  acPop.innerHTML = acItems.map((w,i) =>
+    '<div class="ac-item' + (i === acIndex ? " sel" : "") + '" data-i="' + i + '">' + esc(w) + "</div>").join("");
+  const xy = acCaretXY();
+  acPop.style.left = Math.max(0, xy.x - ed.scrollLeft) + "px";
+  acPop.style.top = (xy.y - ed.scrollTop + 22) + "px";
+  acPop.hidden = false;
+}
+function updateAutocomplete(){
+  const r = currentWordRange();
+  if(!r || r.word.length < 2){ hideAC(); return; }
+  const seen = new Set(AC_BASE);
+  const re = /[A-Za-z_][A-Za-z0-9_]*/g; let m;
+  while((m = re.exec(ed.value))) seen.add(m[0]);
+  const lw = r.word.toLowerCase();
+  const cand = [...seen].filter(w => w !== r.word && w.toLowerCase().startsWith(lw))
+                        .sort((x,y) => x.length - y.length || x.localeCompare(y)).slice(0, 7);
+  if(!cand.length){ hideAC(); return; }
+  acItems = cand; acIndex = 0;
+  renderAC();
+}
+function acceptAC(){
+  const r = currentWordRange();
+  if(!r || !acItems.length){ hideAC(); return; }
+  const word = acItems[acIndex], v = ed.value;
+  ed.value = v.slice(0, r.start) + word + v.slice(r.end);
+  ed.selectionStart = ed.selectionEnd = r.start + word.length;
+  hideAC();
+  ed.dispatchEvent(new Event("input"));
+}
+acPop.addEventListener("mousedown", e => {
+  const item = e.target.closest(".ac-item");
+  if(!item) return;
+  e.preventDefault();
+  acIndex = Number(item.dataset.i);
+  acceptAC();
+});
+ed.addEventListener("blur", () => setTimeout(hideAC, 130));
+
+ed.addEventListener("input", () => {
+  STATE.code[STATE.active] = ed.value; syncEditor(); save();
+  updateLineLen(); updateAutocomplete();
+});
+ed.addEventListener("click", updateLineLen);
+ed.addEventListener("keyup", e => { if(!["Enter","Tab"].includes(e.key)) updateLineLen(); });
+
+/* ---------- CLion-ish editing: auto-indent, bracket/quote pairs, dedent ---------- */
+const AC_PAIRS = {"(":")", "[":"]", "{":"}"};
+const AC_CLOSERS = new Set(Object.values(AC_PAIRS));
+const AC_QUOTES = new Set(['"', "'"]);
+function lineStartOf(text, pos){ return text.lastIndexOf("\n", pos - 1) + 1; }
+function leadingWs(text, pos){ const s0 = lineStartOf(text, pos); return /^[ \t]*/.exec(text.slice(s0, pos))[0]; }
+
 ed.addEventListener("keydown", e => {
+  if(!acPop.hidden){
+    if(e.key === "ArrowDown"){ e.preventDefault(); acIndex = (acIndex + 1) % acItems.length; renderAC(); return; }
+    if(e.key === "ArrowUp"){ e.preventDefault(); acIndex = (acIndex - 1 + acItems.length) % acItems.length; renderAC(); return; }
+    if(e.key === "Tab" || e.key === "Enter"){ e.preventDefault(); acceptAC(); return; }
+    if(e.key === "Escape"){ e.preventDefault(); hideAC(); return; }
+  }
+
+  const a = ed.selectionStart, b = ed.selectionEnd, v = ed.value, collapsed = a === b;
+
   if(e.key === "Tab"){
     e.preventDefault();
-    const a = ed.selectionStart, b = ed.selectionEnd;
-    ed.value = ed.value.slice(0,a) + "    " + ed.value.slice(b);
+    ed.value = v.slice(0, a) + "    " + v.slice(b);
     ed.selectionStart = ed.selectionEnd = a + 4;
-    STATE.code[STATE.active] = ed.value; syncEditor(); save();
+    ed.dispatchEvent(new Event("input"));
+    return;
   }
+
+  if(e.key === "Enter"){
+    e.preventDefault();
+    const indent = leadingWs(v, a);
+    const prevCh = v[a - 1], nextCh = v[a];
+    const opens = prevCh === "{" || prevCh === "(" || prevCh === "[";
+    const ins = "\n" + indent + (opens ? "    " : "");
+    if(opens && AC_PAIRS[prevCh] === nextCh){
+      const tail = "\n" + indent;
+      ed.value = v.slice(0, a) + ins + tail + v.slice(b);
+    }else{
+      ed.value = v.slice(0, a) + ins + v.slice(b);
+    }
+    ed.selectionStart = ed.selectionEnd = a + ins.length;
+    ed.dispatchEvent(new Event("input"));
+    return;
+  }
+
+  if(e.key === "Backspace" && collapsed && a > 0 && AC_PAIRS[v[a - 1]] === v[a]){
+    e.preventDefault();
+    ed.value = v.slice(0, a - 1) + v.slice(a + 1);
+    ed.selectionStart = ed.selectionEnd = a - 1;
+    ed.dispatchEvent(new Event("input"));
+    return;
+  }
+
+  if(collapsed && (AC_CLOSERS.has(e.key) || AC_QUOTES.has(e.key)) && v[a] === e.key){
+    e.preventDefault();
+    ed.selectionStart = ed.selectionEnd = a + 1;
+    ed.dispatchEvent(new Event("input"));
+    return;
+  }
+
+  if(collapsed && e.key === "}"){
+    /* rest of this line blank, and the next line is already just "}" (the
+       usual case right after the auto-split on Enter) -> move past it
+       instead of inserting a duplicate closing brace. */
+    const eol = v.indexOf("\n", a);
+    const restOfLine = v.slice(a, eol === -1 ? v.length : eol);
+    if(/^[ \t]*$/.test(restOfLine) && eol !== -1){
+      let p = eol + 1;
+      while(p < v.length && (v[p] === " " || v[p] === "\t")) p++;
+      if(v[p] === "}"){
+        e.preventDefault();
+        ed.selectionStart = ed.selectionEnd = p + 1;
+        ed.dispatchEvent(new Event("input"));
+        return;
+      }
+    }
+    const ws = leadingWs(v, a);
+    const s0 = lineStartOf(v, a);
+    if(ws.length === a - s0 && ws.length >= 4){
+      e.preventDefault();
+      const cut = 4;
+      ed.value = v.slice(0, s0) + ws.slice(0, -cut) + "}" + v.slice(a);
+      ed.selectionStart = ed.selectionEnd = s0 + ws.length - cut + 1;
+      ed.dispatchEvent(new Event("input"));
+      return;
+    }
+  }
+
+  if(collapsed && AC_PAIRS[e.key]){
+    e.preventDefault();
+    ed.value = v.slice(0, a) + e.key + AC_PAIRS[e.key] + v.slice(b);
+    ed.selectionStart = ed.selectionEnd = a + 1;
+    ed.dispatchEvent(new Event("input"));
+    return;
+  }
+
+  if(collapsed && AC_QUOTES.has(e.key)){
+    e.preventDefault();
+    ed.value = v.slice(0, a) + e.key + e.key + v.slice(b);
+    ed.selectionStart = ed.selectionEnd = a + 1;
+    ed.dispatchEvent(new Event("input"));
+    return;
+  }
+
+  if(e.key === "Escape"){ hideAC(); }
 });
 function openTab(q){
   STATE.active = q;
   document.querySelectorAll(".tab").forEach(t => t.setAttribute("aria-selected", String(t.dataset.q === q)));
   ed.value = STATE.code[q]; syncEditor(); renderResults(q);
   if(!document.getElementById("wrapCases").hidden) renderCases();
+  if(typeof RUN !== "undefined"){
+    RUN.lines = []; RUN.everRun = false;
+    setPrompt(false);
+    document.getElementById("sentRow").hidden = true;
+    rawOut.textContent = "לחץ ▶ Run כדי להדר ולהריץ את הקובץ הזה.";
+  }
 }
 document.querySelectorAll(".tab").forEach(t => t.addEventListener("click", () => openTab(t.dataset.q)));
 
@@ -900,13 +1237,26 @@ function setPrompt(on){
   if(on) setTimeout(() => stdinLine.focus(), 0);
 }
 
+/* compile-only check: fast (~180ms), no execution, so a syntax error is
+   reported before the student is asked to type any input. */
+async function gccCheck(code){
+  const r = await fetch(CE, {
+    method:"POST", headers:{"Content-Type":"application/json", "Accept":"application/json"},
+    body: JSON.stringify({source: code, options:{
+      userArguments:"-std=c99 -Wall -fno-diagnostics-color",
+      filters:{execute:false}, compilerOptions:{}
+    }})
+  });
+  if(!r.ok) throw new Error("שרת ההידור החזיר " + r.status);
+  const j = await r.json();
+  return {failed: j.code !== 0, diagnostics: joinText(j.stderr).trim()};
+}
+
 async function doRun(){
   if(RUN.busy) return;
   RUN.busy = true;
   const b = document.getElementById("runBtn");
-  b.disabled = true; b.textContent = "מהדר…";
-  showPanel("out");
-  if(!RUN.everRun) rawOut.textContent = "מהדר עם gcc 13.2…";
+  b.disabled = true; b.textContent = "מריץ…";
   const t0 = Date.now();
   try{
     const res = await gcc(STATE.code[STATE.active], RUN.lines.length ? RUN.lines.join("\n") + "\n" : "");
@@ -924,7 +1274,8 @@ const stdinLine = document.getElementById("stdinLine");
 stdinLine.addEventListener("keydown", e => {
   if(e.key !== "Enter") return;
   e.preventDefault();
-  RUN.lines.push(stdinLine.value);
+  const v = stdinLine.value;
+  if(v.length) RUN.lines.push(v);
   stdinLine.value = "";
   STATE.stdin = RUN.lines.join("\n"); save();
   doRun();
@@ -932,12 +1283,48 @@ stdinLine.addEventListener("keydown", e => {
 document.getElementById("clearStdin").addEventListener("click", () => {
   RUN.lines = [];
   STATE.stdin = ""; save();
-  doRun();
+  setPrompt(true);
+  rawOut.textContent = "הזן קלט מהתחלה.";
 });
-document.getElementById("runBtn").addEventListener("click", function(){
+
+/* Run click: compile-CHECK only, then show the prompt. Nothing executes
+   until the student presses Enter (even on an empty line, which just
+   runs with no further input - covers programs that need none). */
+document.getElementById("runBtn").addEventListener("click", async function(){
+  if(RUN.busy) return;
+  RUN.busy = true;
   RUN.lines = [];
   STATE.stdin = ""; save();
-  doRun();
+  const b = this;
+  b.disabled = true; b.textContent = "בודק…";
+  showPanel("out");
+  setPrompt(false);
+  document.getElementById("sentRow").hidden = true;
+  rawOut.textContent = "בודק קומפילציה…";
+  const t0 = Date.now();
+  try{
+    const chk = await gccCheck(STATE.code[STATE.active]);
+    const ms = Date.now() - t0;
+    if(chk.failed){
+      RUN.everRun = false;
+      rawOut.innerHTML = (chk.diagnostics ? '<span class="err">' + esc(chk.diagnostics) + "</span>\n\n" : "") +
+        '<span class="err">ההידור נכשל — התוכנית לא רצה.</span>';
+    }else{
+      RUN.everRun = true;
+      let html = "";
+      if(chk.diagnostics) html += '<span class="warnmsg">' + esc(chk.diagnostics) + "</span>\n\n";
+      html += '<span class="okmsg">✓ הודר בהצלחה' + (ms ? " · " + ms + "ms" : "") + "</span>\n";
+      html += '<span class="hintmsg">אם התוכנית מבקשת קלט, הקלד אותו למטה ולחץ Enter. '
+            + 'אם היא לא צריכה קלט, לחץ Enter בתיבה הריקה כדי להריץ.</span>';
+      rawOut.innerHTML = html;
+      setPrompt(true);
+    }
+  }catch(e){
+    rawOut.innerHTML = '<span class="err">' + esc(e.message) + "</span>\n\nאין חיבור לשרת ההידור. בדוק את החיבור לאינטרנט ונסה שוב.";
+  }finally{
+    RUN.busy = false;
+    b.disabled = false; b.textContent = "▶ Run";
+  }
 });
 
 /* ---- test all cases in one compile ---- */
@@ -1001,7 +1388,7 @@ async function runTests(q, pick){
   const sum = document.createElement("div");
   const clean = fail === 0 && !violations.length;
   sum.className = "summary " + (fail === 0 ? (violations.length ? "warn" : "ok") : "no");
-  sum.textContent = pass + " עברו · " + fail + " נכשלו" + (typeof pick === "number" ? "  (מקרה בודד)" : "");
+  sum.innerHTML = "<bdi>" + pass + "</bdi> עברו · <bdi>" + fail + "</bdi> נכשלו" + (typeof pick === "number" ? "  (מקרה בודד)" : "");
   out.appendChild(sum);
   if(cerr) out.appendChild(line("warn","warn","<em>אזהרות הידור:</em> " + esc(cerr.split("\n")[0])));
   violations.forEach(v => out.appendChild(line("אילוץ","warn","<em>" + esc(v) + "</em>")));
@@ -1025,7 +1412,7 @@ function renderResults(q){
   if(!r){ out.innerHTML = '<div class="empty">לחץ "בדוק מול המקרים" כדי להריץ את הפונקציה מול כל מקרי הבדיקה.</div>'; chsum.textContent = ""; return; }
   const sum = document.createElement("div");
   sum.className = "summary " + (r.failed === 0 ? ((r.violations && r.violations.length) ? "warn" : "ok") : "no");
-  sum.textContent = (r.error ? "שגיאת הידור" : r.passed + " עברו · " + r.failed + " נכשלו") + " (הרצה קודמת)";
+  sum.innerHTML = (r.error ? "שגיאת הידור" : "<bdi>" + r.passed + "</bdi> עברו · <bdi>" + r.failed + "</bdi> נכשלו") + " (הרצה קודמת)";
   out.appendChild(sum);
   chsum.textContent = r.error ? "" : r.passed + "/" + (r.total || "?");
 }
@@ -1222,17 +1609,27 @@ q1btn.textContent = "בדוק את כל הסעיפים";
 q1btn.addEventListener("click", () => { q1Revealed ? hideQ1Marks() : revealQ1(); });
 q1grid.parentNode.insertBefore(q1btn, q1box.nextSibling);
 
-/* ================= clock ================= */
+/* ================= clock (+ optional extra time) ================= */
 const clock = document.getElementById("clock");
-const DURATION = 3 * 60 * 60 * 1000;
+const BASE_DURATION = 3 * 60 * 60 * 1000;
+const totalDuration = () => BASE_DURATION + (STATE.extraMs || 0);
+function fmtDur(ms){
+  const h = Math.floor(ms/3600000), m = Math.floor(ms%3600000/60000), s0 = Math.floor(ms%60000/1000);
+  return h + ":" + String(m).padStart(2,"0") + ":" + String(s0).padStart(2,"0");
+}
 function tickClock(){
-  if(!STATE.startedAt){ clock.textContent = "3:00:00"; clock.className = "clock off"; return; }
-  const left = DURATION - (Date.now() - STATE.startedAt);
+  if(!STATE.startedAt){ clock.textContent = fmtDur(totalDuration()); clock.className = "clock off"; return; }
+  const left = totalDuration() - (Date.now() - STATE.startedAt);
   if(left <= 0){ clock.textContent = "0:00:00"; clock.className = "clock low"; return; }
-  const h = Math.floor(left/3600000), m = Math.floor(left%3600000/60000), s = Math.floor(left%60000/1000);
-  clock.textContent = h + ":" + String(m).padStart(2,"0") + ":" + String(s).padStart(2,"0");
+  clock.textContent = fmtDur(left);
   clock.className = "clock" + (left < 15*60*1000 ? " low" : "");
 }
+const extraTimeSel = document.getElementById("extraTime");
+extraTimeSel.value = String(Math.round((STATE.extraMs || 0) / 60000));
+extraTimeSel.addEventListener("change", () => {
+  STATE.extraMs = Number(extraTimeSel.value) * 60000;
+  save(); tickClock();
+});
 const paintStartBtn = () => { document.getElementById("startBtn").textContent = STATE.startedAt ? "אפס מבחן" : "התחל מבחן"; };
 function startClock(){ STATE.startedAt = Date.now(); save(); tickClock(); paintStartBtn(); }
 function restartExam(){
@@ -1247,10 +1644,75 @@ function restartExam(){
   syncEditor(); renderResults(STATE.active); updatePills(); tickClock(); paintStartBtn();
 }
 document.getElementById("startBtn").addEventListener("click", () => {
-  if(STATE.startedAt) askConfirm("לאפס את המבחן? השעון נעצר, הקוד חוזר לשלד, ותשובות שאלה 1 והתוצאות יימחקו. דף הטיוטה ומקרי הבדיקה שלך יישמרו.", restartExam);
+  if(STATE.startedAt) askConfirm("לאפס את המבחן? השעון נעצר, הקוד חוזר לשלד, ותשובות שאלה 1 והתוצאות יימחקו. דף הטיוטה ומקרי הבדיקה שלך יישמרו.\n\n(זמן נוסף וההעדפות שלך על גודל/פריסה לא ייפגעו.)", restartExam);
   else startClock();
 });
 setInterval(tickClock, 1000);
+
+/* ================= resizable layout + font zoom (shared across every exam) ================= */
+function applySplit(){ document.documentElement.style.setProperty("--ide-w", UIPREFS.ideW + "%"); }
+function applyFonts(){
+  document.documentElement.style.setProperty("--ide-fs", UIPREFS.codeFs + "px");
+  document.documentElement.style.setProperty("--paper-fs", UIPREFS.paperFs + "px");
+}
+function applyConsoleHeight(){
+  const paneH = paneIde.clientHeight || window.innerHeight;
+  const h = UIPREFS.consoleH ? Math.min(Math.max(UIPREFS.consoleH, 170), Math.max(220, paneH - 160))
+                              : Math.round(paneH * 0.36);
+  document.getElementById("console").style.height = h + "px";
+  syncEditor();
+}
+(function(){
+  const vres = document.getElementById("vResizer"), splitEl = document.querySelector(".split");
+  let dragging = false, startX = 0, startPct = UIPREFS.ideW;
+  vres.addEventListener("pointerdown", e => {
+    dragging = true; startX = e.clientX; startPct = UIPREFS.ideW;
+    vres.setPointerCapture(e.pointerId); vres.classList.add("active");
+  });
+  vres.addEventListener("pointermove", e => {
+    if(!dragging) return;
+    const rect = splitEl.getBoundingClientRect();
+    const pct = startPct + ((e.clientX - startX) / rect.width) * 100;
+    UIPREFS.ideW = Math.min(78, Math.max(22, pct));
+    applySplit();
+  });
+  const endVres = () => { if(!dragging) return; dragging = false; vres.classList.remove("active"); saveUI(); syncEditor(); };
+  vres.addEventListener("pointerup", endVres);
+  vres.addEventListener("pointercancel", endVres);
+
+  const hres = document.getElementById("hResizer");
+  let vdrag = false, startY = 0, startH = 0;
+  hres.addEventListener("pointerdown", e => {
+    vdrag = true; startY = e.clientY;
+    startH = document.getElementById("console").getBoundingClientRect().height;
+    hres.setPointerCapture(e.pointerId); hres.classList.add("active");
+  });
+  hres.addEventListener("pointermove", e => {
+    if(!vdrag) return;
+    const paneH = paneIde.clientHeight;
+    let h = startH - (e.clientY - startY);
+    h = Math.min(Math.max(h, 170), Math.max(220, paneH - 160));
+    UIPREFS.consoleH = Math.round(h);
+    document.getElementById("console").style.height = h + "px";
+    syncEditor();
+  });
+  const endHres = () => { if(!vdrag) return; vdrag = false; hres.classList.remove("active"); saveUI(); };
+  hres.addEventListener("pointerup", endHres);
+  hres.addEventListener("pointercancel", endHres);
+
+  document.getElementById("codeFsMinus").addEventListener("click", () => {
+    UIPREFS.codeFs = Math.max(10, UIPREFS.codeFs - 1); applyFonts(); saveUI(); syncEditor();
+  });
+  document.getElementById("codeFsPlus").addEventListener("click", () => {
+    UIPREFS.codeFs = Math.min(22, UIPREFS.codeFs + 1); applyFonts(); saveUI(); syncEditor();
+  });
+  document.getElementById("paperFsMinus").addEventListener("click", () => {
+    UIPREFS.paperFs = Math.max(12, UIPREFS.paperFs - 1); applyFonts(); saveUI();
+  });
+  document.getElementById("paperFsPlus").addEventListener("click", () => {
+    UIPREFS.paperFs = Math.min(22, UIPREFS.paperFs + 1); applyFonts(); saveUI();
+  });
+})();
 
 /* ================= modal ================= */
 const modal = document.getElementById("modal");
@@ -1298,9 +1760,32 @@ document.getElementById("submitBtn").addEventListener("click", () => {
     '<div class="nm">Q1</div><div class="bar"><i style="width:' + Math.round(100*a/6) + '%"></i></div><div class="sc">' + a + "/6</div></div>" +
     '<p>שמור את קובץ ההגשה, ואז בטרמינל: <code dir="ltr">/grade &lt;path-to-file&gt;</code></p>' +
     '<p style="color:var(--ink-faint);font-size:12.5px">הבדיקות כאן אינן בודקות סיבוכיות. הציון מ-Claude כן.</p>',
-    [{label:"שמור קובץ הגשה", cls:"btn primary", fn:() => offerFile("moedbet-001-submission.json", JSON.stringify(sub, null, 2))},
+    [{label:"שמור קובץ הגשה", cls:"btn primary", fn:() => offerFile("exam-" + PAGE_ID + "-submission.json", JSON.stringify(sub, null, 2))},
+     {label:"פתרונות לדוגמה", cls:"btn", fn:showSolutions},
      {label:"חזור למבחן", cls:"btn", fn:closeModal}]);
 });
+
+function showSolutions(){
+  const q1rows = Q1_PARTS.map(p =>
+    "<div style='display:flex;gap:10px;padding:5px 0;font-size:13px'><b style='min-width:60px'>" + esc(p.label) + "</b>" +
+    "<span>זמן <bdi>" + esc(Q1_KEY[p.id].time) + "</bdi> &nbsp;·&nbsp; מקום <bdi>" + esc(Q1_KEY[p.id].space) + "</bdi></span></div>"
+  ).join("");
+  const qBlocks = ["q2","q3","q4"].map(q => {
+    const sol = SOLUTIONS[q];
+    if(!sol) return "";
+    return (
+      '<h4 style="font-family:\'Frank Ruhl Libre\',serif;margin:18px 0 3px">' + q.toUpperCase() +
+        (sol.archetype ? ' <span class="badge">' + esc(sol.archetype) + "</span>" : "") + "</h4>" +
+      (sol.complexity ? '<p style="color:var(--ink-faint);font-size:12px;margin:0 0 6px">' + esc(sol.complexity) + "</p>" : "") +
+      '<pre class="raw" style="background:#111317;border-radius:8px;direction:ltr;text-align:left;overflow-x:auto;padding:11px 13px;font-size:12px">' +
+        highlight(sol.code) + "</pre>"
+    );
+  }).join("");
+  openModal("פתרונות לדוגמה",
+    '<p style="color:var(--warn);font-weight:700">אלו פתרונות לדוגמה בלבד — אין כאן ציון. לציון אמיתי הרץ <code dir="ltr">/grade</code> על קובץ ההגשה.</p>' +
+    '<h4 style="font-family:\'Frank Ruhl Libre\',serif;margin:14px 0 2px">שאלה 1</h4>' + q1rows + qBlocks,
+    [{label:"סגור", cls:"btn primary", fn:closeModal}]);
+}
 
 /* ================= scratch pad ================= */
 let showPanel;
@@ -1431,7 +1916,11 @@ let showPanel;
   document.getElementById("tabCases").addEventListener("click", () => showPanel("cases"));
   document.getElementById("tabSketch").addEventListener("click", () => showPanel("sketch"));
   document.getElementById("expandBtn").addEventListener("click", () => {
-    cons.classList.toggle("tall"); syncEditor();
+    const paneH = paneIde.clientHeight;
+    const cur = document.getElementById("console").getBoundingClientRect().height;
+    const tall = Math.round(paneH * 0.66), compact = Math.round(paneH * 0.36);
+    UIPREFS.consoleH = (cur < paneH * 0.5) ? tall : compact;
+    applyConsoleHeight(); saveUI();
     if(!wrap.hidden) requestAnimationFrame(fit);
   });
   if(window.ResizeObserver) new ResizeObserver(() => { if(!wrap.hidden) fit(); }).observe(wrap);
@@ -1456,7 +1945,8 @@ q1Score();
 updatePills();
 tickClock();
 paintStartBtn();
-window.addEventListener("resize", syncEditor);
+window.addEventListener("resize", () => { applyConsoleHeight(); syncEditor(); });
+applySplit(); applyFonts(); applyConsoleHeight(); updateLineLen();
 </script>
 </body>
 </html>
