@@ -272,8 +272,8 @@ textarea.paste{width:100%;height:130px;font-family:"JetBrains Mono",monospace;fo
 .toolbar .fsize{margin-inline-start:0}
 .gcc{margin-left:0}
 
-/* ---- 50-char print margin ---- */
-.ruler50{position:absolute;top:0;bottom:0;left:calc(14px + 50ch);width:1px;
+/* ---- 80-char print margin ---- */
+.ruler50{position:absolute;top:0;bottom:0;left:calc(14px + 80ch);width:1px;
   background:var(--bad);opacity:.28;pointer-events:none;
   font-family:"JetBrains Mono",monospace;font-size:var(--ide-fs,13px)}
 
@@ -342,7 +342,7 @@ textarea.paste{width:100%;height:130px;font-family:"JetBrains Mono",monospace;fo
       <button class="tbtn" id="resetBtn">אפס קובץ</button>
       <button class="tbtn" id="dlBtn">שמור .c</button>
       <span class="gcc" id="gccLabel">gcc 13.2 · -std=c99</span>
-      <span class="linelen" id="lineLen" title="אורך השורה הנוכחית">0/50</span>
+      <span class="linelen" id="lineLen" title="אורך השורה הנוכחית">0/80</span>
       <span class="fsize" title="גודל גופן בעורך">
         <button class="iconbtn" id="codeFsMinus" title="הקטן גופן">A-</button>
         <button class="iconbtn" id="codeFsPlus" title="הגדל גופן">A+</button>
@@ -511,15 +511,15 @@ function syncEditor(){
 }
 edbox.addEventListener("scroll", () => { gutter.scrollTop = edbox.scrollTop; });
 
-/* ---------- line-length readout (the "you hit 50 characters" ask) ---------- */
+/* ---------- line-length readout (the "you hit 80 characters" ask) ---------- */
 const lineLenEl = document.getElementById("lineLen");
 function updateLineLen(){
   const v = ed.value, a = ed.selectionStart;
   const s0 = v.lastIndexOf("\n", a - 1) + 1;
   let e0 = v.indexOf("\n", a); if(e0 === -1) e0 = v.length;
   const len = e0 - s0;
-  lineLenEl.textContent = len + "/50";
-  lineLenEl.classList.toggle("over", len > 50);
+  lineLenEl.textContent = len + "/80";
+  lineLenEl.classList.toggle("over", len > 80);
 }
 
 /* ---------- same-file word autocomplete (no AI - just words already
@@ -643,12 +643,27 @@ ed.addEventListener("keydown", e => {
     return;
   }
 
-  if(e.key === "Backspace" && collapsed && a > 0 && AC_PAIRS[v[a - 1]] === v[a]){
+  if(e.key === "Backspace" && collapsed && a > 0 && AC_PAIRS[v[a - 1]] && AC_PAIRS[v[a - 1]] === v[a]){
     e.preventDefault();
     ed.value = v.slice(0, a - 1) + v.slice(a + 1);
     ed.selectionStart = ed.selectionEnd = a - 1;
     ed.dispatchEvent(new Event("input"));
     return;
+  }
+
+  if(e.key === "Backspace" && collapsed && a > 0){
+    /* cursor sits inside pure leading whitespace -> delete a whole indent
+       level (up to 4 spaces) at once, not space-by-space. */
+    const s0 = lineStartOf(v, a);
+    const before = v.slice(s0, a);
+    if(before.length > 0 && /^ +$/.test(before)){
+      const cut = Math.min(4, ((before.length - 1) % 4) + 1);
+      e.preventDefault();
+      ed.value = v.slice(0, a - cut) + v.slice(a);
+      ed.selectionStart = ed.selectionEnd = a - cut;
+      ed.dispatchEvent(new Event("input"));
+      return;
+    }
   }
 
   if(collapsed && (AC_CLOSERS.has(e.key) || AC_QUOTES.has(e.key)) && v[a] === e.key){
