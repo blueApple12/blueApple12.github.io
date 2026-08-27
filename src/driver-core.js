@@ -311,5 +311,219 @@ const ExamDrivers = (() => {
     }).join(", ");
   }
 
-  return {normalizeManifest, validateArgs, cString, cChar, formatArgs};
+  function driverQuestion(question) {
+    if (!isObject(question)) throw new Error("Invalid driver question: question must be an object");
+    if (typeof question.driver !== "string" || !DRIVER_IDS.has(question.driver)) {
+      throw new Error("Invalid driver question: unrecognized driver");
+    }
+    if (typeof question.mutation !== "string" || !MUTATION_POLICIES.has(question.mutation)) {
+      throw new Error("Invalid driver question: unrecognized mutation policy");
+    }
+    return {driver:question.driver, mutation:question.mutation};
+  }
+
+  function selectedFunction(q) {
+    if (!IDS.includes(q)) throw new Error(`Invalid driver question ${String(q)}`);
+    return `examT_${q}`;
+  }
+
+  function readIntegerArray(name, length) {
+    return `int* ${name}=NULL; if(${length}>0){ ${name}=(int*)malloc(sizeof(*${name})*(size_t)${length}); if(!${name}) return 1; for(int i=0;i<${length};i++) if(scanf("%d",&${name}[i])!=1) return 1; }`;
+  }
+
+  function readString(name, length) {
+    return `int ${length}; if(scanf("%d",&${length})!=1 || ${length}<0 || ${length}>(INT_MAX-2)/2) return 1; size_t ${name}_capacity=2U*(size_t)${length}+2U; char* ${name}=(char*)malloc(${name}_capacity); if(!${name}) return 1; for(int i=0;i<${length};i++){ int byte; if(scanf("%d",&byte)!=1 || byte<1 || byte>255) return 1; ${name}[i]=(char)byte; } ${name}[${length}]='\\0';`;
+  }
+
+  function sourceFor(read, call, mutation, cleanup = "") {
+    return `\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n#include <limits.h>\nint main(void){ int T; if(scanf("%d",&T)!=1 || T<0) return 1; for(int t=0;t<T;t++){ ${read} ${mutation.before} int result=${call}; ${mutation.compare} printf("%d %d\\n", result, mutated); ${mutation.cleanup} ${cleanup} } return 0; }`;
+  }
+
+  function stdinString(value) {
+    const bytes = utf8Bytes(value);
+    return [bytes.length, ...bytes];
+  }
+
+  function stdinChar(driver, value) {
+    const bytes = utf8Bytes(value);
+    if (bytes.length !== 1) argumentError(driver, "value must be a single-byte character");
+    return bytes[0];
+  }
+
+  function noMutation() {
+    return {before:"", compare:"int mutated=0;", cleanup:""};
+  }
+
+  function arrayMutation(policy, name, count) {
+    if (policy !== "forbidden") return noMutation();
+    const before = `${name}_before`;
+    const size = `sizeof(*${name})*(size_t)${count}`;
+    return {
+      before: `int* ${before}=NULL; if(${count}>0){ ${before}=(int*)malloc(${size}); if(!${before}){ free(${name}); return 1; } memcpy(${before},${name},${size}); }`,
+      compare: `int mutated=0; if(${count}>0 && memcmp(${before},${name},${size})!=0) mutated=1;`,
+      cleanup: `free(${before});`
+    };
+  }
+
+  function matrixMutation(policy) {
+    if (policy !== "forbidden") return noMutation();
+    return {
+      before: "int mat_before[m][N]; memcpy(mat_before,mat,sizeof mat);",
+      compare: "int mutated=memcmp(mat_before,mat,sizeof mat)!=0;",
+      cleanup: ""
+    };
+  }
+
+  function stringMutation(policy, name, length) {
+    if (policy !== "forbidden") return noMutation();
+    const before = `${name}_before`;
+    const size = `(size_t)${length}+1U`;
+    return {
+      before: `char* ${before}=(char*)malloc(${size}); if(!${before}){ free(${name}); return 1; } memcpy(${before},${name},${size});`,
+      compare: `int mutated=memcmp(${before},${name},${size})!=0;`,
+      cleanup: `free(${before});`
+    };
+  }
+
+  function twoStringsMutation(policy) {
+    if (policy !== "forbidden") return noMutation();
+    return {
+      before: "char* a_before=(char*)malloc((size_t)a_len+1U); char* b_before=(char*)malloc((size_t)b_len+1U); if(!a_before || !b_before){ free(a_before); free(b_before); free(a); free(b); return 1; } memcpy(a_before,a,(size_t)a_len+1U); memcpy(b_before,b,(size_t)b_len+1U);",
+      compare: "int mutated=memcmp(a_before,a,(size_t)a_len+1U)!=0 || memcmp(b_before,b,(size_t)b_len+1U)!=0;",
+      cleanup: "free(a_before); free(b_before);"
+    };
+  }
+
+  function twoArraysMutation(policy) {
+    if (policy !== "forbidden") return noMutation();
+    return {
+      before: "int* a_before=NULL; int* b_before=NULL; if(na>0){ a_before=(int*)malloc(sizeof(*a)*(size_t)na); if(!a_before){ free(a); free(b); return 1; } memcpy(a_before,a,sizeof(*a)*(size_t)na); } if(nb>0){ b_before=(int*)malloc(sizeof(*b)*(size_t)nb); if(!b_before){ free(a_before); free(a); free(b); return 1; } memcpy(b_before,b,sizeof(*b)*(size_t)nb); }",
+      compare: "int mutated=(na>0 && memcmp(a_before,a,sizeof(*a)*(size_t)na)!=0) || (nb>0 && memcmp(b_before,b,sizeof(*b)*(size_t)nb)!=0);",
+      cleanup: "free(a_before); free(b_before);"
+    };
+  }
+
+  const DRIVER_REGISTRY = Object.freeze({
+    int_array_n_int: {
+      validate: (args) => validateArgs("int_array_n_int", args),
+      read: () => `int n; if(scanf("%d",&n)!=1 || n<0) return 1; ${readIntegerArray("arr", "n")} int value; if(scanf("%d",&value)!=1) return 1;`,
+      call: (fn) => `${fn}(arr, n, value)`,
+      snapshot: (mutation) => arrayMutation(mutation, "arr", "n"),
+      cleanup: () => "free(arr);",
+      stdin: (args) => [args.n, ...args.arr, args.value],
+      format: (args) => formatArgs("int_array_n_int", args)
+    },
+    int_array_n: {
+      validate: (args) => validateArgs("int_array_n", args),
+      read: () => `int n; if(scanf("%d",&n)!=1 || n<0) return 1; ${readIntegerArray("arr", "n")}`,
+      call: (fn) => `${fn}(arr, n)`,
+      snapshot: (mutation) => arrayMutation(mutation, "arr", "n"),
+      cleanup: () => "free(arr);",
+      stdin: (args) => [args.n, ...args.arr],
+      format: (args) => formatArgs("int_array_n", args)
+    },
+    sentinel_int_array_int: {
+      validate: (args) => validateArgs("sentinel_int_array_int", args),
+      read: () => `int n; if(scanf("%d",&n)!=1 || n<0) return 1; size_t capacity=1; while(capacity<=(size_t)n) capacity*=2U; int* arr=(int*)malloc(sizeof(*arr)*capacity); if(!arr) return 1; for(int i=0;i<n;i++) if(scanf("%d",&arr[i])!=1) return 1; for(size_t i=(size_t)n;i<capacity;i++) arr[i]=INT_MIN; int value; if(scanf("%d",&value)!=1) return 1;`,
+      call: (fn) => `${fn}(arr, value)`,
+      snapshot: (mutation) => arrayMutation(mutation, "arr", "capacity"),
+      cleanup: () => "free(arr);",
+      stdin: (args) => [args.arr.length, ...args.arr, args.value],
+      format: (args) => formatArgs("sentinel_int_array_int", args)
+    },
+    matrix_rows_int: {
+      validate: (args) => validateArgs("matrix_rows_int", args),
+      read: () => `int m, cols; if(scanf("%d%d",&m,&cols)!=2 || m<1 || cols!=N) return 1; int mat[m][N]; for(int row=0;row<m;row++) for(int col=0;col<N;col++) if(scanf("%d",&mat[row][col])!=1) return 1; int value; if(scanf("%d",&value)!=1) return 1;`,
+      call: (fn) => `${fn}(mat, m, value)`,
+      snapshot: (mutation) => matrixMutation(mutation),
+      cleanup: () => "",
+      stdin: (args) => [args.m, args.cols, ...args.mat.flat(), args.value],
+      format: (args) => formatArgs("matrix_rows_int", args)
+    },
+    string_only: {
+      validate: (args) => validateArgs("string_only", args),
+      read: () => readString("buf", "len"),
+      call: (fn) => `${fn}(buf)`,
+      snapshot: (mutation) => stringMutation(mutation, "buf", "len"),
+      cleanup: () => "free(buf);",
+      stdin: (args) => stdinString(args.s),
+      format: (args) => formatArgs("string_only", args)
+    },
+    string_int: {
+      validate: (args) => validateArgs("string_int", args),
+      read: () => `${readString("buf", "len")} int value; if(scanf("%d",&value)!=1) return 1;`,
+      call: (fn) => `${fn}(buf, value)`,
+      snapshot: (mutation) => stringMutation(mutation, "buf", "len"),
+      cleanup: () => "free(buf);",
+      stdin: (args) => [...stdinString(args.s), args.value],
+      format: (args) => formatArgs("string_int", args)
+    },
+    string_char: {
+      validate: (args) => validateArgs("string_char", args),
+      read: () => `${readString("buf", "len")} int value_input; if(scanf("%d",&value_input)!=1 || value_input<1 || value_input>255) return 1; char value=(char)value_input;`,
+      call: (fn) => `${fn}(buf, value)`,
+      snapshot: (mutation) => stringMutation(mutation, "buf", "len"),
+      cleanup: () => "free(buf);",
+      stdin: (args) => [...stdinString(args.s), stdinChar("string_char", args.value)],
+      format: (args) => formatArgs("string_char", args)
+    },
+    two_strings: {
+      validate: (args) => validateArgs("two_strings", args),
+      read: () => `${readString("a", "a_len")} ${readString("b", "b_len")}`,
+      call: (fn) => `${fn}(a, b)`,
+      snapshot: (mutation) => twoStringsMutation(mutation),
+      cleanup: () => "free(a); free(b);",
+      stdin: (args) => [...stdinString(args.a), ...stdinString(args.b)],
+      format: (args) => formatArgs("two_strings", args)
+    },
+    int_only: {
+      validate: (args) => validateArgs("int_only", args),
+      read: () => `int value; if(scanf("%d",&value)!=1) return 1;`,
+      call: (fn) => `${fn}(value)`,
+      snapshot: () => noMutation(),
+      cleanup: () => "",
+      stdin: (args) => [args.value],
+      format: (args) => formatArgs("int_only", args)
+    },
+    two_ints: {
+      validate: (args) => validateArgs("two_ints", args),
+      read: () => `int first, second; if(scanf("%d%d",&first,&second)!=2) return 1;`,
+      call: (fn) => `${fn}(first, second)`,
+      snapshot: () => noMutation(),
+      cleanup: () => "",
+      stdin: (args) => [args.first, args.second],
+      format: (args) => formatArgs("two_ints", args)
+    },
+    two_int_arrays: {
+      validate: (args) => validateArgs("two_int_arrays", args),
+      read: () => `int na; if(scanf("%d",&na)!=1 || na<0) return 1; ${readIntegerArray("a", "na")} int nb; if(scanf("%d",&nb)!=1 || nb<0) return 1; ${readIntegerArray("b", "nb")}`,
+      call: (fn) => `${fn}(a, na, b, nb)`,
+      snapshot: (mutation) => twoArraysMutation(mutation),
+      cleanup: () => "free(a); free(b);",
+      stdin: (args) => [args.na, ...args.a, args.nb, ...args.b],
+      format: (args) => formatArgs("two_int_arrays", args)
+    }
+  });
+
+  function driverFor(q, question, cases) {
+    const config = driverQuestion(question);
+    if (!Array.isArray(cases)) throw new Error("Invalid driver cases: cases must be an array");
+    const entry = DRIVER_REGISTRY[config.driver];
+    return sourceFor(entry.read(), entry.call(selectedFunction(q)), entry.snapshot(config.mutation), entry.cleanup());
+  }
+
+  function driverStdin(question, cases) {
+    const config = driverQuestion(question);
+    if (!Array.isArray(cases)) throw new Error("Invalid driver cases: cases must be an array");
+    const entry = DRIVER_REGISTRY[config.driver];
+    const lines = [String(cases.length)];
+    for (const testCase of cases) {
+      if (!isObject(testCase)) throw new Error("Invalid driver case: case must be an object");
+      const args = entry.validate(testCase.args);
+      lines.push(...entry.stdin(args).map(String));
+    }
+    return lines.join("\n") + "\n";
+  }
+
+  return {normalizeManifest, validateArgs, cString, cChar, formatArgs, driverFor, driverStdin};
 })();

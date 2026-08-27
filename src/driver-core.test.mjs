@@ -201,3 +201,87 @@ test("hardens legacy argument aliases and literal/display boundaries", () => {
   assert.match(formatted, /len=10000/);
   assert.ok(formatted.length < 500, `preview was not bounded: ${formatted.length}`);
 });
+
+test("generates closed C drivers with the exact selected calls", () => {
+  const core = loadCore();
+  const examples = [
+    ["int_array_n_int", "q2", {arr:[7], n:1, value:3}, "examT_q2(arr, n, value)"],
+    ["int_array_n", "q2", {arr:[7], n:1}, "examT_q2(arr, n)"],
+    ["sentinel_int_array_int", "q2", {arr:[7], value:3}, "examT_q2(arr, value)"],
+    ["matrix_rows_int", "q2", {mat:[[7]], m:1, cols:1, value:3}, "examT_q2(mat, m, value)"],
+    ["string_only", "q3", {s:"abc"}, "examT_q3(buf)"],
+    ["string_int", "q3", {s:"abc", value:3}, "examT_q3(buf, value)"],
+    ["string_char", "q3", {s:"abc", value:"x"}, "examT_q3(buf, value)"],
+    ["two_strings", "q3", {a:"abc", b:"def"}, "examT_q3(a, b)"],
+    ["int_only", "q4", {value:3}, "examT_q4(value)"],
+    ["two_ints", "q4", {first:3, second:4}, "examT_q4(first, second)"],
+    ["two_int_arrays", "q4", {a:[3], na:1, b:[4], nb:1}, "examT_q4(a, na, b, nb)"]
+  ];
+
+  for (const [driver, q, args, call] of examples) {
+    const question = {driver, mutation:"allowed"};
+    const cases = [{name:"one", args, expect:"0"}];
+    const source = core.driverFor(q, question, cases);
+    assert.match(source, new RegExp(call.replace(/[()]/g, "\\$&")), driver);
+    assert.match(source, /printf\("%d %d\\n", result, mutated\);/, driver);
+    assert.match(core.driverStdin(question, cases), /^1\n/, driver);
+  }
+
+  const source = core.driverFor("q4", {driver:"int_only", mutation:"allowed"}, [{
+    name:"no-source", args:{value:1, c_source:"JSON_C_INJECTION"}, expect:"0"
+  }]);
+  assert.match(source, /examT_q4\(value\)/);
+  assert.doesNotMatch(source, /JSON_C_INJECTION/);
+  assert.throws(
+    () => core.driverFor("q2; JSON_C_INJECTION", {driver:"int_only", mutation:"allowed"}, []),
+    /question/
+  );
+});
+
+test("generates safe input layouts and mutation checks from policy data", () => {
+  const core = loadCore();
+  const source = (q, driver, mutation, args) => core.driverFor(q, {driver, mutation}, [{name:"one", args, expect:"0"}]);
+
+  const sentinelArgs = {arr:[4,5], value:6};
+  const sentinel = source("q2", "sentinel_int_array_int", "forbidden", sentinelArgs);
+  assert.match(sentinel, /size_t capacity=1; while\(capacity<=\(size_t\)n\) capacity\*=2U;/);
+  assert.match(sentinel, /for\(size_t i=\(size_t\)n;i<capacity;i\+\+\) arr\[i\]=INT_MIN;/);
+  assert.equal(core.driverStdin({driver:"sentinel_int_array_int", mutation:"forbidden"}, [{name:"one", args:sentinelArgs, expect:"0"}]), "1\n2\n4\n5\n6\n");
+
+  const matrix = source("q2", "matrix_rows_int", "forbidden", {mat:[[1,2]], m:1, cols:2, value:3});
+  assert.match(matrix, /cols!=N/);
+  assert.match(matrix, /int mat\[m\]\[N\]/);
+
+  const string = source("q3", "string_only", "forbidden", {s:"a b"});
+  assert.match(string, /size_t buf_capacity=2U\*\(size_t\)len\+2U;/);
+  assert.match(string, /byte<1 \|\| byte>255/);
+  assert.equal(core.driverStdin({driver:"string_only", mutation:"forbidden"}, [{name:"one", args:{s:"a b"}, expect:"0"}]), "1\n3\n97\n32\n98\n");
+
+  const mutable = [
+    ["q2", "int_array_n_int", {arr:[1], n:1, value:2}, /arr_before/],
+    ["q2", "int_array_n", {arr:[1], n:1}, /arr_before/],
+    ["q2", "sentinel_int_array_int", {arr:[1], value:2}, /arr_before/],
+    ["q2", "matrix_rows_int", {mat:[[1]], m:1, cols:1, value:2}, /mat_before/, false],
+    ["q3", "string_only", {s:"a"}, /buf_before/],
+    ["q3", "string_int", {s:"a", value:2}, /buf_before/],
+    ["q3", "string_char", {s:"a", value:"x"}, /buf_before/],
+    ["q3", "two_strings", {a:"a", b:"b"}, /a_before[\s\S]*b_before/],
+    ["q4", "two_int_arrays", {a:[1], na:1, b:[2], nb:1}, /a_before[\s\S]*b_before/]
+  ];
+  for (const [q, driver, args, snapshot, heapAllocated = true] of mutable) {
+    const forbidden = source(q, driver, "forbidden", args);
+    assert.match(forbidden, snapshot, `${driver} snapshot`);
+    assert.match(forbidden, /memcmp\(/, `${driver} comparison`);
+    if (heapAllocated) assert.match(forbidden, /free\(/, `${driver} cleanup`);
+
+    const allowed = source(q, driver, "allowed", args);
+    assert.match(allowed, /int mutated=0;/, `${driver} allowed marker`);
+    assert.doesNotMatch(allowed, snapshot, `${driver} allowed does not snapshot`);
+    assert.doesNotMatch(allowed, /memcmp\(/, `${driver} allowed accepts modifications`);
+  }
+
+  assert.throws(
+    () => core.driverStdin({driver:"int_only", mutation:"allowed"}, [{name:"evil", args:{value:1, c_source:"JSON_C_INJECTION"}, expect:"0"}]),
+    /unexpected.*c_source/
+  );
+});
