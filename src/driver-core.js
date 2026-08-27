@@ -94,6 +94,9 @@ const ExamDrivers = (() => {
 
     const normalizedQuestions = {};
     for (const id of IDS) {
+      if (!Object.prototype.hasOwnProperty.call(questions, id)) {
+        throw new Error(`Invalid manifest: missing question ${id}`);
+      }
       const source = Object.prototype.hasOwnProperty.call(raw, "version")
         ? questions[id]
         : {...LEGACY[id], cases:questions[id]};

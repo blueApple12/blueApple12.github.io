@@ -62,6 +62,25 @@ test("requires all three questions and rejects extra question keys", () => {
   assert.throws(() => core.normalizeManifest({version:2, questions:{q2:{}, q3:{}, q4:{}, q5:{}}}), /question/);
 });
 
+test("rejects inherited question definitions", () => {
+  const core = loadCore();
+  const inherited = Object.create({q2:[], q3:[], q4:[]});
+  assert.throws(() => core.normalizeManifest(inherited), /q2/);
+});
+
+test("rejects a non-array cases value in a version-2 question", () => {
+  const core = loadCore();
+  const raw = {
+    version: 2,
+    questions: {
+      q2: {driver:"int_array_n", mutation:"allowed", cases:{name:"a"}},
+      q3: {driver:"string_only", mutation:"forbidden", cases:[]},
+      q4: {driver:"int_only", mutation:"allowed", cases:[]}
+    }
+  };
+  assert.throws(() => core.normalizeManifest(raw), /q2/);
+});
+
 test("requires case arrays, unique nonempty names, object args, and decimal expects", () => {
   const core = loadCore();
   const base = () => ({
