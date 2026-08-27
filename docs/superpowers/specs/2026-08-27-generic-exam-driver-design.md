@@ -56,7 +56,7 @@ New exams use a versioned form:
     },
     "q3": {
       "driver": "string_only",
-      "mutation": "required",
+      "mutation": "allowed",
       "cases": [{ "name": "t01", "args": {}, "expect": "0" }]
     },
     "q4": {
@@ -68,12 +68,12 @@ New exams use a versioned form:
 ```
 
 `version` must equal `2`. Each question must contain one recognized `driver`,
-one `mutation` policy (`"forbidden"`, `"required"`, or `"ignored"`), and at
-least twelve cases. Cases retain `name`, `args`, and string `expect` so the
-result comparison and report UI remain stable. Mutation policy is evaluated
-only for driver kinds whose inputs can be snapshotted; `"required"` means at
-least one input differs after the call, while `"forbidden"` means none may
-differ.
+one `mutation` policy (`"forbidden"` or `"allowed"`), and at least twelve
+cases. Cases retain `name`, `args`, and string `expect` so the result comparison
+and report UI remain stable. Mutation policy is evaluated only for driver kinds
+whose inputs can be snapshotted. `"forbidden"` means no input may differ after
+the call; `"allowed"` does not require a change because a correct in-place
+algorithm can legitimately leave some inputs unchanged.
 
 ## Driver Vocabulary
 
