@@ -1,5 +1,4 @@
 "use strict";
-
 const ExamDrivers = (() => {
   const IDS = ["q2", "q3", "q4"];
   const LEGACY = {
@@ -41,9 +40,8 @@ const ExamDrivers = (() => {
     throw new Error(`Invalid manifest ${question}${suffix}: ${message}`);
   }
 
-  function checkQuestionKeys(questions) {
-    const keys = Object.keys(questions);
-    for (const key of keys) {
+  function rejectExtraQuestions(questions) {
+    for (const key of Object.keys(questions)) {
       if (!IDS.includes(key)) throw new Error(`Invalid manifest: unexpected question ${key}`);
     }
   }
@@ -76,30 +74,28 @@ const ExamDrivers = (() => {
       }
       return copy(item);
     });
-
     return {driver:source.driver, mutation:source.mutation, cases};
   }
 
   function normalizeManifest(raw, options = {}) {
     if (!isObject(raw)) throw new Error("Invalid manifest: manifest must be an object");
+    const hasVersion = Object.prototype.hasOwnProperty.call(raw, "version");
     let questions;
-    if (Object.prototype.hasOwnProperty.call(raw, "version")) {
+    if (hasVersion) {
       if (raw.version !== 2) throw new Error(`Invalid manifest version ${String(raw.version)}`);
       if (!isObject(raw.questions)) throw new Error("Invalid manifest: questions must be an object");
       questions = raw.questions;
     } else {
       questions = raw;
     }
-    checkQuestionKeys(questions);
+    rejectExtraQuestions(questions);
 
     const normalizedQuestions = {};
     for (const id of IDS) {
       if (!Object.prototype.hasOwnProperty.call(questions, id)) {
         throw new Error(`Invalid manifest: missing question ${id}`);
       }
-      const source = Object.prototype.hasOwnProperty.call(raw, "version")
-        ? questions[id]
-        : {...LEGACY[id], cases:questions[id]};
+      const source = hasVersion ? questions[id] : {...LEGACY[id], cases:questions[id]};
       normalizedQuestions[id] = normalizeQuestion(id, source, options);
     }
     return {version:2, questions:normalizedQuestions};

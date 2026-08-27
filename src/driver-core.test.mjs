@@ -55,15 +55,12 @@ test("rejects malformed manifest structure and policies", () => {
   }
 });
 
-test("requires all three questions and rejects extra question keys", () => {
+test("requires all three questions, own properties, and rejects extra keys", () => {
   const core = loadCore();
   assert.throws(() => core.normalizeManifest({q2:[], q3:[]}), /q4/);
   assert.throws(() => core.normalizeManifest({q2:[], q3:[], q4:[], q5:[]}), /question/);
   assert.throws(() => core.normalizeManifest({version:2, questions:{q2:{}, q3:{}, q4:{}, q5:{}}}), /question/);
-});
 
-test("rejects inherited question definitions", () => {
-  const core = loadCore();
   const inherited = Object.create({q2:[], q3:[], q4:[]});
   assert.throws(() => core.normalizeManifest(inherited), /q2/);
 });
@@ -116,11 +113,7 @@ test("requires case arrays, unique nonempty names, object args, and decimal expe
 
 test("requires twelve cases per question when requested", () => {
   const core = loadCore();
-  const raw = {
-    q2: [],
-    q3: [],
-    q4: []
-  };
+  const raw = {q2:[], q3:[], q4:[]};
   for (const q of ["q2", "q3", "q4"]) {
     for (let i = 0; i < 11; i++) raw[q].push({name:`t${i}`, args:{}, expect:"0"});
   }
