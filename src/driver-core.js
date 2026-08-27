@@ -424,9 +424,9 @@ const ExamDrivers = (() => {
     },
     sentinel_int_array_int: {
       validate: (args) => validateArgs("sentinel_int_array_int", args),
-      read: () => `int n; if(scanf("%d",&n)!=1 || n<0) return 1; size_t capacity=1; while(capacity<=(size_t)n) capacity*=2U; int* arr=(int*)malloc(sizeof(*arr)*capacity); if(!arr) return 1; for(int i=0;i<n;i++) if(scanf("%d",&arr[i])!=1) return 1; for(size_t i=(size_t)n;i<capacity;i++) arr[i]=INT_MIN; int value; if(scanf("%d",&value)!=1) return 1;`,
+      read: () => `int n; if(scanf("%d",&n)!=1 || n<0) return 1; size_t probe=1; while(probe<=(size_t)n) probe*=2U; int* arr=(int*)malloc(sizeof(*arr)*(probe+1U)); if(!arr) return 1; for(int i=0;i<n;i++) if(scanf("%d",&arr[i])!=1) return 1; for(size_t i=(size_t)n;i<=probe;i++) arr[i]=INT_MIN; int value; if(scanf("%d",&value)!=1) return 1;`,
       call: (fn) => `${fn}(arr, value)`,
-      snapshot: (mutation) => arrayMutation(mutation, "arr", "capacity"),
+      snapshot: (mutation) => arrayMutation(mutation, "arr", "(probe+1U)"),
       cleanup: () => "free(arr);",
       stdin: (args) => [args.arr.length, ...args.arr, args.value],
       format: (args) => formatArgs("sentinel_int_array_int", args)

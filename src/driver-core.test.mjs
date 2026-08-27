@@ -244,8 +244,9 @@ test("generates safe input layouts and mutation checks from policy data", () => 
 
   const sentinelArgs = {arr:[4,5], value:6};
   const sentinel = source("q2", "sentinel_int_array_int", "forbidden", sentinelArgs);
-  assert.match(sentinel, /size_t capacity=1; while\(capacity<=\(size_t\)n\) capacity\*=2U;/);
-  assert.match(sentinel, /for\(size_t i=\(size_t\)n;i<capacity;i\+\+\) arr\[i\]=INT_MIN;/);
+  assert.match(sentinel, /size_t probe=1; while\(probe<=\(size_t\)n\) probe\*=2U;/);
+  assert.match(sentinel, /malloc\(sizeof\(\*arr\)\*\(probe\+1U\)\)/);
+  assert.match(sentinel, /for\(size_t i=\(size_t\)n;i<=probe;i\+\+\) arr\[i\]=INT_MIN;/);
   assert.equal(core.driverStdin({driver:"sentinel_int_array_int", mutation:"forbidden"}, [{name:"one", args:sentinelArgs, expect:"0"}]), "1\n2\n4\n5\n6\n");
 
   const matrix = source("q2", "matrix_rows_int", "forbidden", {mat:[[1,2]], m:1, cols:2, value:3});
@@ -284,4 +285,14 @@ test("generates safe input layouts and mutation checks from policy data", () => 
     () => core.driverStdin({driver:"int_only", mutation:"allowed"}, [{name:"evil", args:{value:1, c_source:"JSON_C_INJECTION"}, expect:"0"}]),
     /unexpected.*c_source/
   );
+});
+
+test("pads a length-five sentinel array through its next doubling probe", () => {
+  const core = loadCore();
+  const source = core.driverFor("q2", {driver:"sentinel_int_array_int", mutation:"forbidden"}, [{
+    name:"length-five", args:{arr:[1,2,3,4,5], value:3}, expect:"0"
+  }]);
+  assert.match(source, /size_t probe=1; while\(probe<=\(size_t\)n\) probe\*=2U;/);
+  assert.match(source, /malloc\(sizeof\(\*arr\)\*\(probe\+1U\)\)/);
+  assert.match(source, /for\(size_t i=\(size_t\)n;i<=probe;i\+\+\) arr\[i\]=INT_MIN;/);
 });
