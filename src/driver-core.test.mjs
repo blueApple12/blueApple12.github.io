@@ -17,11 +17,12 @@ test("normalizes the exam-001 legacy manifest", () => {
   assert.deepEqual(core.normalizeManifest(raw), {
     version: 2,
     questions: {
-      q2: {driver:"int_array_n_int", mutation:"allowed", cases:raw.q2},
-      q3: {driver:"string_int", mutation:"forbidden", cases:raw.q3},
-      q4: {driver:"int_array_n_int", mutation:"allowed", cases:raw.q4}
+      q2: {driver:"int_array_n_int", mutation:"allowed", cases:[{name:"t01", args:{arr:[1], n:1, value:1}, expect:"0"}]},
+      q3: {driver:"string_int", mutation:"forbidden", cases:[{name:"t01", args:{s:"aa", value:1}, expect:"2"}]},
+      q4: {driver:"int_array_n_int", mutation:"allowed", cases:[{name:"t01", args:{arr:[1], n:1, value:1}, expect:"1"}]}
     }
   });
+  assert.deepEqual(raw.q2[0].args, {arr:[1], n:1, x:1});
 });
 
 test("normalizes and copies a valid version-2 manifest", () => {
@@ -180,8 +181,23 @@ test("serializes C strings/chars and formats typed arguments", () => {
   const core = loadCore();
   assert.equal(core.cString('a"b\\c\n'), '"a\\"b\\\\c\\n"');
   assert.equal(core.cChar("'"), "'\\''");
-  assert.equal(core.cString("\r\t\x01"), '"\\r\\t\\x01"');
+  assert.equal(core.cString("\r\t\x01"), '"\\r\\t\\001"');
   assert.match(core.formatArgs("two_strings", {a:"abc", b:"abd"}), /a=/);
   assert.match(core.formatArgs("two_int_arrays", {a:[1],na:1,b:[2],nb:1}), /nb=1/);
   assert.match(core.formatArgs("string_only", {s:"abcdefghijk",}), /len=11/);
+});
+
+test("hardens legacy argument aliases and literal/display boundaries", () => {
+  const core = loadCore();
+  assert.throws(
+    () => core.validateArgs("sentinel_int_array_int", {arr:[1], value:-2147483648}),
+    /INT_MIN/
+  );
+  assert.equal(core.cString("\x01A"), '"\\001A"');
+  assert.throws(() => core.cChar("é"), /single-byte/);
+
+  const long = "x".repeat(10000);
+  const formatted = core.formatArgs("string_only", {s:long});
+  assert.match(formatted, /len=10000/);
+  assert.ok(formatted.length < 500, `preview was not bounded: ${formatted.length}`);
 });

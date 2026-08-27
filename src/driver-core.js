@@ -77,6 +77,19 @@ const ExamDrivers = (() => {
     return {driver:source.driver, mutation:source.mutation, cases};
   }
 
+  function canonicalizeLegacyCases(question, cases) {
+    const alias = question === "q2" ? "x" : "k";
+    if (!Array.isArray(cases)) return cases;
+    return cases.map((item) => {
+      const result = copy(item);
+      if (isObject(result) && isObject(result.args) && !Object.prototype.hasOwnProperty.call(result.args, "value") && Object.prototype.hasOwnProperty.call(result.args, alias)) {
+        result.args.value = result.args[alias];
+        delete result.args[alias];
+      }
+      return result;
+    });
+  }
+
   function normalizeManifest(raw, options = {}) {
     if (!isObject(raw)) throw new Error("Invalid manifest: manifest must be an object");
     const hasVersion = Object.prototype.hasOwnProperty.call(raw, "version");
@@ -95,7 +108,7 @@ const ExamDrivers = (() => {
       if (!Object.prototype.hasOwnProperty.call(questions, id)) {
         throw new Error(`Invalid manifest: missing question ${id}`);
       }
-      const source = hasVersion ? questions[id] : {...LEGACY[id], cases:questions[id]};
+      const source = hasVersion ? questions[id] : {...LEGACY[id], cases:canonicalizeLegacyCases(id, questions[id])};
       normalizedQuestions[id] = normalizeQuestion(id, source, options);
     }
     return {version:2, questions:normalizedQuestions};
@@ -185,6 +198,7 @@ const ExamDrivers = (() => {
     } else if (driver === "sentinel_int_array_int") {
       result.arr = validateIntegerArray(driver, args.arr, "arr", {rejectSentinel:true});
       result.value = validateInteger(driver, args.value, "value");
+      if (result.value === INT_MIN) argumentError(driver, "value must not be INT_MIN");
     } else if (driver === "matrix_rows_int") {
       if (!Array.isArray(args.mat)) argumentError(driver, "mat must be an array of rows");
       result.mat = args.mat.map((row, rowIndex) => {
@@ -252,7 +266,7 @@ const ExamDrivers = (() => {
     if (byte === 0x08) return "\\b";
     if (byte === 0x0c) return "\\f";
     if (byte >= 0x20 && byte <= 0x7e) return String.fromCharCode(byte);
-    return `\\x${byte.toString(16).padStart(2, "0").toUpperCase()}`;
+    return `\\${byte.toString(8).padStart(3, "0")}`;
   }
 
   function cString(value) {
@@ -264,7 +278,9 @@ const ExamDrivers = (() => {
     if (typeof value !== "string" || Array.from(value).length !== 1) {
       throw new TypeError("cChar expects a single character");
     }
-    return `'${utf8Bytes(value).map((byte) => escapedByte(byte, 0x27)).join("")}'`;
+    const bytes = utf8Bytes(value);
+    if (bytes.length !== 1) throw new TypeError("cChar expects a single-byte character");
+    return `'${bytes.map((byte) => escapedByte(byte, 0x27)).join("")}'`;
   }
 
   function preview(value, limit = 8) {
@@ -276,12 +292,18 @@ const ExamDrivers = (() => {
     return String(value);
   }
 
+  function stringPreview(value, limit = 64) {
+    const chars = Array.from(value);
+    const clipped = chars.length > limit ? `${chars.slice(0, limit).join("")}...` : value;
+    return cString(clipped);
+  }
+
   function formatArgs(driver, args) {
     const validated = validateArgs(driver, args);
     return ARGUMENT_KEYS[driver].map((key) => {
       const value = validated[key];
       if (typeof value === "string") {
-        const literal = driver === "string_char" && key === "value" ? cChar(value) : cString(value);
+        const literal = driver === "string_char" && key === "value" ? cChar(value) : stringPreview(value);
         return `${key}=${literal} (len=${Array.from(value).length})`;
       }
       if (Array.isArray(value)) return `${key}=${preview(value)} (len=${value.length})`;
