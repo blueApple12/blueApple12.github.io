@@ -121,3 +121,67 @@ test("requires twelve cases per question when requested", () => {
   raw.q2.push({name:"t11", args:{}, expect:"0"});
   assert.throws(() => core.normalizeManifest(raw, {requireMinimum:true}), /q3.*12/);
 });
+
+test("validates every typed driver schema and returns defensive copies", () => {
+  const core = loadCore();
+  const valid = {
+    int_array_n_int: {arr:[1,2], n:2, value:7},
+    int_array_n: {arr:[1,2], n:2},
+    sentinel_int_array_int: {arr:[1,3,5], value:3},
+    matrix_rows_int: {mat:[[1,2],[3,4]], m:2, cols:2, value:3},
+    string_only: {s:"abba"},
+    string_int: {s:"abba", value:2},
+    string_char: {s:"abba", value:"b"},
+    two_strings: {a:"abc", b:"abd"},
+    int_only: {value:7},
+    two_ints: {first:7, second:3},
+    two_int_arrays: {a:[1,2], na:2, b:[1,2,3], nb:3}
+  };
+  for (const [driver, args] of Object.entries(valid)) {
+    const copy = core.validateArgs(driver, args);
+    assert.deepEqual(copy, args, driver);
+    assert.notStrictEqual(copy, args, driver);
+  }
+
+  const invalid = [
+    ["int_array_n_int", {arr:[1], n:2, value:0}, /length/],
+    ["int_array_n_int", {arr:[1], n:1, value:"0"}, /32-bit/],
+    ["int_array_n", {arr:[1], n:1, extra:0}, /unexpected.*extra/],
+    ["int_array_n", {arr:"1", n:1}, /array/],
+    ["sentinel_int_array_int", {arr:[1, -2147483648], value:0}, /INT_MIN/],
+    ["sentinel_int_array_int", {arr:"1", value:0}, /array/],
+    ["matrix_rows_int", {mat:[[1],[2,3]], m:2, cols:1, value:0}, /rectangular/],
+    ["matrix_rows_int", {mat:[[1]], m:2, cols:1, value:0}, /rows.*m|m.*rows/],
+    ["string_only", {s:"a\0b"}, /NUL/],
+    ["string_only", {s:1}, /string/],
+    ["string_int", {s:"a", value:2147483648}, /32-bit/],
+    ["string_int", {s:"a\0", value:1}, /NUL/],
+    ["string_char", {s:"abc", value:"xy"}, /single character/],
+    ["string_char", {s:"a\0", value:"x"}, /NUL/],
+    ["two_strings", {a:"abc", b:3}, /string/],
+    ["two_strings", {a:"a\0", b:"b"}, /NUL/],
+    ["int_only", {value:1.5}, /32-bit/],
+    ["int_only", {}, /missing.*value/],
+    ["two_ints", {first:7}, /second/],
+    ["two_ints", {first:2147483648, second:3}, /32-bit/],
+    ["two_int_arrays", {a:[1], na:1, b:[2], nb:2}, /length/],
+    ["two_int_arrays", {a:["1"], na:1, b:[2], nb:1}, /32-bit/]
+  ];
+  for (const [driver, args, message] of invalid) {
+    assert.throws(() => core.validateArgs(driver, args), message, driver);
+  }
+
+  const result = core.validateArgs("int_array_n_int", valid.int_array_n_int);
+  result.arr[0] = 99;
+  assert.equal(valid.int_array_n_int.arr[0], 1);
+});
+
+test("serializes C strings/chars and formats typed arguments", () => {
+  const core = loadCore();
+  assert.equal(core.cString('a"b\\c\n'), '"a\\"b\\\\c\\n"');
+  assert.equal(core.cChar("'"), "'\\''");
+  assert.equal(core.cString("\r\t\x01"), '"\\r\\t\\x01"');
+  assert.match(core.formatArgs("two_strings", {a:"abc", b:"abd"}), /a=/);
+  assert.match(core.formatArgs("two_int_arrays", {a:[1],na:1,b:[2],nb:1}), /nb=1/);
+  assert.match(core.formatArgs("string_only", {s:"abcdefghijk",}), /len=11/);
+});
