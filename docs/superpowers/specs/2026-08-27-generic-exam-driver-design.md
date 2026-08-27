@@ -56,6 +56,7 @@ New exams use a versioned form:
     },
     "q3": {
       "driver": "string_only",
+      "mutation": "required",
       "cases": [{ "name": "t01", "args": {}, "expect": "0" }]
     },
     "q4": {
@@ -66,9 +67,13 @@ New exams use a versioned form:
 }
 ```
 
-`version` must equal `2`. Each question must contain one recognized `driver`
-and at least twelve cases. Cases retain `name`, `args`, and string `expect` so
-the result comparison and report UI remain stable.
+`version` must equal `2`. Each question must contain one recognized `driver`,
+one `mutation` policy (`"forbidden"`, `"required"`, or `"ignored"`), and at
+least twelve cases. Cases retain `name`, `args`, and string `expect` so the
+result comparison and report UI remain stable. Mutation policy is evaluated
+only for driver kinds whose inputs can be snapshotted; `"required"` means at
+least one input differs after the call, while `"forbidden"` means none may
+differ.
 
 ## Driver Vocabulary
 
@@ -102,6 +107,7 @@ will provide:
 - schema validation with question/case-specific error messages;
 - C literal serialization for integers, arrays, matrices, strings, and chars;
 - driver generation for a question’s complete case list.
+- normalized interpretation of the per-question mutation policy.
 
 Node verification imports this module directly. The browser receives the same
 registry logic through the normal build, avoiding an independently maintained
@@ -144,6 +150,8 @@ splicing.
 - Matrices must be rectangular and match the compile-time column count required
   by the corresponding skeleton.
 - Case names must be unique within a question.
+- Mutation policies are explicit, preventing the exam-001 Q3 no-mutation rule
+  from being applied to new in-place string questions.
 - Expected values remain decimal strings and are compared as normalized first
   tokens, preserving current behavior.
 
