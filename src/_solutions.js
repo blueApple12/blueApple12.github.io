@@ -1,54 +1,54 @@
 const SOLUTIONS = {
   q2: {
-    archetype: "binary-search",
-    complexity: "Θ(log n) time, Θ(1) space",
-    code: `int examT_q2(int arr[], int n, int x) {
-    int lo = 0, hi = n - 1;
-    while (lo <= hi) {
-        int mid = lo + (hi - lo) / 2;
-        if (arr[mid] == x) return mid;
-        if (arr[lo] <= arr[mid]) {
-            if (arr[lo] <= x && x < arr[mid]) hi = mid - 1;
-            else lo = mid + 1;
-        } else {
-            if (arr[mid] < x && x <= arr[hi]) lo = mid + 1;
-            else hi = mid - 1;
-        }
+    archetype: "binary-search-on-answer",
+    complexity: "O(n log(sum(weights))) time, O(1) space",
+    code: `int examT_q2(int weights[], int n, int D) {
+    int low = weights[0], high = 0;
+    for (int i = 0; i < n; i++) {
+        if (weights[i] > low) low = weights[i];
+        high += weights[i];
     }
-    return -1;
+    while (low < high) {
+        int capacity = low + (high - low) / 2;
+        int groups = 1, current = 0;
+        for (int i = 0; i < n; i++) {
+            if (current + weights[i] > capacity) {
+                groups++;
+                current = weights[i];
+            } else {
+                current += weights[i];
+            }
+        }
+        if (groups <= D) high = capacity;
+        else low = capacity + 1;
+    }
+    return low;
 }`
   },
   q3: {
     archetype: "in-place-two-pointers",
     complexity: "Θ(n) time, Θ(1) space",
     code: `int examT_q3(char *s) {
-    int length = 0;
-    while (s[length] != '\\0') length++;
-    int source = length + 1;
-    for (int i = length; i >= 0; i--) {
-        s[source + i] = s[i];
-    }
-    int read = source, end = source + length, write = 0;
-    while (read < end) {
-        char ch = s[read];
-        int count = 0;
-        while (read < end && s[read] == ch) {
-            read++;
-            count++;
+    int read = 0, write = 0, replacements = 0;
+    while (s[read] != '\\0') {
+        if (s[read] == 'a' && s[read + 1] == 'b') {
+            s[write++] = '#';
+            read += 2;
+            replacements++;
+        } else {
+            s[write++] = s[read++];
         }
-        s[write++] = ch;
-        s[write++] = (char)('0' + count);
     }
     s[write] = '\\0';
-    return write;
+    return replacements;
 }`
   },
   q4: {
-    archetype: "tail-recursion",
-    complexity: "Θ(d) time, Θ(d) stack space",
-    code: `int examT_q4(int n, int acc) {
-    if (n == 0) return acc;
-    return examT_q4(n / 10, acc * 10 + n % 10);
+    archetype: "direct-recursion",
+    complexity: "Θ(log n) time, Θ(log n) stack space",
+    code: `int examT_q4(int n) {
+    if (n == 0) return 0;
+    return (n % 2) + examT_q4(n / 2);
 }`
   }
 };

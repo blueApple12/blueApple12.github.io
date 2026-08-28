@@ -1,65 +1,67 @@
 <div class="sheet">
   <header class="exam-head">
     <div>
-      <h1>תרגול מבחן 002</h1>
+      <h1>תרגול מבחן 003</h1>
       <p>מבוא למדעי המחשב — מועד ב׳</p>
     </div>
     <div class="exam-meta">זמן מומלץ: 3 שעות · שפת C</div>
   </header>
-
-  <p class="note">ענו על כל השאלות. אלא אם נאמר אחרת, נמקו סיבוכיות זמן ומקום.</p>
-
+  <p class="note">ענו על כל השאלות. שמרו על חתימות הפונקציות הנתונות.</p>
   <section class="question">
     <h2>שאלה 1 — ניתוח סיבוכיות</h2>
     <p>לכל קטע קוד בחרו את סיבוכיות הזמן והמקום ההדוקות ביותר.</p>
     <h3>א</h3>
-    <pre class="snip">void f(int n) {
-    for (int i = 1; i &lt;= n; i *= 2)
-        for (int j = 0; j &lt; 20; j++)
-            putchar('.');
+    <pre class="snip">void grow(int n) {
+    for (int i = 2; i &lt; n; i *= i)
+        putchar('.');
 }</pre>
     <h3>ב</h3>
-    <pre class="snip">void g(int n) {
+    <pre class="snip">void half(int n) {
     if (n &lt;= 1) return;
-    int *p = malloc(n * sizeof(int));
-    g(n / 2);
-    g(n / 2);
-    free(p);
+    half(n / 2);
+}
+
+void down(int n) {
+    if (n &lt;= 1) return;
+    down(n - 1);
+}
+
+void both(int n) {
+    half(n);
+    down(n);
 }</pre>
     <h3>ג</h3>
-    <pre class="snip">int h(int n) {
-    if (n &lt;= 1) return 1;
-    return h(n / 2) + h(n / 2);
+    <pre class="snip">void layers(int n) {
+    for (int i = 1; i &lt; n; i *= 2)
+        for (int j = 0; j &lt; n / i; j++)
+            for (int k = 0; k &lt; i; k++)
+                putchar('.');
 }</pre>
     <div class="q1grid" id="q1grid"></div>
   </section>
-
   <section class="question">
-    <h2>שאלה 2 — חיפוש במערך מסובב</h2>
-    <p>נתון מערך של מספרים שלמים שונים, שמוין בסדר עולה ולאחר מכן סובב בנקודה לא ידועה. החזירו את האינדקס של <code>x</code>, או ‎-1 אם אינו נמצא.</p>
-    <div class="sig">int examT_q2(int arr[], int n, int x);</div>
-    <p><strong>דוגמה:</strong> עבור <code>[4,5,6,7,0,1,2]</code> ו־<code>x=0</code> יוחזר <code>4</code>; עבור <code>x=3</code> יוחזר <code>-1</code>.</p>
-    <p class="req">דרישות: זמן Θ(log n), מקום נוסף Θ(1).</p>
+    <h2>שאלה 2 — קיבולת משלוח מינימלית</h2>
+    <p>חלקו את המערך, לפי הסדר, ל־<code>D</code> קבוצות רציפות בדיוק. החזירו את הערך המינימלי האפשרי של סכום הקבוצה הגדולה ביותר.</p>
+    <div class="sig">int examT_q2(int weights[], int n, int D);</div>
+    <p><strong>דוגמה:</strong> עבור המשקלים <code>{1,2,3,4,5,6,7,8,9,10}</code> ו־<code>D=5</code> מוחזר <code>15</code>.</p>
+    <p class="req">דרישות: זמן O(n·log(sum(weights))), מקום נוסף O(1).</p>
   </section>
-
   <section class="question">
-    <h2>שאלה 3 — כיווץ רצפים במקום</h2>
-    <p>כתבו מחדש את המחרוזת כך שכל רצף מקסימלי יוחלף בתו ובמספר הופעותיו. אורך כל רצף הוא לכל היותר 9. החזירו את האורך החדש.</p>
+    <h2>שאלה 3 — החלפת התבנית ab</h2>
+    <p>סרקו משמאל לימין. החליפו כל הופעה לא חופפת של <code>"ab"</code> בתו <code>'#'</code>, הזיזו את המשך המחרוזת שמאלה והחזירו את מספר ההחלפות.</p>
     <div class="sig">int examT_q3(char *s);</div>
-    <p><strong>דוגמה:</strong> <code>"aaabbc"</code> הופכת ל־<code>"a3b2c1"</code>, והפונקציה מחזירה <code>6</code>.</p>
+    <p><strong>דוגמה:</strong> <code>"cababd"</code> הופכת ל־<code>"c##d"</code>, ומוחזר <code>2</code>.</p>
     <p class="req">דרישות: שינוי במקום, זמן Θ(n), מקום נוסף Θ(1).</p>
   </section>
-
   <section class="question">
-    <h2>שאלה 4 — היפוך מספר ברקורסיה</h2>
-    <p>החזירו את הספרות של <code>n</code> בסדר הפוך. הקריאה הראשית תמיד תתבצע עם <code>acc=0</code>.</p>
-    <div class="sig">int examT_q4(int n, int acc);</div>
-    <p><strong>דוגמאות:</strong> <code>examT_q4(1234,0)</code> מחזירה <code>4321</code>; עבור <code>1000</code> מוחזר <code>1</code>.</p>
-    <p class="req">חובה להשתמש ברקורסיה עצמית בלבד; אין לולאות ואין פונקציית מעטפת.</p>
+    <h2>שאלה 4 — ספירת ביטים דלוקים</h2>
+    <p>החזירו את מספר הביטים שערכם 1 בייצוג הבינארי של מספר שלם אי־שלילי.</p>
+    <div class="sig">int examT_q4(int n);</div>
+    <p><strong>דוגמה:</strong> עבור <code>13</code> (בבינארית <code>1101</code>) מוחזר <code>3</code>.</p>
+    <p class="req">הפונקציה עצמה חייבת להיות רקורסיבית; אין פונקציית מעטפת ואין לולאות.</p>
   </section>
-
   <section class="question instructions">
     <h2>הנחיות הגשה</h2>
-    <p>שמרו על חתימות הפונקציות הנתונות. ניתן להוסיף משתנים מקומיים בלבד, אלא אם השאלה מציינת אחרת.</p>
+    <p>ניתן להוסיף משתנים מקומיים בלבד. אין לשנות את שמות הפונקציות או את הפרמטרים.</p>
   </section>
 </div>
