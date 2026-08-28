@@ -1,54 +1,41 @@
 const SOLUTIONS = {
   q2: {
-    archetype: "two-pointers",
-    complexity: "Θ(n) time, Θ(1) space",
-    code: `int examT_q2(int arr[], int n) {
-    int left = 0, right = n - 1, best = 0;
-    while (left < right) {
-        int height = arr[left] < arr[right] ? arr[left] : arr[right];
-        int area = (right - left) * height;
-        if (area > best) best = area;
-        if (arr[left] <= arr[right]) left++;
-        else right--;
+    archetype: "staircase-search",
+    complexity: "O(m+N) time, O(1) space",
+    code: `int examT_q2(int mat[][N], int m, int x) {
+    int row = 0, col = N - 1;
+    while (row < m && col >= 0) {
+        if (mat[row][col] == x) return 1;
+        if (mat[row][col] > x) col--;
+        else row++;
     }
-    return best;
+    return 0;
 }`
   },
   q3: {
-    archetype: "fixed-sliding-histogram",
+    archetype: "in-place-deduplication",
     complexity: "Θ(n) time, Θ(1) space",
-    code: `int examT_q3(char *s, char *p) {
-    int wanted[26] = {0}, window[26] = {0};
-    int n = 0, m = 0;
-    while (s[n] != '\\0') n++;
-    while (p[m] != '\\0') {
-        wanted[p[m] - 'a']++;
-        m++;
-    }
-    for (int i = 0; i < m; i++) window[s[i] - 'a']++;
-    int total = 0;
-    for (int start = 0; start + m <= n; start++) {
-        int equal = 1;
-        for (int ch = 0; ch < 26; ch++) {
-            if (window[ch] != wanted[ch]) equal = 0;
+    code: `int examT_q3(char *s) {
+    int seen[26] = {0};
+    int read = 0, write = 0;
+    while (s[read] != '\\0') {
+        int index = s[read] - 'a';
+        if (!seen[index]) {
+            seen[index] = 1;
+            s[write++] = s[read];
         }
-        total += equal;
-        if (start + m < n) {
-            window[s[start] - 'a']--;
-            window[s[start + m] - 'a']++;
-        }
+        read++;
     }
-    return total;
+    s[write] = '\\0';
+    return write;
 }`
   },
   q4: {
-    archetype: "direct-subsequence-recursion",
-    complexity: "Θ(na) time, Θ(na) stack space",
-    code: `int examT_q4(int *a, int na, int *b, int nb) {
-    if (nb == 0) return 1;
-    if (na == 0) return 0;
-    if (a[0] == b[0]) return examT_q4(a + 1, na - 1, b + 1, nb - 1);
-    return examT_q4(a + 1, na - 1, b, nb);
+    archetype: "fibonacci-recursion",
+    complexity: "exponential time, Θ(n) stack space",
+    code: `int examT_q4(int n) {
+    if (n == 0 || n == 1) return 1;
+    return examT_q4(n - 1) + examT_q4(n - 2);
 }`
   }
 };
