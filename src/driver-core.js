@@ -311,6 +311,25 @@ const ExamDrivers = (() => {
     }).join(", ");
   }
 
+  function validateCases(question, cases) {
+    const config = driverQuestion(question);
+    if (!Array.isArray(cases)) throw new Error("Invalid driver cases: cases must be an array");
+    const names = new Set();
+    return cases.map((testCase) => {
+      if (!isObject(testCase)) throw new Error("Invalid driver case: case must be an object");
+      const name = testCase.name;
+      if (typeof name !== "string" || name.trim().length === 0) {
+        throw new Error("Invalid driver case: case name must be a nonempty string");
+      }
+      if (names.has(name)) throw new Error(`Invalid driver case ${name}: case name must be unique`);
+      names.add(name);
+      if (typeof testCase.expect !== "string" || !/^-?\d+$/.test(testCase.expect)) {
+        throw new Error(`Invalid driver case ${name}: expect must be a decimal string`);
+      }
+      return {name, args:validateArgs(config.driver, testCase.args), expect:testCase.expect};
+    });
+  }
+
   function driverQuestion(question) {
     if (!isObject(question)) throw new Error("Invalid driver question: question must be an object");
     if (typeof question.driver !== "string" || !DRIVER_IDS.has(question.driver)) {
@@ -525,5 +544,5 @@ const ExamDrivers = (() => {
     return lines.join("\n") + "\n";
   }
 
-  return {normalizeManifest, validateArgs, cString, cChar, formatArgs, driverFor, driverStdin};
+  return {normalizeManifest, validateArgs, validateCases, cString, cChar, formatArgs, driverFor, driverStdin};
 })();

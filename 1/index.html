@@ -562,6 +562,555 @@ textarea.paste{width:100%;height:130px;font-family:"JetBrains Mono",monospace;fo
 <script id="exam-tests" type="application/json">{"q2":[{"name":"t01","args":{"arr":[1,3,7,9,6,2],"n":6,"x":5},"expect":"3"},{"name":"t02","args":{"arr":[1,3,7,9,6,2],"n":6,"x":9},"expect":"0"},{"name":"t03","args":{"arr":[1,3,7,9,6,2],"n":6,"x":0},"expect":"6"},{"name":"t04","args":{"arr":[2,8,5],"n":3,"x":4},"expect":"2"},{"name":"t05","args":{"arr":[2,8,5],"n":3,"x":8},"expect":"0"},{"name":"t06","args":{"arr":[2,8,5],"n":3,"x":1},"expect":"3"},{"name":"t07","args":{"arr":[1,2,3,4,100,40,30,20,10],"n":9,"x":3},"expect":"6"},{"name":"t08","args":{"arr":[1,3,9,13,15,14,10,4,0,-6,-12,-16,-22,-24,-30,-32,-34,-40],"n":18,"x":-32},"expect":"15"},{"name":"t09","args":{"arr":[1,7,13,15,17,23,25,31,35,41,43,45,49,53,52,46,44,38,32,28,26,22,18,16,12,10,8,6,0,-2,-4,-8,-14,-18,-20,-22,-28,-32,-34,-40,-42,-44,-48,-52,-54,-56,-62],"n":47,"x":-18},"expect":"33"},{"name":"t10","args":{"arr":[1,7,9,11,17,23,27,31,33,39,45,49,51,57,59,58,56,54],"n":18,"x":58},"expect":"1"},{"name":"t11","args":{"arr":[1,3,5,7,9,13,15,21,27,31,33,35,41,45,51,55,59,61,60,56,52,48,44,40,36,30,24,20,14,12,10,6,4,-2,-4],"n":35,"x":45},"expect":"8"},{"name":"t12","args":{"arr":[1,5,7,9,11,13,15,21,23,29,31,33,39,43,47,53,59,61,60,56,54,52,48,42,36,34,28,26,24,20,18,16,10,4,-2,-8,-12,-14,-16,-22,-24,-28,-32,-38,-44,-48,-52,-58,-60,-64,-66,-70,-74,-78],"n":54,"x":20},"expect":"22"},{"name":"t13","args":{"arr":[1,5,7,6,2,-4,-8,-14,-16,-18,-24,-30,-36,-40],"n":14,"x":7},"expect":"0"},{"name":"t14","args":{"arr":[1,5,7,13,15,17,23,25,29,31,35,39,45,47,49,55,61,67,71,75,81,85,89,91,97,99,103,109,115,121,125,127,131,135,141,143,145,147,153,157,163,169,173,177,181,183,189,191,197,201,203,207,209,213,219,223,225,231,237,239,243,249,255,261,265,267,269,273,279,281,285,287,293,295,297,299,303,305,311,317,319,323,325,331,333,339,343,349,351,353,359,361,363,365,369,375,379,381,387,391,395,401,403,407,413,419,423,429,433,437,441,447,449,455,457,459,463,465,471,473,475,481,485,491,497,503,507,513,515,517,519,525,531,537,539,543,545,547,553,557,563,569,575,581,583,587,593,597,603,607,609,611,617,623,629,631,633,639,643,645,651,655,659,665,667,673,677,679,681,685,691,697,701,707,709,713,717,721,727,729,731,735,739,745,747,749,755,759,761,763,769,773,779,783,785,787,789,795,797,803,809,815,821,827,833,837,841,845,851,853,859,865,871,875,879,885,887,893,897,901,905,909,915,919,923,925,929,935,937,943,949,953,957,963,967,971,977,979,985,991,993,995,997,1003,1005,1007,1013,1017,1019,1023,1029,1035,1037,1041,1047,1051,1053,1055,1059,1063,1069,1075,1081,1083,1085,1087,1089,1091,1095,1097,1099,1101,1105,1111,1115,1119,1121,1123,1127,1131,1133,1139,1145,1149,1151,1157,1159,1163,1169,1173,1175,1179,1183,1189,1193,1199,1205,1207,1213,1215,1214,1212,1210,1206,1202,1198,1196,1194,1192,1190,1186,1180,1176,1174,1170,1168,1162,1156,1150,1148,1142,1136,1132,1130,1124,1122,1116,1112,1106,1102,1096,1090,1088,1082,1078,1072,1070,1064,1062,1056,1054,1048,1044,1040,1034,1030,1024,1020,1016,1010,1006,1004,1002,1000,996,992,986,984,982,976,970,964,962,956,950,944,942,938,932,928,924,918,912,908,902,898,892,886,884,882,880,878,872,868,866,862,858,854,848,846,840,838,832,826,824,822,820,814,810,806,802,796,794,790,788,782,776,774,770,764,762,760,754,748,744,738,736,730,724,720,718,714,712,708,704,698,692,686,684,682,678,674,668,664,658,652,650,646,644,638,636,634,632,630,626,620,614,610,606,604,600,598,592,586,580,576,574,568,564,562,556,552,550,548,542,536,530,524,522,518,512,506,502,498,492,488,486,484,478,476,472,466,462,456,450,444,442,436,432,426,420,414,408,402,398,394,388,384,382,378,376,374,370,368,364,362,358,352,348,344,338,336,330,326,320,316,310,308,306,304,298,294,292,286,282,276,272,268,266,260,254,250,248,242,238,234,230,226,220,216,210,204,198,196,192,186,182,180,178,176,174,172,166,164,162,160,158,152,150,146,142,138,134,132,126,120,114,110,106,104,100,94,92,90,84,80,76,70,68,66,62,56,54,52,50,44,42,38,34,32,28,22,20,16,12,6,4,2,-2,-6],"n":600,"x":809},"expect":"198"}],"q3":[{"name":"t01","args":{"s":"aabbcc","k":2},"expect":"6"},{"name":"t02","args":{"s":"abcabc","k":1},"expect":"15"},{"name":"t03","args":{"s":"aaa","k":2},"expect":"2"},{"name":"t04","args":{"s":"abc","k":2},"expect":"0"},{"name":"t05","args":{"s":"a","k":1},"expect":"1"},{"name":"t06","args":{"s":"zzzz","k":2},"expect":"3"},{"name":"t07","args":{"s":"abababab","k":4},"expect":"1"},{"name":"t08","args":{"s":"aabbaabb","k":2},"expect":"9"},{"name":"t09","args":{"s":"qwertyuiop","k":1},"expect":"55"},{"name":"t10","args":{"s":"aaabbbccc","k":3},"expect":"6"},{"name":"t11","args":{"s":"xyzzyx","k":2},"expect":"3"},{"name":"t12","args":{"s":"caabccccbbcbbbcaaabccacbbbbccabcbccacaacacaaa","k":1},"expect":"77"},{"name":"t13","args":{"s":"baacccacababcccbbccaaabcbbaaaccbcbaaccbabaabaacc","k":3},"expect":"17"},{"name":"t14","args":{"s":"aaaccbcabaacbbbcbbccaccaacbbacbcbbbbccbbcbaaabbcc","k":3},"expect":"16"},{"name":"t15","args":{"s":"cbabbbccabcbbaacbacabacbccbcaacbacccbbaccbccbbccabacccba","k":3},"expect":"10"},{"name":"t16","args":{"s":"acdicjhjaifiehdcbdgdjdhcgcaeibhdbibeefiddbdjebfdededeghaeecicgiijhfbebdjcfacdjdijedfieieaacbcegeiebbiabdhcfddcdfcejdafhicbedajaaciajhebcfjfffedhicbfagcedjbbadcjeibchhejhfcgaijijdbebbjhadaejibicaahhibeeccjdegcahjfcfdbbahjajgcbaicfjfbbcgecjfcdjbfigaabhahcaggfaeebaiabbecbejhjcgefaacgcefjafhbaecfhbjjiicigcahdgjegbciiciecdcfheihbafhjdchhfhgbebiidbcaddfefgegdhcjgbefadfebhbbfcabgccgacjgjbhchficajdacfghih","k":2},"expect":"49"}],"q4":[{"name":"t01","args":{"arr":[1,2,3,-2,2],"n":5,"k":3},"expect":"4"},{"name":"t02","args":{"arr":[1,1,1],"n":3,"k":2},"expect":"2"},{"name":"t03","args":{"arr":[0,0],"n":2,"k":0},"expect":"3"},{"name":"t04","args":{"arr":[5],"n":1,"k":4},"expect":"0"},{"name":"t05","args":{"arr":[5],"n":1,"k":5},"expect":"1"},{"name":"t06","args":{"arr":[-1,-1,-1],"n":3,"k":-2},"expect":"2"},{"name":"t07","args":{"arr":[0,0,0,0],"n":4,"k":0},"expect":"10"},{"name":"t08","args":{"arr":[3,-3,3,-3],"n":4,"k":0},"expect":"4"},{"name":"t09","args":{"arr":[1,2,3,4,5],"n":5,"k":15},"expect":"1"},{"name":"t10","args":{"arr":[3,0,0,-5,-5,-4,-6,4,-6,5,1,-3,4,-3,-5,-1,4],"n":17,"k":5},"expect":"2"},{"name":"t11","args":{"arr":[-5,3,1,-4,-3,0,1,-2,4,2,0],"n":11,"k":2},"expect":"7"},{"name":"t12","args":{"arr":[4,-6,-1,5,-6,-3,-6,-4,3,6,1],"n":11,"k":2},"expect":"1"},{"name":"t13","args":{"arr":[-2,-5,-5,2,6,-6,-5,2],"n":8,"k":0},"expect":"1"},{"name":"t14","args":{"arr":[6,6,-4,-5,-3,-6,-3,-4,3,-1,0,2,-6,-6,3],"n":15,"k":2},"expect":"5"}]}</script>
 <script>
 "use strict";
+"use strict";
+const ExamDrivers = (() => {
+  const IDS = ["q2", "q3", "q4"];
+  const LEGACY = {
+    q2: {driver:"int_array_n_int", mutation:"allowed"},
+    q3: {driver:"string_int", mutation:"forbidden"},
+    q4: {driver:"int_array_n_int", mutation:"allowed"}
+  };
+  const DRIVER_IDS = new Set([
+    "int_array_n_int",
+    "int_array_n",
+    "sentinel_int_array_int",
+    "matrix_rows_int",
+    "string_only",
+    "string_int",
+    "string_char",
+    "two_strings",
+    "int_only",
+    "two_ints",
+    "two_int_arrays"
+  ]);
+  const MUTATION_POLICIES = new Set(["allowed", "forbidden"]);
+
+  function isObject(value) {
+    return value !== null && typeof value === "object" && !Array.isArray(value);
+  }
+
+  function copy(value) {
+    if (Array.isArray(value)) return value.map(copy);
+    if (isObject(value)) {
+      const result = {};
+      for (const key of Object.keys(value)) result[key] = copy(value[key]);
+      return result;
+    }
+    return value;
+  }
+
+  function invalid(question, message, caseName) {
+    const suffix = caseName === undefined ? "" : ` case ${String(caseName || "<unknown>")}`;
+    throw new Error(`Invalid manifest ${question}${suffix}: ${message}`);
+  }
+
+  function rejectExtraQuestions(questions) {
+    for (const key of Object.keys(questions)) {
+      if (!IDS.includes(key)) throw new Error(`Invalid manifest: unexpected question ${key}`);
+    }
+  }
+
+  function normalizeQuestion(question, source, options) {
+    if (!isObject(source)) invalid(question, "question definition must be an object");
+    if (typeof source.mutation !== "string" || !MUTATION_POLICIES.has(source.mutation)) {
+      invalid(question, `unrecognized mutation policy ${String(source.mutation)}`);
+    }
+    if (typeof source.driver !== "string" || !DRIVER_IDS.has(source.driver)) {
+      invalid(question, `unrecognized driver ${String(source.driver)}`);
+    }
+    if (!Array.isArray(source.cases)) invalid(question, "cases must be an array");
+    if (options.requireMinimum && source.cases.length < 12) {
+      invalid(question, `at least 12 cases are required (got ${source.cases.length})`);
+    }
+
+    const names = new Set();
+    const cases = source.cases.map((item) => {
+      if (!isObject(item)) invalid(question, "case must be an object");
+      const caseName = item.name;
+      if (typeof caseName !== "string" || caseName.trim().length === 0) {
+        invalid(question, "case name must be a nonempty string", caseName);
+      }
+      if (names.has(caseName)) invalid(question, "case name must be unique", caseName);
+      names.add(caseName);
+      if (!isObject(item.args)) invalid(question, "args must be an object", caseName);
+      if (typeof item.expect !== "string" || !/^-?\d+$/.test(item.expect)) {
+        invalid(question, "expect must be a decimal string", caseName);
+      }
+      return copy(item);
+    });
+    return {driver:source.driver, mutation:source.mutation, cases};
+  }
+
+  function canonicalizeLegacyCases(question, cases) {
+    const alias = question === "q2" ? "x" : "k";
+    if (!Array.isArray(cases)) return cases;
+    return cases.map((item) => {
+      const result = copy(item);
+      if (isObject(result) && isObject(result.args) && !Object.prototype.hasOwnProperty.call(result.args, "value") && Object.prototype.hasOwnProperty.call(result.args, alias)) {
+        result.args.value = result.args[alias];
+        delete result.args[alias];
+      }
+      return result;
+    });
+  }
+
+  function normalizeManifest(raw, options = {}) {
+    if (!isObject(raw)) throw new Error("Invalid manifest: manifest must be an object");
+    const hasVersion = Object.prototype.hasOwnProperty.call(raw, "version");
+    let questions;
+    if (hasVersion) {
+      if (raw.version !== 2) throw new Error(`Invalid manifest version ${String(raw.version)}`);
+      if (!isObject(raw.questions)) throw new Error("Invalid manifest: questions must be an object");
+      questions = raw.questions;
+    } else {
+      questions = raw;
+    }
+    rejectExtraQuestions(questions);
+
+    const normalizedQuestions = {};
+    for (const id of IDS) {
+      if (!Object.prototype.hasOwnProperty.call(questions, id)) {
+        throw new Error(`Invalid manifest: missing question ${id}`);
+      }
+      const source = hasVersion ? questions[id] : {...LEGACY[id], cases:canonicalizeLegacyCases(id, questions[id])};
+      normalizedQuestions[id] = normalizeQuestion(id, source, options);
+    }
+    return {version:2, questions:normalizedQuestions};
+  }
+
+  const INT_MIN = -2147483648;
+  const INT_MAX = 2147483647;
+  const ARGUMENT_KEYS = {
+    int_array_n_int: ["arr", "n", "value"],
+    int_array_n: ["arr", "n"],
+    sentinel_int_array_int: ["arr", "value"],
+    matrix_rows_int: ["mat", "m", "cols", "value"],
+    string_only: ["s"],
+    string_int: ["s", "value"],
+    string_char: ["s", "value"],
+    two_strings: ["a", "b"],
+    int_only: ["value"],
+    two_ints: ["first", "second"],
+    two_int_arrays: ["a", "na", "b", "nb"]
+  };
+
+  function argumentError(driver, message) {
+    throw new Error(`Invalid arguments for ${driver}: ${message}`);
+  }
+
+  function requireArgumentObject(driver, args) {
+    if (!isObject(args)) argumentError(driver, "arguments must be an object");
+    const keys = ARGUMENT_KEYS[driver];
+    if (!keys) argumentError(driver, "unrecognized driver");
+    for (const key of keys) {
+      if (!Object.prototype.hasOwnProperty.call(args, key)) {
+        argumentError(driver, `missing argument ${key}`);
+      }
+    }
+    const allowed = new Set(keys);
+    for (const key of Object.keys(args)) {
+      if (!allowed.has(key)) argumentError(driver, `unexpected argument ${key}`);
+    }
+    return keys;
+  }
+
+  function validateInteger(driver, value, name) {
+    if (!Number.isSafeInteger(value) || value < INT_MIN || value > INT_MAX) {
+      argumentError(driver, `${name} must be a signed 32-bit integer`);
+    }
+    return value;
+  }
+
+  function validateString(driver, value, name) {
+    if (typeof value !== "string") argumentError(driver, `${name} must be a string`);
+    if (value.includes("\0")) argumentError(driver, `${name} must not contain NUL`);
+    return value;
+  }
+
+  function validateChar(driver, value, name) {
+    validateString(driver, value, name);
+    if (Array.from(value).length !== 1) {
+      argumentError(driver, `${name} must be a single character`);
+    }
+    return value;
+  }
+
+  function validateIntegerArray(driver, value, name, options = {}) {
+    if (!Array.isArray(value)) argumentError(driver, `${name} must be an array`);
+    const result = value.map((item, index) => {
+      const number = validateInteger(driver, item, `${name}[${index}]`);
+      if (options.rejectSentinel && number === INT_MIN) {
+        argumentError(driver, `${name}[${index}] must not be INT_MIN`);
+      }
+      return number;
+    });
+    return result;
+  }
+
+  function validateArgs(driver, args) {
+    requireArgumentObject(driver, args);
+    const result = {};
+    if (driver === "int_array_n_int") {
+      result.arr = validateIntegerArray(driver, args.arr, "arr");
+      result.n = validateInteger(driver, args.n, "n");
+      if (result.n !== result.arr.length) argumentError(driver, "n must match arr length");
+      result.value = validateInteger(driver, args.value, "value");
+    } else if (driver === "int_array_n") {
+      result.arr = validateIntegerArray(driver, args.arr, "arr");
+      result.n = validateInteger(driver, args.n, "n");
+      if (result.n !== result.arr.length) argumentError(driver, "n must match arr length");
+    } else if (driver === "sentinel_int_array_int") {
+      result.arr = validateIntegerArray(driver, args.arr, "arr", {rejectSentinel:true});
+      result.value = validateInteger(driver, args.value, "value");
+      if (result.value === INT_MIN) argumentError(driver, "value must not be INT_MIN");
+    } else if (driver === "matrix_rows_int") {
+      if (!Array.isArray(args.mat)) argumentError(driver, "mat must be an array of rows");
+      result.mat = args.mat.map((row, rowIndex) => {
+        if (!Array.isArray(row)) argumentError(driver, `mat row ${rowIndex} must be an array`);
+        return validateIntegerArray(driver, row, `mat[${rowIndex}]`);
+      });
+      result.m = validateInteger(driver, args.m, "m");
+      result.cols = validateInteger(driver, args.cols, "cols");
+      if (result.m !== result.mat.length) argumentError(driver, "m must match matrix rows");
+      if (result.m < 1) argumentError(driver, "m must be positive");
+      const actualCols = result.mat[0].length;
+      if (actualCols < 1) argumentError(driver, "matrix must have at least one column");
+      if (!result.mat.every((row) => row.length === actualCols)) {
+        argumentError(driver, "matrix must be rectangular");
+      }
+      if (result.cols !== actualCols) argumentError(driver, "cols must match matrix columns");
+      result.value = validateInteger(driver, args.value, "value");
+    } else if (driver === "string_only") {
+      result.s = validateString(driver, args.s, "s");
+    } else if (driver === "string_int") {
+      result.s = validateString(driver, args.s, "s");
+      result.value = validateInteger(driver, args.value, "value");
+    } else if (driver === "string_char") {
+      result.s = validateString(driver, args.s, "s");
+      result.value = validateChar(driver, args.value, "value");
+    } else if (driver === "two_strings") {
+      result.a = validateString(driver, args.a, "a");
+      result.b = validateString(driver, args.b, "b");
+    } else if (driver === "int_only") {
+      result.value = validateInteger(driver, args.value, "value");
+    } else if (driver === "two_ints") {
+      result.first = validateInteger(driver, args.first, "first");
+      result.second = validateInteger(driver, args.second, "second");
+    } else if (driver === "two_int_arrays") {
+      result.a = validateIntegerArray(driver, args.a, "a");
+      result.na = validateInteger(driver, args.na, "na");
+      result.b = validateIntegerArray(driver, args.b, "b");
+      result.nb = validateInteger(driver, args.nb, "nb");
+      if (result.na !== result.a.length) argumentError(driver, "na must match a length");
+      if (result.nb !== result.b.length) argumentError(driver, "nb must match b length");
+    }
+    return copy(result);
+  }
+
+  function utf8Bytes(value) {
+    const bytes = [];
+    for (let index = 0; index < value.length; index++) {
+      let codePoint = value.codePointAt(index);
+      if (codePoint > 0xffff) index++;
+      if (codePoint >= 0xd800 && codePoint <= 0xdfff) codePoint = 0xfffd;
+      if (codePoint <= 0x7f) bytes.push(codePoint);
+      else if (codePoint <= 0x7ff) bytes.push(0xc0 | (codePoint >> 6), 0x80 | (codePoint & 0x3f));
+      else if (codePoint <= 0xffff) bytes.push(0xe0 | (codePoint >> 12), 0x80 | ((codePoint >> 6) & 0x3f), 0x80 | (codePoint & 0x3f));
+      else bytes.push(0xf0 | (codePoint >> 18), 0x80 | ((codePoint >> 12) & 0x3f), 0x80 | ((codePoint >> 6) & 0x3f), 0x80 | (codePoint & 0x3f));
+    }
+    return bytes;
+  }
+
+  function escapedByte(byte, quote) {
+    if (byte === 0x5c) return "\\\\";
+    if (byte === quote) return `\\${String.fromCharCode(byte)}`;
+    if (byte === 0x0a) return "\\n";
+    if (byte === 0x0d) return "\\r";
+    if (byte === 0x09) return "\\t";
+    if (byte === 0x08) return "\\b";
+    if (byte === 0x0c) return "\\f";
+    if (byte >= 0x20 && byte <= 0x7e) return String.fromCharCode(byte);
+    return `\\${byte.toString(8).padStart(3, "0")}`;
+  }
+
+  function cString(value) {
+    if (typeof value !== "string") throw new TypeError("cString expects a string");
+    return `"${utf8Bytes(value).map((byte) => escapedByte(byte, 0x22)).join("")}"`;
+  }
+
+  function cChar(value) {
+    if (typeof value !== "string" || Array.from(value).length !== 1) {
+      throw new TypeError("cChar expects a single character");
+    }
+    const bytes = utf8Bytes(value);
+    if (bytes.length !== 1) throw new TypeError("cChar expects a single-byte character");
+    return `'${bytes.map((byte) => escapedByte(byte, 0x27)).join("")}'`;
+  }
+
+  function preview(value, limit = 8) {
+    if (Array.isArray(value)) {
+      const items = value.slice(0, limit).map((item) => Array.isArray(item) ? preview(item, limit) : String(item));
+      if (value.length > limit) items.push("...");
+      return `[${items.join(", ")}]`;
+    }
+    return String(value);
+  }
+
+  function stringPreview(value, limit = 64) {
+    const chars = Array.from(value);
+    const clipped = chars.length > limit ? `${chars.slice(0, limit).join("")}...` : value;
+    return cString(clipped);
+  }
+
+  function formatArgs(driver, args) {
+    const validated = validateArgs(driver, args);
+    return ARGUMENT_KEYS[driver].map((key) => {
+      const value = validated[key];
+      if (typeof value === "string") {
+        const literal = driver === "string_char" && key === "value" ? cChar(value) : stringPreview(value);
+        return `${key}=${literal} (len=${Array.from(value).length})`;
+      }
+      if (Array.isArray(value)) return `${key}=${preview(value)} (len=${value.length})`;
+      return `${key}=${String(value)}`;
+    }).join(", ");
+  }
+
+  function validateCases(question, cases) {
+    const config = driverQuestion(question);
+    if (!Array.isArray(cases)) throw new Error("Invalid driver cases: cases must be an array");
+    const names = new Set();
+    return cases.map((testCase) => {
+      if (!isObject(testCase)) throw new Error("Invalid driver case: case must be an object");
+      const name = testCase.name;
+      if (typeof name !== "string" || name.trim().length === 0) {
+        throw new Error("Invalid driver case: case name must be a nonempty string");
+      }
+      if (names.has(name)) throw new Error(`Invalid driver case ${name}: case name must be unique`);
+      names.add(name);
+      if (typeof testCase.expect !== "string" || !/^-?\d+$/.test(testCase.expect)) {
+        throw new Error(`Invalid driver case ${name}: expect must be a decimal string`);
+      }
+      return {name, args:validateArgs(config.driver, testCase.args), expect:testCase.expect};
+    });
+  }
+
+  function driverQuestion(question) {
+    if (!isObject(question)) throw new Error("Invalid driver question: question must be an object");
+    if (typeof question.driver !== "string" || !DRIVER_IDS.has(question.driver)) {
+      throw new Error("Invalid driver question: unrecognized driver");
+    }
+    if (typeof question.mutation !== "string" || !MUTATION_POLICIES.has(question.mutation)) {
+      throw new Error("Invalid driver question: unrecognized mutation policy");
+    }
+    return {driver:question.driver, mutation:question.mutation};
+  }
+
+  function selectedFunction(q) {
+    if (!IDS.includes(q)) throw new Error(`Invalid driver question ${String(q)}`);
+    return `examT_${q}`;
+  }
+
+  function readIntegerArray(name, length) {
+    return `int* ${name}=NULL; if(${length}>0){ ${name}=(int*)malloc(sizeof(*${name})*(size_t)${length}); if(!${name}) return 1; for(int i=0;i<${length};i++) if(scanf("%d",&${name}[i])!=1) return 1; }`;
+  }
+
+  function readString(name, length) {
+    return `int ${length}; if(scanf("%d",&${length})!=1 || ${length}<0 || ${length}>(INT_MAX-2)/2) return 1; size_t ${name}_capacity=2U*(size_t)${length}+2U; char* ${name}=(char*)malloc(${name}_capacity); if(!${name}) return 1; for(int i=0;i<${length};i++){ int byte; if(scanf("%d",&byte)!=1 || byte<1 || byte>255) return 1; ${name}[i]=(char)byte; } ${name}[${length}]='\\0';`;
+  }
+
+  function sourceFor(read, call, mutation, cleanup = "") {
+    return `\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n#include <limits.h>\nint main(void){ int T; if(scanf("%d",&T)!=1 || T<0) return 1; for(int t=0;t<T;t++){ ${read} ${mutation.before} int result=${call}; ${mutation.compare} printf("%d %d\\n", result, mutated); ${mutation.cleanup} ${cleanup} } return 0; }`;
+  }
+
+  function stdinString(value) {
+    const bytes = utf8Bytes(value);
+    return [bytes.length, ...bytes];
+  }
+
+  function stdinChar(driver, value) {
+    const bytes = utf8Bytes(value);
+    if (bytes.length !== 1) argumentError(driver, "value must be a single-byte character");
+    return bytes[0];
+  }
+
+  function noMutation() {
+    return {before:"", compare:"int mutated=0;", cleanup:""};
+  }
+
+  function arrayMutation(policy, name, count) {
+    if (policy !== "forbidden") return noMutation();
+    const before = `${name}_before`;
+    const size = `sizeof(*${name})*(size_t)${count}`;
+    return {
+      before: `int* ${before}=NULL; if(${count}>0){ ${before}=(int*)malloc(${size}); if(!${before}){ free(${name}); return 1; } memcpy(${before},${name},${size}); }`,
+      compare: `int mutated=0; if(${count}>0 && memcmp(${before},${name},${size})!=0) mutated=1;`,
+      cleanup: `free(${before});`
+    };
+  }
+
+  function matrixMutation(policy) {
+    if (policy !== "forbidden") return noMutation();
+    return {
+      before: "int mat_before[m][N]; memcpy(mat_before,mat,sizeof mat);",
+      compare: "int mutated=memcmp(mat_before,mat,sizeof mat)!=0;",
+      cleanup: ""
+    };
+  }
+
+  function stringMutation(policy, name, length) {
+    if (policy !== "forbidden") return noMutation();
+    const before = `${name}_before`;
+    const size = `(size_t)${length}+1U`;
+    return {
+      before: `char* ${before}=(char*)malloc(${size}); if(!${before}){ free(${name}); return 1; } memcpy(${before},${name},${size});`,
+      compare: `int mutated=memcmp(${before},${name},${size})!=0;`,
+      cleanup: `free(${before});`
+    };
+  }
+
+  function twoStringsMutation(policy) {
+    if (policy !== "forbidden") return noMutation();
+    return {
+      before: "char* a_before=(char*)malloc((size_t)a_len+1U); char* b_before=(char*)malloc((size_t)b_len+1U); if(!a_before || !b_before){ free(a_before); free(b_before); free(a); free(b); return 1; } memcpy(a_before,a,(size_t)a_len+1U); memcpy(b_before,b,(size_t)b_len+1U);",
+      compare: "int mutated=memcmp(a_before,a,(size_t)a_len+1U)!=0 || memcmp(b_before,b,(size_t)b_len+1U)!=0;",
+      cleanup: "free(a_before); free(b_before);"
+    };
+  }
+
+  function twoArraysMutation(policy) {
+    if (policy !== "forbidden") return noMutation();
+    return {
+      before: "int* a_before=NULL; int* b_before=NULL; if(na>0){ a_before=(int*)malloc(sizeof(*a)*(size_t)na); if(!a_before){ free(a); free(b); return 1; } memcpy(a_before,a,sizeof(*a)*(size_t)na); } if(nb>0){ b_before=(int*)malloc(sizeof(*b)*(size_t)nb); if(!b_before){ free(a_before); free(a); free(b); return 1; } memcpy(b_before,b,sizeof(*b)*(size_t)nb); }",
+      compare: "int mutated=(na>0 && memcmp(a_before,a,sizeof(*a)*(size_t)na)!=0) || (nb>0 && memcmp(b_before,b,sizeof(*b)*(size_t)nb)!=0);",
+      cleanup: "free(a_before); free(b_before);"
+    };
+  }
+
+  const DRIVER_REGISTRY = Object.freeze({
+    int_array_n_int: {
+      validate: (args) => validateArgs("int_array_n_int", args),
+      read: () => `int n; if(scanf("%d",&n)!=1 || n<0) return 1; ${readIntegerArray("arr", "n")} int value; if(scanf("%d",&value)!=1) return 1;`,
+      call: (fn) => `${fn}(arr, n, value)`,
+      snapshot: (mutation) => arrayMutation(mutation, "arr", "n"),
+      cleanup: () => "free(arr);",
+      stdin: (args) => [args.n, ...args.arr, args.value],
+      format: (args) => formatArgs("int_array_n_int", args)
+    },
+    int_array_n: {
+      validate: (args) => validateArgs("int_array_n", args),
+      read: () => `int n; if(scanf("%d",&n)!=1 || n<0) return 1; ${readIntegerArray("arr", "n")}`,
+      call: (fn) => `${fn}(arr, n)`,
+      snapshot: (mutation) => arrayMutation(mutation, "arr", "n"),
+      cleanup: () => "free(arr);",
+      stdin: (args) => [args.n, ...args.arr],
+      format: (args) => formatArgs("int_array_n", args)
+    },
+    sentinel_int_array_int: {
+      validate: (args) => validateArgs("sentinel_int_array_int", args),
+      read: () => `int n; if(scanf("%d",&n)!=1 || n<0) return 1; size_t probe=1; while(probe<=(size_t)n) probe*=2U; int* arr=(int*)malloc(sizeof(*arr)*(probe+1U)); if(!arr) return 1; for(int i=0;i<n;i++) if(scanf("%d",&arr[i])!=1) return 1; for(size_t i=(size_t)n;i<=probe;i++) arr[i]=INT_MIN; int value; if(scanf("%d",&value)!=1) return 1;`,
+      call: (fn) => `${fn}(arr, value)`,
+      snapshot: (mutation) => arrayMutation(mutation, "arr", "(probe+1U)"),
+      cleanup: () => "free(arr);",
+      stdin: (args) => [args.arr.length, ...args.arr, args.value],
+      format: (args) => formatArgs("sentinel_int_array_int", args)
+    },
+    matrix_rows_int: {
+      validate: (args) => validateArgs("matrix_rows_int", args),
+      read: () => `int m, cols; if(scanf("%d%d",&m,&cols)!=2 || m<1 || cols!=N) return 1; int mat[m][N]; for(int row=0;row<m;row++) for(int col=0;col<N;col++) if(scanf("%d",&mat[row][col])!=1) return 1; int value; if(scanf("%d",&value)!=1) return 1;`,
+      call: (fn) => `${fn}(mat, m, value)`,
+      snapshot: (mutation) => matrixMutation(mutation),
+      cleanup: () => "",
+      stdin: (args) => [args.m, args.cols, ...args.mat.flat(), args.value],
+      format: (args) => formatArgs("matrix_rows_int", args)
+    },
+    string_only: {
+      validate: (args) => validateArgs("string_only", args),
+      read: () => readString("buf", "len"),
+      call: (fn) => `${fn}(buf)`,
+      snapshot: (mutation) => stringMutation(mutation, "buf", "len"),
+      cleanup: () => "free(buf);",
+      stdin: (args) => stdinString(args.s),
+      format: (args) => formatArgs("string_only", args)
+    },
+    string_int: {
+      validate: (args) => validateArgs("string_int", args),
+      read: () => `${readString("buf", "len")} int value; if(scanf("%d",&value)!=1) return 1;`,
+      call: (fn) => `${fn}(buf, value)`,
+      snapshot: (mutation) => stringMutation(mutation, "buf", "len"),
+      cleanup: () => "free(buf);",
+      stdin: (args) => [...stdinString(args.s), args.value],
+      format: (args) => formatArgs("string_int", args)
+    },
+    string_char: {
+      validate: (args) => validateArgs("string_char", args),
+      read: () => `${readString("buf", "len")} int value_input; if(scanf("%d",&value_input)!=1 || value_input<1 || value_input>255) return 1; char value=(char)value_input;`,
+      call: (fn) => `${fn}(buf, value)`,
+      snapshot: (mutation) => stringMutation(mutation, "buf", "len"),
+      cleanup: () => "free(buf);",
+      stdin: (args) => [...stdinString(args.s), stdinChar("string_char", args.value)],
+      format: (args) => formatArgs("string_char", args)
+    },
+    two_strings: {
+      validate: (args) => validateArgs("two_strings", args),
+      read: () => `${readString("a", "a_len")} ${readString("b", "b_len")}`,
+      call: (fn) => `${fn}(a, b)`,
+      snapshot: (mutation) => twoStringsMutation(mutation),
+      cleanup: () => "free(a); free(b);",
+      stdin: (args) => [...stdinString(args.a), ...stdinString(args.b)],
+      format: (args) => formatArgs("two_strings", args)
+    },
+    int_only: {
+      validate: (args) => validateArgs("int_only", args),
+      read: () => `int value; if(scanf("%d",&value)!=1) return 1;`,
+      call: (fn) => `${fn}(value)`,
+      snapshot: () => noMutation(),
+      cleanup: () => "",
+      stdin: (args) => [args.value],
+      format: (args) => formatArgs("int_only", args)
+    },
+    two_ints: {
+      validate: (args) => validateArgs("two_ints", args),
+      read: () => `int first, second; if(scanf("%d%d",&first,&second)!=2) return 1;`,
+      call: (fn) => `${fn}(first, second)`,
+      snapshot: () => noMutation(),
+      cleanup: () => "",
+      stdin: (args) => [args.first, args.second],
+      format: (args) => formatArgs("two_ints", args)
+    },
+    two_int_arrays: {
+      validate: (args) => validateArgs("two_int_arrays", args),
+      read: () => `int na; if(scanf("%d",&na)!=1 || na<0) return 1; ${readIntegerArray("a", "na")} int nb; if(scanf("%d",&nb)!=1 || nb<0) return 1; ${readIntegerArray("b", "nb")}`,
+      call: (fn) => `${fn}(a, na, b, nb)`,
+      snapshot: (mutation) => twoArraysMutation(mutation),
+      cleanup: () => "free(a); free(b);",
+      stdin: (args) => [args.na, ...args.a, args.nb, ...args.b],
+      format: (args) => formatArgs("two_int_arrays", args)
+    }
+  });
+
+  function driverFor(q, question, cases) {
+    const config = driverQuestion(question);
+    if (!Array.isArray(cases)) throw new Error("Invalid driver cases: cases must be an array");
+    const entry = DRIVER_REGISTRY[config.driver];
+    return sourceFor(entry.read(), entry.call(selectedFunction(q)), entry.snapshot(config.mutation), entry.cleanup());
+  }
+
+  function driverStdin(question, cases) {
+    const config = driverQuestion(question);
+    if (!Array.isArray(cases)) throw new Error("Invalid driver cases: cases must be an array");
+    const entry = DRIVER_REGISTRY[config.driver];
+    const lines = [String(cases.length)];
+    for (const testCase of cases) {
+      if (!isObject(testCase)) throw new Error("Invalid driver case: case must be an object");
+      const args = entry.validate(testCase.args);
+      lines.push(...entry.stdin(args).map(String));
+    }
+    return lines.join("\n") + "\n";
+  }
+
+  return {normalizeManifest, validateArgs, validateCases, cString, cChar, formatArgs, driverFor, driverStdin};
+})();
+
 const Q1_KEY = JSON.parse(decodeURIComponent(atob("JTdCJTIyYSUyMiUzQSUyMCU3QiUyMnRpbWUlMjIlM0ElMjAlMjIlQ0UlOTglMjhsb2clMjBuJTIwJUMyJUI3JTIwbG9nJTIwbG9nJTIwbiUyOSUyMiUyQyUyMCUyMnNwYWNlJTIyJTNBJTIwJTIyJUNFJTk4JTI4MSUyOSUyMiU3RCUyQyUyMCUyMmIlMjIlM0ElMjAlN0IlMjJ0aW1lJTIyJTNBJTIwJTIyJUNFJTk4JTI4biUyMGxvZyUyMG4lMjklMjIlMkMlMjAlMjJzcGFjZSUyMiUzQSUyMCUyMiVDRSU5OCUyOG4lMjklMjIlN0QlMkMlMjAlMjJjJTIyJTNBJTIwJTdCJTIydGltZSUyMiUzQSUyMCUyMiVDRSU5OCUyOG4lQzIlQjIlMjklMjIlMkMlMjAlMjJzcGFjZSUyMiUzQSUyMCUyMiVDRSU5OCUyODElMjklMjIlN0QlN0Q=")));
 /* Every exam page shares this ONE origin (blueapple12.github.io), so
    localStorage is shared across /exam/<n>/ paths too. Key everything to
@@ -774,7 +1323,13 @@ const Q1_PARTS = [{id:"a",label:"סעיף א'"},{id:"b",label:"סעיף ב'"},{i
 const KEYWORDS = new Set(["if","else","for","while","do","return","break","continue","switch","case","default","sizeof","struct","typedef","const","static","goto","union","enum","extern","register","volatile"]);
 const TYPES = new Set(["int","char","long","short","unsigned","signed","float","double","bool","size_t","void","FILE"]);
 
-const BASE_TESTS = JSON.parse(document.getElementById("exam-tests").textContent);
+const TEST_MANIFEST = ExamDrivers.normalizeManifest(
+  JSON.parse(document.getElementById("exam-tests").textContent)
+);
+const QUESTION_TESTS = TEST_MANIFEST.questions;
+const BASE_TESTS = Object.fromEntries(
+  ["q2","q3","q4"].map(q => [q, QUESTION_TESTS[q].cases])
+);
 let CUSTOM = {};
 const effTests = q => (CUSTOM[q] && CUSTOM[q].length) ? CUSTOM[q] : BASE_TESTS[q];
 const isCustom = q => !!(CUSTOM[q] && CUSTOM[q].length);
@@ -1141,51 +1696,6 @@ function constraintCheck(q, src){
 function renameMain(src){
   return src.replace(/\bint\s+main\s*\(\s*(void)?\s*\)/, "int __student_main(void)");
 }
-function driverFor(q, cases){
-  const call = q === "q3" ? "examT_q3(buf, k)" : ("examT_" + q + "(arr, n, " + (q === "q2" ? "x" : "k") + ")");
-  if(q === "q3"){
-    return `
-int main(void){
-    int T; if(scanf("%d",&T)!=1) return 1;
-    for(int t=0;t<T;t++){
-        int len; if(scanf("%d",&len)!=1) return 1;
-        char* buf = (char*)malloc((size_t)len+2);
-        char* ref = (char*)malloc((size_t)len+2);
-        if(scanf("%s",buf)!=1) return 1;
-        int k; if(scanf("%d",&k)!=1) return 1;
-        for(int i=0;i<=len;i++) ref[i]=buf[i];
-        int r = ${call};
-        int mut = 0;
-        for(int i=0;i<=len;i++) if(ref[i]!=buf[i]) mut = 1;
-        printf("%d %d\\n", r, mut);
-        free(buf); free(ref);
-    }
-    return 0;
-}`;
-  }
-  return `
-int main(void){
-    int T; if(scanf("%d",&T)!=1) return 1;
-    for(int t=0;t<T;t++){
-        int n; if(scanf("%d",&n)!=1) return 1;
-        int* arr = NULL;
-        if(n>0){ arr = (int*)malloc(sizeof(int)*(size_t)n);
-                 for(int i=0;i<n;i++) if(scanf("%d",&arr[i])!=1) return 1; }
-        int ${q === "q2" ? "x" : "k"}; if(scanf("%d",&${q === "q2" ? "x" : "k"})!=1) return 1;
-        printf("%d 0\\n", ${call});
-        free(arr);
-    }
-    return 0;
-}`;
-}
-function driverStdin(q, cases){
-  const L = [String(cases.length)];
-  for(const c of cases){
-    if(q === "q3"){ L.push(String(c.args.s.length)); L.push(c.args.s); L.push(String(c.args.k)); }
-    else{ L.push(String(c.args.n)); L.push(c.args.arr.join(" ")); L.push(String(q === "q2" ? c.args.x : c.args.k)); }
-  }
-  return L.join("\n") + "\n";
-}
 
 /* ================= panels ================= */
 const out = document.getElementById("out"), chsum = document.getElementById("chsum");
@@ -1196,11 +1706,6 @@ function line(tag, cls, msg){
   d.className = "ln";
   d.innerHTML = '<span class="tag ' + cls + '">' + tag + '</span><span class="msg">' + msg + "</span>";
   return d;
-}
-function fmtArgs(q, a){
-  if(q === "q3") return 's="' + (a.s.length > 46 ? a.s.slice(0,46) + "…" : a.s) + '", k=' + a.k;
-  const arr = a.arr.length > 14 ? "{" + a.arr.slice(0,14).join(",") + ",…} (" + a.n + " איברים)" : "{" + a.arr.join(",") + "}";
-  return "arr=" + arr + ", n=" + a.n + ", " + (q === "q2" ? "x=" + a.x : "k=" + a.k);
 }
 
 /* ---- ▶ Run : their own file, their own stdin ---- */
@@ -1346,14 +1851,15 @@ document.getElementById("runBtn").addEventListener("click", async function(){
 async function runTests(q, pick){
   showPanel("tests");
   out.innerHTML = "";
+  const question = QUESTION_TESTS[q];
   const all = effTests(q);
   const cases = (typeof pick === "number") ? [all[pick]] : all;
   out.appendChild(line("gcc","info","מהדר ומריץ " + cases.length + " מקרי בדיקה…"));
 
   const violations = constraintCheck(q, STATE.code[q]);
-  const prog = renameMain(STATE.code[q]) + "\n" + driverFor(q, cases);
+  const prog = renameMain(STATE.code[q]) + "\n" + ExamDrivers.driverFor(q, question, cases);
   let j;
-  try{ j = await gcc(prog, driverStdin(q, cases), "-std=c99 -w -fno-diagnostics-color -lm"); }
+  try{ j = await gcc(prog, ExamDrivers.driverStdin(question, cases), "-std=c99 -w -fno-diagnostics-color -lm"); }
   catch(e){
     out.innerHTML = "";
     out.appendChild(line("שגיאה","no","<em>" + esc(e.message) + "</em> — אין חיבור לשרת ההידור."));
@@ -1373,32 +1879,34 @@ async function runTests(q, pick){
 
   const lines = (j.stdout || "").trim().split("\n").filter(x => x.length);
   out.innerHTML = "";
-  let pass = 0, fail = 0, mutated = false;
+  let pass = 0, fail = 0;
   const frag = document.createDocumentFragment();
   cases.forEach((tc, i) => {
     const parts = (lines[i] || "").trim().split(/\s+/);
     const got = parts[0];
-    if(parts[1] === "1") mutated = true;
+    const args = ExamDrivers.formatArgs(question.driver, tc.args);
+    const mutationForbidden = question.mutation === "forbidden" && parts[1] === "1";
     if(got === undefined || got === ""){
       fail++;
-      frag.appendChild(line(tc.name,"no","<em>" + esc(fmtArgs(q, tc.args)) + "</em>"));
+      frag.appendChild(line(tc.name,"no","<em>" + esc(args) + "</em>"));
       const d = document.createElement("dl"); d.className = "diffgrid";
       d.innerHTML = "<dt>שגיאה</dt><dd>התוכנית לא הדפיסה תוצאה (קריסה או לולאה אינסופית?)</dd>";
       frag.appendChild(d);
       return;
     }
-    if(String(got) === String(tc.expect)){
+    if(String(got) === String(tc.expect) && !mutationForbidden){
       pass++;
-      frag.appendChild(line(tc.name,"ok", esc(fmtArgs(q, tc.args)) + ' <span style="color:#5b6270">→ ' + esc(got) + "</span>"));
+      frag.appendChild(line(tc.name,"ok", esc(args) + ' <span style="color:#5b6270">→ ' + esc(got) + "</span>"));
     }else{
       fail++;
-      frag.appendChild(line(tc.name,"no","<em>" + esc(fmtArgs(q, tc.args)) + "</em>"));
+      frag.appendChild(line(tc.name,"no","<em>" + esc(args) + "</em>"));
       const d = document.createElement("dl"); d.className = "diffgrid";
-      d.innerHTML = "<dt>ציפיתי</dt><dd>" + esc(String(tc.expect)) + "</dd><dt>קיבלתי</dt><dd>" + esc(got) + "</dd>";
+      d.innerHTML = mutationForbidden
+        ? "<dt>אילוץ</dt><dd>הפונקציה שינתה קלט למרות שמדיניות השאלה אוסרת זאת</dd>"
+        : "<dt>ציפיתי</dt><dd>" + esc(String(tc.expect)) + "</dd><dt>קיבלתי</dt><dd>" + esc(got) + "</dd>";
       frag.appendChild(d);
     }
   });
-  if(q === "q3" && mutated) violations.push("הפונקציה שינתה את המחרוזת s — שאלה 3 אוסרת זאת");
 
   const sum = document.createElement("div");
   const clean = fail === 0 && !violations.length;
@@ -1461,29 +1969,16 @@ document.getElementById("dlBtn").addEventListener("click", () => offerFile("exam
 
 /* ================= test cases panel ================= */
 const CUSTOM_KEY = LS_KEY + "-tests";
-const SHAPE = {
-  q2:'[{"name":"mine1","args":{"arr":[1,5,9,4,2],"n":5,"x":3},"expect":"3"}]',
-  q3:'[{"name":"mine1","args":{"s":"aabb","k":2},"expect":"3"}]',
-  q4:'[{"name":"mine1","args":{"arr":[1,2,3],"n":3,"k":3},"expect":"2"}]'
-};
-const NEEDED = {q2:["arr","n","x"], q3:["s","k"], q4:["arr","n","k"]};
+const CASE_SHAPE = '[{"name":"mine1","args":{},"expect":"0"}]';
 function validateCases(q, arr){
   if(!Array.isArray(arr)) throw new Error("ה-JSON חייב להיות מערך של מקרי בדיקה");
   if(!arr.length) throw new Error("המערך ריק");
-  return arr.map((c,i) => {
+  const cases = arr.map((c,i) => {
     if(!c || typeof c !== "object") throw new Error("מקרה " + (i+1) + ": אינו אובייקט");
-    if(!c.args || typeof c.args !== "object") throw new Error("מקרה " + (i+1) + ": חסר args");
-    for(const f of NEEDED[q]) if(!(f in c.args)) throw new Error("מקרה " + (i+1) + ": חסר args." + f);
-    if(q === "q3"){
-      if(typeof c.args.s !== "string") throw new Error("מקרה " + (i+1) + ": args.s חייב להיות מחרוזת");
-      if(/\s/.test(c.args.s)) throw new Error("מקרה " + (i+1) + ": args.s לא יכול להכיל רווחים");
-    }else{
-      if(!Array.isArray(c.args.arr)) throw new Error("מקרה " + (i+1) + ": args.arr חייב להיות מערך");
-      if(c.args.arr.length !== c.args.n) throw new Error("מקרה " + (i+1) + ": n=" + c.args.n + " אבל במערך " + c.args.arr.length + " איברים");
-    }
     if(c.expect === undefined || c.expect === null) throw new Error("מקרה " + (i+1) + ": חסר expect");
     return {name:String(c.name || ("c" + (i+1))), args:c.args, expect:String(c.expect)};
   });
+  return ExamDrivers.validateCases(QUESTION_TESTS[q], cases);
 }
 function renderCases(){
   const q = STATE.active, host = document.getElementById("cases"), list = effTests(q);
@@ -1492,8 +1987,8 @@ function renderCases(){
   det.className = "tcustom";
   det.innerHTML =
     "<summary>מקרי בדיקה משלך (JSON)" + (isCustom(q) ? ' <span class="badge">פעיל</span>' : "") + "</summary>" +
-    '<div style="margin-top:7px;color:#6f8199;font-size:11px">מבנה לשאלה ' + q.toUpperCase() + ':<br><code>' + esc(SHAPE[q]) + "</code></div>" +
-    '<textarea id="tcin" spellcheck="false" placeholder="' + esc(SHAPE[q]) + '"></textarea>' +
+    '<div style="margin-top:7px;color:#6f8199;font-size:11px">מבנה לשאלה ' + q.toUpperCase() + ' (' + esc(QUESTION_TESTS[q].driver) + '):<br><code>' + esc(CASE_SHAPE) + "</code></div>" +
+    '<textarea id="tcin" spellcheck="false" placeholder="' + esc(CASE_SHAPE) + '"></textarea>' +
     '<div class="row">' +
       '<button class="tbtn" id="tcLoad">טען והחלף</button>' +
       '<button class="tbtn" id="tcAdd">הוסף</button>' +
@@ -1550,8 +2045,9 @@ function renderCases(){
   list.forEach((tc, i) => {
     const row = document.createElement("div");
     row.className = "trow";
-    row.innerHTML = '<span class="nm">' + esc(tc.name) + '</span><span class="ag" title="' + esc(fmtArgs(q, tc.args)) + '">' +
-      esc(fmtArgs(q, tc.args)) + '</span><span class="ex">' + esc(String(tc.expect)) + "</span>";
+    const args = ExamDrivers.formatArgs(QUESTION_TESTS[q].driver, tc.args);
+    row.innerHTML = '<span class="nm">' + esc(tc.name) + '</span><span class="ag" title="' + esc(args) + '">' +
+      esc(args) + '</span><span class="ex">' + esc(String(tc.expect)) + "</span>";
     const b = document.createElement("button");
     b.className = "go"; b.textContent = "▶"; b.title = "הרץ רק את זה";
     b.addEventListener("click", () => runTests(q, i));

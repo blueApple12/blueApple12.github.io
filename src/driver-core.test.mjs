@@ -194,6 +194,17 @@ test("serializes C strings/chars and formats typed arguments", () => {
   assert.match(core.formatArgs("string_only", {s:"abcdefghijk",}), /len=11/);
 });
 
+test("validates custom cases against their selected driver", () => {
+  const core = loadCore();
+  const question = {driver:"int_array_n_int", mutation:"forbidden"};
+  const cases = [{name:"mine", args:{arr:[1,2], n:2, value:3}, expect:"4"}];
+  assert.deepEqual(core.validateCases(question, cases), cases);
+  assert.throws(
+    () => core.validateCases(question, [{name:"bad", args:{arr:[1], n:2, value:3}, expect:"4"}]),
+    /length/
+  );
+});
+
 test("hardens legacy argument aliases and literal/display boundaries", () => {
   const core = loadCore();
   assert.throws(

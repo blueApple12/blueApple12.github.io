@@ -419,6 +419,7 @@ __PAPER__
 <script id="exam-tests" type="application/json">__TESTS__</script>
 <script>
 "use strict";
+__DRIVER_CORE__
 const Q1_KEY = JSON.parse(decodeURIComponent(atob("__Q1KEY__")));
 /* Every exam page shares this ONE origin (blueapple12.github.io), so
    localStorage is shared across /exam/<n>/ paths too. Key everything to
@@ -438,7 +439,13 @@ const Q1_PARTS = [{id:"a",label:"סעיף א'"},{id:"b",label:"סעיף ב'"},{i
 const KEYWORDS = new Set(["if","else","for","while","do","return","break","continue","switch","case","default","sizeof","struct","typedef","const","static","goto","union","enum","extern","register","volatile"]);
 const TYPES = new Set(["int","char","long","short","unsigned","signed","float","double","bool","size_t","void","FILE"]);
 
-const BASE_TESTS = JSON.parse(document.getElementById("exam-tests").textContent);
+const TEST_MANIFEST = ExamDrivers.normalizeManifest(
+  JSON.parse(document.getElementById("exam-tests").textContent)
+);
+const QUESTION_TESTS = TEST_MANIFEST.questions;
+const BASE_TESTS = Object.fromEntries(
+  ["q2","q3","q4"].map(q => [q, QUESTION_TESTS[q].cases])
+);
 let CUSTOM = {};
 const effTests = q => (CUSTOM[q] && CUSTOM[q].length) ? CUSTOM[q] : BASE_TESTS[q];
 const isCustom = q => !!(CUSTOM[q] && CUSTOM[q].length);
@@ -805,51 +812,6 @@ function constraintCheck(q, src){
 function renameMain(src){
   return src.replace(/\bint\s+main\s*\(\s*(void)?\s*\)/, "int __student_main(void)");
 }
-function driverFor(q, cases){
-  const call = q === "q3" ? "examT_q3(buf, k)" : ("examT_" + q + "(arr, n, " + (q === "q2" ? "x" : "k") + ")");
-  if(q === "q3"){
-    return `
-int main(void){
-    int T; if(scanf("%d",&T)!=1) return 1;
-    for(int t=0;t<T;t++){
-        int len; if(scanf("%d",&len)!=1) return 1;
-        char* buf = (char*)malloc((size_t)len+2);
-        char* ref = (char*)malloc((size_t)len+2);
-        if(scanf("%s",buf)!=1) return 1;
-        int k; if(scanf("%d",&k)!=1) return 1;
-        for(int i=0;i<=len;i++) ref[i]=buf[i];
-        int r = ${call};
-        int mut = 0;
-        for(int i=0;i<=len;i++) if(ref[i]!=buf[i]) mut = 1;
-        printf("%d %d\\n", r, mut);
-        free(buf); free(ref);
-    }
-    return 0;
-}`;
-  }
-  return `
-int main(void){
-    int T; if(scanf("%d",&T)!=1) return 1;
-    for(int t=0;t<T;t++){
-        int n; if(scanf("%d",&n)!=1) return 1;
-        int* arr = NULL;
-        if(n>0){ arr = (int*)malloc(sizeof(int)*(size_t)n);
-                 for(int i=0;i<n;i++) if(scanf("%d",&arr[i])!=1) return 1; }
-        int ${q === "q2" ? "x" : "k"}; if(scanf("%d",&${q === "q2" ? "x" : "k"})!=1) return 1;
-        printf("%d 0\\n", ${call});
-        free(arr);
-    }
-    return 0;
-}`;
-}
-function driverStdin(q, cases){
-  const L = [String(cases.length)];
-  for(const c of cases){
-    if(q === "q3"){ L.push(String(c.args.s.length)); L.push(c.args.s); L.push(String(c.args.k)); }
-    else{ L.push(String(c.args.n)); L.push(c.args.arr.join(" ")); L.push(String(q === "q2" ? c.args.x : c.args.k)); }
-  }
-  return L.join("\n") + "\n";
-}
 
 /* ================= panels ================= */
 const out = document.getElementById("out"), chsum = document.getElementById("chsum");
@@ -860,11 +822,6 @@ function line(tag, cls, msg){
   d.className = "ln";
   d.innerHTML = '<span class="tag ' + cls + '">' + tag + '</span><span class="msg">' + msg + "</span>";
   return d;
-}
-function fmtArgs(q, a){
-  if(q === "q3") return 's="' + (a.s.length > 46 ? a.s.slice(0,46) + "…" : a.s) + '", k=' + a.k;
-  const arr = a.arr.length > 14 ? "{" + a.arr.slice(0,14).join(",") + ",…} (" + a.n + " איברים)" : "{" + a.arr.join(",") + "}";
-  return "arr=" + arr + ", n=" + a.n + ", " + (q === "q2" ? "x=" + a.x : "k=" + a.k);
 }
 
 /* ---- ▶ Run : their own file, their own stdin ---- */
@@ -1010,14 +967,15 @@ document.getElementById("runBtn").addEventListener("click", async function(){
 async function runTests(q, pick){
   showPanel("tests");
   out.innerHTML = "";
+  const question = QUESTION_TESTS[q];
   const all = effTests(q);
   const cases = (typeof pick === "number") ? [all[pick]] : all;
   out.appendChild(line("gcc","info","מהדר ומריץ " + cases.length + " מקרי בדיקה…"));
 
   const violations = constraintCheck(q, STATE.code[q]);
-  const prog = renameMain(STATE.code[q]) + "\n" + driverFor(q, cases);
+  const prog = renameMain(STATE.code[q]) + "\n" + ExamDrivers.driverFor(q, question, cases);
   let j;
-  try{ j = await gcc(prog, driverStdin(q, cases), "-std=c99 -w -fno-diagnostics-color -lm"); }
+  try{ j = await gcc(prog, ExamDrivers.driverStdin(question, cases), "-std=c99 -w -fno-diagnostics-color -lm"); }
   catch(e){
     out.innerHTML = "";
     out.appendChild(line("שגיאה","no","<em>" + esc(e.message) + "</em> — אין חיבור לשרת ההידור."));
@@ -1037,32 +995,34 @@ async function runTests(q, pick){
 
   const lines = (j.stdout || "").trim().split("\n").filter(x => x.length);
   out.innerHTML = "";
-  let pass = 0, fail = 0, mutated = false;
+  let pass = 0, fail = 0;
   const frag = document.createDocumentFragment();
   cases.forEach((tc, i) => {
     const parts = (lines[i] || "").trim().split(/\s+/);
     const got = parts[0];
-    if(parts[1] === "1") mutated = true;
+    const args = ExamDrivers.formatArgs(question.driver, tc.args);
+    const mutationForbidden = question.mutation === "forbidden" && parts[1] === "1";
     if(got === undefined || got === ""){
       fail++;
-      frag.appendChild(line(tc.name,"no","<em>" + esc(fmtArgs(q, tc.args)) + "</em>"));
+      frag.appendChild(line(tc.name,"no","<em>" + esc(args) + "</em>"));
       const d = document.createElement("dl"); d.className = "diffgrid";
       d.innerHTML = "<dt>שגיאה</dt><dd>התוכנית לא הדפיסה תוצאה (קריסה או לולאה אינסופית?)</dd>";
       frag.appendChild(d);
       return;
     }
-    if(String(got) === String(tc.expect)){
+    if(String(got) === String(tc.expect) && !mutationForbidden){
       pass++;
-      frag.appendChild(line(tc.name,"ok", esc(fmtArgs(q, tc.args)) + ' <span style="color:#5b6270">→ ' + esc(got) + "</span>"));
+      frag.appendChild(line(tc.name,"ok", esc(args) + ' <span style="color:#5b6270">→ ' + esc(got) + "</span>"));
     }else{
       fail++;
-      frag.appendChild(line(tc.name,"no","<em>" + esc(fmtArgs(q, tc.args)) + "</em>"));
+      frag.appendChild(line(tc.name,"no","<em>" + esc(args) + "</em>"));
       const d = document.createElement("dl"); d.className = "diffgrid";
-      d.innerHTML = "<dt>ציפיתי</dt><dd>" + esc(String(tc.expect)) + "</dd><dt>קיבלתי</dt><dd>" + esc(got) + "</dd>";
+      d.innerHTML = mutationForbidden
+        ? "<dt>אילוץ</dt><dd>הפונקציה שינתה קלט למרות שמדיניות השאלה אוסרת זאת</dd>"
+        : "<dt>ציפיתי</dt><dd>" + esc(String(tc.expect)) + "</dd><dt>קיבלתי</dt><dd>" + esc(got) + "</dd>";
       frag.appendChild(d);
     }
   });
-  if(q === "q3" && mutated) violations.push("הפונקציה שינתה את המחרוזת s — שאלה 3 אוסרת זאת");
 
   const sum = document.createElement("div");
   const clean = fail === 0 && !violations.length;
@@ -1125,29 +1085,16 @@ document.getElementById("dlBtn").addEventListener("click", () => offerFile("exam
 
 /* ================= test cases panel ================= */
 const CUSTOM_KEY = LS_KEY + "-tests";
-const SHAPE = {
-  q2:'[{"name":"mine1","args":{"arr":[1,5,9,4,2],"n":5,"x":3},"expect":"3"}]',
-  q3:'[{"name":"mine1","args":{"s":"aabb","k":2},"expect":"3"}]',
-  q4:'[{"name":"mine1","args":{"arr":[1,2,3],"n":3,"k":3},"expect":"2"}]'
-};
-const NEEDED = {q2:["arr","n","x"], q3:["s","k"], q4:["arr","n","k"]};
+const CASE_SHAPE = '[{"name":"mine1","args":{},"expect":"0"}]';
 function validateCases(q, arr){
   if(!Array.isArray(arr)) throw new Error("ה-JSON חייב להיות מערך של מקרי בדיקה");
   if(!arr.length) throw new Error("המערך ריק");
-  return arr.map((c,i) => {
+  const cases = arr.map((c,i) => {
     if(!c || typeof c !== "object") throw new Error("מקרה " + (i+1) + ": אינו אובייקט");
-    if(!c.args || typeof c.args !== "object") throw new Error("מקרה " + (i+1) + ": חסר args");
-    for(const f of NEEDED[q]) if(!(f in c.args)) throw new Error("מקרה " + (i+1) + ": חסר args." + f);
-    if(q === "q3"){
-      if(typeof c.args.s !== "string") throw new Error("מקרה " + (i+1) + ": args.s חייב להיות מחרוזת");
-      if(/\s/.test(c.args.s)) throw new Error("מקרה " + (i+1) + ": args.s לא יכול להכיל רווחים");
-    }else{
-      if(!Array.isArray(c.args.arr)) throw new Error("מקרה " + (i+1) + ": args.arr חייב להיות מערך");
-      if(c.args.arr.length !== c.args.n) throw new Error("מקרה " + (i+1) + ": n=" + c.args.n + " אבל במערך " + c.args.arr.length + " איברים");
-    }
     if(c.expect === undefined || c.expect === null) throw new Error("מקרה " + (i+1) + ": חסר expect");
     return {name:String(c.name || ("c" + (i+1))), args:c.args, expect:String(c.expect)};
   });
+  return ExamDrivers.validateCases(QUESTION_TESTS[q], cases);
 }
 function renderCases(){
   const q = STATE.active, host = document.getElementById("cases"), list = effTests(q);
@@ -1156,8 +1103,8 @@ function renderCases(){
   det.className = "tcustom";
   det.innerHTML =
     "<summary>מקרי בדיקה משלך (JSON)" + (isCustom(q) ? ' <span class="badge">פעיל</span>' : "") + "</summary>" +
-    '<div style="margin-top:7px;color:#6f8199;font-size:11px">מבנה לשאלה ' + q.toUpperCase() + ':<br><code>' + esc(SHAPE[q]) + "</code></div>" +
-    '<textarea id="tcin" spellcheck="false" placeholder="' + esc(SHAPE[q]) + '"></textarea>' +
+    '<div style="margin-top:7px;color:#6f8199;font-size:11px">מבנה לשאלה ' + q.toUpperCase() + ' (' + esc(QUESTION_TESTS[q].driver) + '):<br><code>' + esc(CASE_SHAPE) + "</code></div>" +
+    '<textarea id="tcin" spellcheck="false" placeholder="' + esc(CASE_SHAPE) + '"></textarea>' +
     '<div class="row">' +
       '<button class="tbtn" id="tcLoad">טען והחלף</button>' +
       '<button class="tbtn" id="tcAdd">הוסף</button>' +
@@ -1214,8 +1161,9 @@ function renderCases(){
   list.forEach((tc, i) => {
     const row = document.createElement("div");
     row.className = "trow";
-    row.innerHTML = '<span class="nm">' + esc(tc.name) + '</span><span class="ag" title="' + esc(fmtArgs(q, tc.args)) + '">' +
-      esc(fmtArgs(q, tc.args)) + '</span><span class="ex">' + esc(String(tc.expect)) + "</span>";
+    const args = ExamDrivers.formatArgs(QUESTION_TESTS[q].driver, tc.args);
+    row.innerHTML = '<span class="nm">' + esc(tc.name) + '</span><span class="ag" title="' + esc(args) + '">' +
+      esc(args) + '</span><span class="ex">' + esc(String(tc.expect)) + "</span>";
     const b = document.createElement("button");
     b.className = "go"; b.textContent = "▶"; b.title = "הרץ רק את זה";
     b.addEventListener("click", () => runTests(q, i));
