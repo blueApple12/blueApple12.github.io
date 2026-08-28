@@ -474,7 +474,18 @@ function save(){ try{ localStorage.setItem(LS_KEY, JSON.stringify({code:STATE.co
       if(typeof d.stdin === "string") STATE.stdin = d.stdin;
       if(typeof d.extraMs === "number") STATE.extraMs = d.extraMs;
     }
-    CUSTOM = JSON.parse(localStorage.getItem(LS_KEY + "-tests") || "{}") || {};
+    const savedCustom = JSON.parse(localStorage.getItem(LS_KEY + "-tests") || "{}") || {};
+    if(savedCustom && typeof savedCustom === "object"){
+      const loadedCustom = {};
+      let customChanged = false;
+      ["q2","q3","q4"].forEach(q => {
+        if(!Array.isArray(savedCustom[q])) return;
+        loadedCustom[q] = validateCases(q, savedCustom[q]);
+        if(JSON.stringify(loadedCustom[q]) !== JSON.stringify(savedCustom[q])) customChanged = true;
+      });
+      CUSTOM = loadedCustom;
+      if(customChanged) localStorage.setItem(LS_KEY + "-tests", JSON.stringify(CUSTOM));
+    }
   }catch(e){}
 })();
 
@@ -1084,12 +1095,27 @@ function offerFile(filename, data){
 document.getElementById("dlBtn").addEventListener("click", () => offerFile("examT_" + STATE.active + ".c", STATE.code[STATE.active]));
 
 /* ================= test cases panel ================= */
+/* BEGIN CUSTOM CASE HELPERS */
+function canonicalizeLegacyCustomCases(q, cases){
+  const alias = q === "q2" ? "x" : "k";
+  return cases.map(testCase => {
+    if(!testCase || typeof testCase !== "object" || !testCase.args || typeof testCase.args !== "object" || Array.isArray(testCase.args)) return testCase;
+    const args = {...testCase.args};
+    if(!Object.prototype.hasOwnProperty.call(args, "value") && Object.prototype.hasOwnProperty.call(args, alias)) args.value = args[alias];
+    delete args[alias];
+    return {...testCase, args};
+  });
+}
+function customCaseExample(q){
+  const testCase = ExamDrivers.validateCases(QUESTION_TESTS[q], [BASE_TESTS[q][0]])[0];
+  return JSON.stringify([testCase], null, 1);
+}
+/* END CUSTOM CASE HELPERS */
 const CUSTOM_KEY = LS_KEY + "-tests";
-const CASE_SHAPE = '[{"name":"mine1","args":{},"expect":"0"}]';
 function validateCases(q, arr){
   if(!Array.isArray(arr)) throw new Error("ה-JSON חייב להיות מערך של מקרי בדיקה");
   if(!arr.length) throw new Error("המערך ריק");
-  const cases = arr.map((c,i) => {
+  const cases = canonicalizeLegacyCustomCases(q, arr).map((c,i) => {
     if(!c || typeof c !== "object") throw new Error("מקרה " + (i+1) + ": אינו אובייקט");
     if(c.expect === undefined || c.expect === null) throw new Error("מקרה " + (i+1) + ": חסר expect");
     return {name:String(c.name || ("c" + (i+1))), args:c.args, expect:String(c.expect)};
@@ -1098,13 +1124,14 @@ function validateCases(q, arr){
 }
 function renderCases(){
   const q = STATE.active, host = document.getElementById("cases"), list = effTests(q);
+  const caseExample = customCaseExample(q);
   host.innerHTML = "";
   const det = document.createElement("details");
   det.className = "tcustom";
   det.innerHTML =
     "<summary>מקרי בדיקה משלך (JSON)" + (isCustom(q) ? ' <span class="badge">פעיל</span>' : "") + "</summary>" +
-    '<div style="margin-top:7px;color:#6f8199;font-size:11px">מבנה לשאלה ' + q.toUpperCase() + ' (' + esc(QUESTION_TESTS[q].driver) + '):<br><code>' + esc(CASE_SHAPE) + "</code></div>" +
-    '<textarea id="tcin" spellcheck="false" placeholder="' + esc(CASE_SHAPE) + '"></textarea>' +
+    '<div style="margin-top:7px;color:#6f8199;font-size:11px">מבנה לשאלה ' + q.toUpperCase() + ' (' + esc(QUESTION_TESTS[q].driver) + '):<br><code>' + esc(caseExample) + "</code></div>" +
+    '<textarea id="tcin" spellcheck="false" placeholder="' + esc(caseExample) + '"></textarea>' +
     '<div class="row">' +
       '<button class="tbtn" id="tcLoad">טען והחלף</button>' +
       '<button class="tbtn" id="tcAdd">הוסף</button>' +

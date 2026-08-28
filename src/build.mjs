@@ -27,7 +27,7 @@ export function buildPage({number = '1', sourceDir = here, outputRoot = path.joi
   for (const [placeholder] of replacements) {
     if (!html.includes(placeholder)) throw new Error(`Template placeholder missing: ${placeholder}`);
   }
-  for (const [placeholder, value] of replacements) html = html.replace(placeholder, value);
+  for (const [placeholder, value] of replacements) html = html.replace(placeholder, () => value);
   const unresolved = html.match(/__[A-Z0-9_]+__/);
   if (unresolved) throw new Error(`Template placeholder unresolved: ${unresolved[0]}`);
 
