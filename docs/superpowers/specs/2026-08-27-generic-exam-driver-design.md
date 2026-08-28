@@ -2,7 +2,7 @@
 
 **Date:** 2026-08-27
 
-**Status:** Approved approach; implementation pending
+**Status:** Implemented
 
 ## Goal
 
@@ -52,16 +52,18 @@ New exams use a versioned form:
   "questions": {
     "q2": {
       "driver": "int_array_n_int",
-      "cases": [{ "name": "t01", "args": {}, "expect": "0" }]
+      "mutation": "allowed",
+      "cases": [{ "name": "t01", "args": { "arr": [1], "n": 1, "value": 1 }, "expect": "0" }]
     },
     "q3": {
       "driver": "string_only",
       "mutation": "allowed",
-      "cases": [{ "name": "t01", "args": {}, "expect": "0" }]
+      "cases": [{ "name": "t01", "args": { "s": "abba" }, "expect": "0" }]
     },
     "q4": {
       "driver": "int_only",
-      "cases": [{ "name": "t01", "args": {}, "expect": "0" }]
+      "mutation": "allowed",
+      "cases": [{ "name": "t01", "args": { "value": 7 }, "expect": "7" }]
     }
   }
 }

@@ -28,6 +28,18 @@ test("offline verifier delegates driver generation to driver-core", () => {
   assert.doesNotMatch(verify, /function driverStdin/);
 });
 
+test("documents an implemented and valid version-2 manifest example", () => {
+  const core = loadCore();
+  const design = fs.readFileSync(new URL("../docs/superpowers/specs/2026-08-27-generic-exam-driver-design.md", import.meta.url), "utf8");
+  const block = design.match(/New exams use a versioned form:\s*```json\s*([\s\S]*?)\s*```/);
+  assert.ok(block, "version-2 example is missing");
+  const manifest = core.normalizeManifest(JSON.parse(block[1]));
+  for (const question of Object.values(manifest.questions)) {
+    assert.doesNotThrow(() => core.validateCases(question, question.cases));
+  }
+  assert.match(design, /\*\*Status:\*\* Implemented/);
+});
+
 test("normalizes the exam-001 legacy manifest", () => {
   const core = loadCore();
   const raw = {
@@ -62,6 +74,30 @@ test("normalizes and copies a valid version-2 manifest", () => {
   assert.notStrictEqual(normalized.questions, raw.questions);
   assert.notStrictEqual(normalized.questions.q2, raw.questions.q2);
   assert.notStrictEqual(normalized.questions.q2.cases, raw.questions.q2.cases);
+});
+
+test("rejects unexpected version-2 manifest, question, and case keys", () => {
+  const core = loadCore();
+  const base = () => ({
+    version: 2,
+    questions: {
+      q2: {driver:"int_only", mutation:"allowed", cases:[{name:"q2", args:{value:1}, expect:"1"}]},
+      q3: {driver:"int_only", mutation:"allowed", cases:[{name:"q3", args:{value:2}, expect:"2"}]},
+      q4: {driver:"int_only", mutation:"allowed", cases:[{name:"q4", args:{value:3}, expect:"3"}]}
+    }
+  });
+
+  const extraTopLevel = base();
+  extraTopLevel.unexpected = true;
+  assert.throws(() => core.normalizeManifest(extraTopLevel), /top-level.*unexpected/);
+
+  const extraQuestionKey = base();
+  extraQuestionKey.questions.q2.unexpected = true;
+  assert.throws(() => core.normalizeManifest(extraQuestionKey), /q2.*unexpected/);
+
+  const extraCaseKey = base();
+  extraCaseKey.questions.q2.cases[0].unexpected = true;
+  assert.throws(() => core.normalizeManifest(extraCaseKey), /q2.*unexpected/);
 });
 
 test("rejects malformed manifest structure and policies", () => {
@@ -232,6 +268,31 @@ test("hardens legacy argument aliases and literal/display boundaries", () => {
   const formatted = core.formatArgs("string_only", {s:long});
   assert.match(formatted, /len=10000/);
   assert.ok(formatted.length < 500, `preview was not bounded: ${formatted.length}`);
+});
+
+test("uses a one-byte UTF-8 character boundary across string-char paths", () => {
+  const core = loadCore();
+  const question = {driver:"string_char", mutation:"forbidden"};
+  const oneByte = {s:"abc", value:"x"};
+  const nonAscii = {s:"abc", value:"é"};
+  const oneCase = [{name:"one", args:oneByte, expect:"0"}];
+  const nonAsciiCase = [{name:"one", args:nonAscii, expect:"0"}];
+
+  const accepted = [
+    () => core.validateArgs("string_char", oneByte),
+    () => core.validateCases(question, oneCase),
+    () => core.formatArgs("string_char", oneByte),
+    () => core.driverStdin(question, oneCase)
+  ];
+  const rejected = [
+    () => core.validateArgs("string_char", nonAscii),
+    () => core.validateCases(question, nonAsciiCase),
+    () => core.formatArgs("string_char", nonAscii),
+    () => core.driverStdin(question, nonAsciiCase)
+  ];
+
+  for (const check of accepted) assert.doesNotThrow(check);
+  for (const check of rejected) assert.throws(check, /single-byte/);
 });
 
 test("generates closed C drivers with the exact selected calls", () => {

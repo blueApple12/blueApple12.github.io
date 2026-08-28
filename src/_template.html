@@ -1112,6 +1112,9 @@ function customCaseExample(q){
   const testCase = ExamDrivers.validateCases(QUESTION_TESTS[q], [BASE_TESTS[q][0]])[0];
   return JSON.stringify([testCase], null, 1);
 }
+function mergeCustomCases(q, existing, incoming){
+  return validateCases(q, (existing || []).concat(incoming));
+}
 /* END CUSTOM CASE HELPERS */
 const CUSTOM_KEY = LS_KEY + "-tests";
 function validateCases(q, arr){
@@ -1155,7 +1158,7 @@ function renderCases(){
     try{ parsed = JSON.parse(ta.value); }catch(e){ say("JSON לא תקין: " + e.message, false); return; }
     let cs;
     try{ cs = validateCases(q, parsed); }catch(e){ say(e.message, false); return; }
-    CUSTOM[q] = mode === "add" ? (effTests(q) || []).concat(cs) : cs;
+    CUSTOM[q] = mode === "add" ? mergeCustomCases(q, effTests(q), cs) : cs;
     persistTests(); say(CUSTOM[q].length + " מקרי בדיקה פעילים", true);
     renderCases(); updatePills();
   }

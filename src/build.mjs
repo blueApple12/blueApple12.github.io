@@ -9,13 +9,22 @@ import {fileURLToPath} from 'node:url';
 const here = path.dirname(fileURLToPath(import.meta.url));
 
 export function buildPage({number = '1', sourceDir = here, outputRoot = path.join(here, '..')} = {}) {
+  const pageNumber = String(number);
+  if (!/^[1-9][0-9]*$/.test(pageNumber)) {
+    throw new Error(`Invalid page number ${JSON.stringify(pageNumber)}: expected an unpadded positive decimal`);
+  }
+  const resolvedOutputRoot = path.resolve(outputRoot);
+  const outputDirectory = path.resolve(resolvedOutputRoot, pageNumber);
+  if (path.dirname(outputDirectory) !== resolvedOutputRoot) {
+    throw new Error(`Invalid page number ${JSON.stringify(pageNumber)}: output must be an immediate child`);
+  }
   const read = f => fs.readFileSync(path.join(sourceDir, f), 'utf8');
   const meta = JSON.parse(read('_meta.json'));
   const replacements = [
     ['__PAPER__', read('_paper.html')],
     ['__SKELETONS__', read('_skeletons.js')],
     ['__SOLUTIONS__', read('_solutions.js')],
-    ['__TESTS__', read('_tests.json')],
+    ['__TESTS__', read('_tests.json').replace(/</g, '\\u003c')],
     ['__Q1KEY__', read('_q1key.txt').trim()],
     ['__PAGE_TITLE__', meta.pageTitle],
     ['__BRAND_TITLE__', meta.brandTitle],
@@ -24,14 +33,18 @@ export function buildPage({number = '1', sourceDir = here, outputRoot = path.joi
   ];
 
   let html = read('_template.html');
+  const replacementValues = new Map(replacements);
+  const placeholders = html.match(/__[A-Z0-9_]+__/g) || [];
   for (const [placeholder] of replacements) {
-    if (!html.includes(placeholder)) throw new Error(`Template placeholder missing: ${placeholder}`);
+    const count = placeholders.filter((item) => item === placeholder).length;
+    if (count !== 1) throw new Error(`Template placeholder count for ${placeholder}: expected 1, found ${count}`);
   }
-  for (const [placeholder, value] of replacements) html = html.replace(placeholder, () => value);
-  const unresolved = html.match(/__[A-Z0-9_]+__/);
-  if (unresolved) throw new Error(`Template placeholder unresolved: ${unresolved[0]}`);
+  for (const placeholder of placeholders) {
+    if (!replacementValues.has(placeholder)) throw new Error(`Template unexpected placeholder: ${placeholder}`);
+  }
+  html = html.replace(/__[A-Z0-9_]+__/g, (placeholder) => replacementValues.get(placeholder));
 
-  const outputPath = path.join(outputRoot, String(number), 'index.html');
+  const outputPath = path.join(outputDirectory, 'index.html');
   fs.mkdirSync(path.dirname(outputPath), {recursive:true});
   fs.writeFileSync(outputPath, html);
   return {outputPath, html};

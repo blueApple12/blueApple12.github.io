@@ -46,8 +46,16 @@ const ExamDrivers = (() => {
     }
   }
 
+  function rejectUnexpectedKeys(scope, value, allowed) {
+    const allowedKeys = new Set(allowed);
+    for (const key of Object.keys(value)) {
+      if (!allowedKeys.has(key)) throw new Error(`Invalid manifest ${scope}: unexpected key ${key}`);
+    }
+  }
+
   function normalizeQuestion(question, source, options) {
     if (!isObject(source)) invalid(question, "question definition must be an object");
+    rejectUnexpectedKeys(`question ${question}`, source, ["driver", "mutation", "cases"]);
     if (typeof source.mutation !== "string" || !MUTATION_POLICIES.has(source.mutation)) {
       invalid(question, `unrecognized mutation policy ${String(source.mutation)}`);
     }
@@ -62,6 +70,7 @@ const ExamDrivers = (() => {
     const names = new Set();
     const cases = source.cases.map((item) => {
       if (!isObject(item)) invalid(question, "case must be an object");
+      rejectUnexpectedKeys(`${question} case`, item, ["name", "args", "expect"]);
       const caseName = item.name;
       if (typeof caseName !== "string" || caseName.trim().length === 0) {
         invalid(question, "case name must be a nonempty string", caseName);
@@ -95,6 +104,7 @@ const ExamDrivers = (() => {
     const hasVersion = Object.prototype.hasOwnProperty.call(raw, "version");
     let questions;
     if (hasVersion) {
+      rejectUnexpectedKeys("top-level", raw, ["version", "questions"]);
       if (raw.version !== 2) throw new Error(`Invalid manifest version ${String(raw.version)}`);
       if (!isObject(raw.questions)) throw new Error("Invalid manifest: questions must be an object");
       questions = raw.questions;
@@ -165,8 +175,8 @@ const ExamDrivers = (() => {
 
   function validateChar(driver, value, name) {
     validateString(driver, value, name);
-    if (Array.from(value).length !== 1) {
-      argumentError(driver, `${name} must be a single character`);
+    if (utf8Bytes(value).length !== 1) {
+      argumentError(driver, `${name} must be a single character encoded as a single-byte value`);
     }
     return value;
   }
