@@ -79,13 +79,16 @@ test("escapes test-payload less-than signs and recovers their original strings",
   const original = "literal </script> test data";
   const testsPath = path.join(sourceDir, "_tests.json");
   const tests = JSON.parse(fs.readFileSync(testsPath, "utf8"));
-  tests.q3[0].args.s = original;
+  const q3Cases = tests.version === 2 ? tests.questions.q3.cases : tests.q3;
+  q3Cases[0].args.s = original;
   fs.writeFileSync(testsPath, JSON.stringify(tests));
 
   const {html} = buildPage({number:"1", sourceDir, outputRoot:fs.mkdtempSync(path.join(os.tmpdir(), "exam-build-output-"))});
   const payload = html.match(/<script id="exam-tests" type="application\/json">([\s\S]*?)<\/script>/)[1];
   assert.match(payload, /\\u003c\/script>/);
-  assert.equal(JSON.parse(payload).q3[0].args.s, original);
+  const embedded = JSON.parse(payload);
+  const embeddedQ3Cases = embedded.version === 2 ? embedded.questions.q3.cases : embedded.q3;
+  assert.equal(embeddedQ3Cases[0].args.s, original);
 });
 
 test("browser test runner delegates to the shared driver contract", () => {

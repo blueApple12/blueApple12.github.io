@@ -1,67 +1,54 @@
 const SOLUTIONS = {
-q2: {
-  archetype: "בינארי על מבנה עולה-יורד (מערך הררי)",
-  complexity: "דרישה: זמן Θ(log n) · מקום Θ(1)",
-  code: `int examT_q2(int arr[], int n, int x) {
-    int low = 0, high = n - 1;
-    while (low < high) {
-        int mid = (low + high) / 2;
-        if (arr[mid] < arr[mid + 1]) low = mid + 1;
-        else high = mid;
-    }
-    int p = low, count = 0;
-    int lo = 0, hi = p, L = -1;
+  q2: {
+    archetype: "binary-search",
+    complexity: "Θ(log n) time, Θ(1) space",
+    code: `int examT_q2(int arr[], int n, int x) {
+    int lo = 0, hi = n - 1;
     while (lo <= hi) {
-        int mid = (lo + hi) / 2;
-        if (arr[mid] > x) { L = mid; hi = mid - 1; }
-        else lo = mid + 1;
-    }
-    if (L != -1) count += p - L + 1;
-    lo = p + 1; hi = n - 1;
-    int R = -1;
-    while (lo <= hi) {
-        int mid = (lo + hi) / 2;
-        if (arr[mid] > x) { R = mid; lo = mid + 1; }
-        else hi = mid - 1;
-    }
-    if (R != -1) count += R - p;
-    return count;
-}`
-},
-q3: {
-  archetype: "היסטוגרמה על כל תת-המחרוזות",
-  complexity: "דרישה: זמן O(n²) · מקום נוסף O(1)",
-  code: `int examT_q3(char* s, int k) {
-    int n = 0;
-    while (s[n] != '\\0') n++;
-    int count = 0;
-    for (int start = 0; start < n; start++) {
-        int hist[26];
-        for (int i = 0; i < 26; i++) hist[i] = 0;
-        int distinct = 0, exactK = 0;
-        for (int end = start; end < n; end++) {
-            int c = s[end] - 'a';
-            if (hist[c] == 0) distinct++;
-            if (hist[c] == k) exactK--;
-            hist[c]++;
-            if (hist[c] == k) exactK++;
-            if (distinct == exactK) count++;
+        int mid = lo + (hi - lo) / 2;
+        if (arr[mid] == x) return mid;
+        if (arr[lo] <= arr[mid]) {
+            if (arr[lo] <= x && x < arr[mid]) hi = mid - 1;
+            else lo = mid + 1;
+        } else {
+            if (arr[mid] < x && x <= arr[hi]) lo = mid + 1;
+            else hi = mid - 1;
         }
     }
-    return count;
+    return -1;
 }`
-},
-q4: {
-  archetype: "ספירה רקורסיבית ללא עטיפה",
-  complexity: "אין דרישת סיבוכיות בשאלה זו",
-  code: `int countPrefixes(int* arr, int n, int k) {
-    if (n == 0) return 0;
-    return (arr[0] == k ? 1 : 0) + countPrefixes(arr + 1, n - 1, k - arr[0]);
-}
-
-int examT_q4(int* arr, int n, int k) {
-    if (n <= 0) return 0;
-    return countPrefixes(arr, n, k) + examT_q4(arr + 1, n - 1, k);
+  },
+  q3: {
+    archetype: "in-place-two-pointers",
+    complexity: "Θ(n) time, Θ(1) space",
+    code: `int examT_q3(char *s) {
+    int length = 0;
+    while (s[length] != '\\0') length++;
+    int source = length + 1;
+    for (int i = length; i >= 0; i--) {
+        s[source + i] = s[i];
+    }
+    int read = source, end = source + length, write = 0;
+    while (read < end) {
+        char ch = s[read];
+        int count = 0;
+        while (read < end && s[read] == ch) {
+            read++;
+            count++;
+        }
+        s[write++] = ch;
+        s[write++] = (char)('0' + count);
+    }
+    s[write] = '\\0';
+    return write;
 }`
-}
+  },
+  q4: {
+    archetype: "tail-recursion",
+    complexity: "Θ(d) time, Θ(d) stack space",
+    code: `int examT_q4(int n, int acc) {
+    if (n == 0) return acc;
+    return examT_q4(n / 10, acc * 10 + n % 10);
+}`
+  }
 };
