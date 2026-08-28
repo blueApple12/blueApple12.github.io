@@ -7,6 +7,20 @@ function loadCore() {
   return new Function(source + "\nreturn ExamDrivers;")();
 }
 
+function driverIdsFromCore() {
+  const source = fs.readFileSync(new URL("./driver-core.js", import.meta.url), "utf8");
+  const block = source.match(/const DRIVER_IDS = new Set\(\[([\s\S]*?)\]\);/);
+  assert.ok(block, "driver allowlist is missing from driver-core.js");
+  return [...block[1].matchAll(/"([^"]+)"/g)].map((match) => match[1]);
+}
+
+test("documents every driver id in the shared core", () => {
+  const readme = fs.readFileSync(new URL("../README.md", import.meta.url), "utf8");
+  for (const driver of driverIdsFromCore()) {
+    assert.match(readme, new RegExp(`\\b${driver}\\b`), `README must document ${driver}`);
+  }
+});
+
 test("offline verifier delegates driver generation to driver-core", () => {
   const verify = fs.readFileSync(new URL("./verify.mjs", import.meta.url), "utf8");
   assert.match(verify, /driver-core\.js/);

@@ -51,7 +51,7 @@ New exams use a versioned form:
   "version": 2,
   "questions": {
     "q2": {
-      "driver": "array_n_x",
+      "driver": "int_array_n_int",
       "cases": [{ "name": "t01", "args": {}, "expect": "0" }]
     },
     "q3": {
@@ -60,7 +60,7 @@ New exams use a versioned form:
       "cases": [{ "name": "t01", "args": {}, "expect": "0" }]
     },
     "q4": {
-      "driver": "scalar_acc",
+      "driver": "int_only",
       "cases": [{ "name": "t01", "args": {}, "expect": "0" }]
     }
   }
