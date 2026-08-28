@@ -7,6 +7,13 @@ function loadCore() {
   return new Function(source + "\nreturn ExamDrivers;")();
 }
 
+test("offline verifier delegates driver generation to driver-core", () => {
+  const verify = fs.readFileSync(new URL("./verify.mjs", import.meta.url), "utf8");
+  assert.match(verify, /driver-core\.js/);
+  assert.doesNotMatch(verify, /function driverFor/);
+  assert.doesNotMatch(verify, /function driverStdin/);
+});
+
 test("normalizes the exam-001 legacy manifest", () => {
   const core = loadCore();
   const raw = {

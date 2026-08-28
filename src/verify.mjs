@@ -23,6 +23,15 @@ const TESTS = JSON.parse(read('_tests.json'));
 // the same trust level as `require()`-ing a local config file.
 const SKELETONS = new Function(read('_skeletons.js') + '\nreturn SKELETONS;')();
 const SOLUTIONS = new Function(read('_solutions.js') + '\nreturn SOLUTIONS;')();
+const ExamDrivers = new Function(read('driver-core.js') + '\nreturn ExamDrivers;')();
+
+let MANIFEST;
+try {
+  MANIFEST = ExamDrivers.normalizeManifest(TESTS, {requireMinimum:true});
+} catch (e) {
+  console.log('VERIFY FAILED - ' + e.message);
+  process.exit(1);
+}
 
 const CE = 'https://godbolt.org/api/compiler/cg132/compile';
 const joinText = a => (a || []).map(x => x.text).join('\n');
@@ -53,34 +62,6 @@ async function gcc(code, stdin) {
 
 const renameMain = src => src.replace(/\bint\s+main\s*\(\s*(void)?\s*\)/, 'int __student_main(void)');
 
-function driverFor(q) {
-  const call = q === 'q3' ? 'examT_q3(buf, k)' : `examT_${q}(arr, n, ${q === 'q2' ? 'x' : 'k'})`;
-  if (q === 'q3') return `
-int main(void){ int T; if(scanf("%d",&T)!=1) return 1;
-  for(int t=0;t<T;t++){ int len; if(scanf("%d",&len)!=1) return 1;
-    char* buf=(char*)malloc((size_t)len+2); char* ref=(char*)malloc((size_t)len+2);
-    if(scanf("%s",buf)!=1) return 1; int k; if(scanf("%d",&k)!=1) return 1;
-    for(int i=0;i<=len;i++) ref[i]=buf[i];
-    int r=${call}; int mut=0; for(int i=0;i<=len;i++) if(ref[i]!=buf[i]) mut=1;
-    printf("%d %d\\n", r, mut); free(buf); free(ref);} return 0;}`;
-  return `
-int main(void){ int T; if(scanf("%d",&T)!=1) return 1;
-  for(int t=0;t<T;t++){ int n; if(scanf("%d",&n)!=1) return 1;
-    int* arr=NULL; if(n>0){ arr=(int*)malloc(sizeof(int)*(size_t)n);
-      for(int i=0;i<n;i++) if(scanf("%d",&arr[i])!=1) return 1; }
-    int ${q === 'q2' ? 'x' : 'k'}; if(scanf("%d",&${q === 'q2' ? 'x' : 'k'})!=1) return 1;
-    printf("%d 0\\n", ${call}); free(arr);} return 0;}`;
-}
-
-function driverStdin(q, cases) {
-  const L = [String(cases.length)];
-  for (const c of cases) {
-    if (q === 'q3') { L.push(String(c.args.s.length)); L.push(c.args.s); L.push(String(c.args.k)); }
-    else { L.push(String(c.args.n)); L.push(c.args.arr.join(' ')); L.push(String(q === 'q2' ? c.args.x : c.args.k)); }
-  }
-  return L.join('\n') + '\n';
-}
-
 function spliceSolution(skeleton, fnName, solutionCode) {
   // skeletons declare a prototype ("...;") before the real definition
   // ("... {"), so take the LAST occurrence - the definition, not the prototype.
@@ -98,7 +79,8 @@ function spliceSolution(skeleton, fnName, solutionCode) {
 
 let totalPass = 0, totalFail = 0, hadError = false;
 for (const q of ['q2', 'q3', 'q4']) {
-  const cases = TESTS[q];
+  const question = MANIFEST.questions[q];
+  const cases = question.cases;
   if (!cases || !cases.length) { console.log(q + ': NO TESTS in _tests.json'); hadError = true; continue; }
   if (!SOLUTIONS[q]) { console.log(q + ': NO SOLUTIONS.' + q + ' in _solutions.js'); hadError = true; continue; }
   let src;
@@ -106,7 +88,10 @@ for (const q of ['q2', 'q3', 'q4']) {
     src = spliceSolution(SKELETONS[q], 'examT_' + q, SOLUTIONS[q].code);
   } catch (e) { console.log(q + ': splice failed - ' + e.message); hadError = true; continue; }
 
-  const res = await gcc(renameMain(src) + '\n' + driverFor(q), driverStdin(q, cases));
+  const res = await gcc(
+    renameMain(src) + '\n' + ExamDrivers.driverFor(q, question, cases),
+    ExamDrivers.driverStdin(question, cases)
+  );
   if (res.buildFailed) {
     console.log(q + ': COMPILE FAILED\n' + res.diagnostics);
     hadError = true; continue;
@@ -114,8 +99,10 @@ for (const q of ['q2', 'q3', 'q4']) {
   const lines = (res.stdout || '').trim().split('\n').filter(Boolean);
   let pass = 0, fail = 0;
   cases.forEach((tc, i) => {
-    const got = (lines[i] || '').trim().split(/\s+/)[0];
-    if (got === String(tc.expect)) pass++;
+    const tokens = (lines[i] || '').trim().split(/\s+/);
+    const got = tokens[0];
+    const mutated = tokens[1];
+    if (got === String(tc.expect) && !(question.mutation === 'forbidden' && mutated === '1')) pass++;
     else { fail++; console.log('  ' + q + '/' + tc.name + ': want ' + tc.expect + ' got ' + JSON.stringify(got)); }
   });
   totalPass += pass; totalFail += fail;
