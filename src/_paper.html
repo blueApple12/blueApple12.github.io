@@ -1,67 +1,50 @@
 <div class="sheet">
-  <header class="exam-head">
-    <div>
-      <h1>תרגול מבחן 003</h1>
-      <p>מבוא למדעי המחשב — מועד ב׳</p>
-    </div>
-    <div class="exam-meta">זמן מומלץ: 3 שעות · שפת C</div>
-  </header>
+  <header class="exam-head"><div><h1>תרגול מבחן 004</h1><p>מבוא למדעי המחשב — מועד ב׳</p></div>
+    <div class="exam-meta">זמן מומלץ: 3 שעות · שפת C</div></header>
   <p class="note">ענו על כל השאלות. שמרו על חתימות הפונקציות הנתונות.</p>
   <section class="question">
     <h2>שאלה 1 — ניתוח סיבוכיות</h2>
     <p>לכל קטע קוד בחרו את סיבוכיות הזמן והמקום ההדוקות ביותר.</p>
     <h3>א</h3>
-    <pre class="snip">void grow(int n) {
-    for (int i = 2; i &lt; n; i *= i)
-        putchar('.');
+    <pre class="snip">void triangle(int n) {
+    for (int remaining = n; remaining &gt; 0; remaining--)
+        for (int j = 0; j &lt; remaining; j++)
+            putchar('.');
 }</pre>
     <h3>ב</h3>
-    <pre class="snip">void half(int n) {
-    if (n &lt;= 1) return;
-    half(n / 2);
-}
-
-void down(int n) {
-    if (n &lt;= 1) return;
-    down(n - 1);
-}
-
-void both(int n) {
-    half(n);
-    down(n);
+    <pre class="snip">int halves(int n) {
+    if (n &lt;= 1) return 1;
+    return halves(n / 2) + halves(n / 2);
 }</pre>
     <h3>ג</h3>
-    <pre class="snip">void layers(int n) {
+    <pre class="snip">void levels(int n) {
     for (int i = 1; i &lt; n; i *= 2)
-        for (int j = 0; j &lt; n / i; j++)
-            for (int k = 0; k &lt; i; k++)
-                putchar('.');
+        for (int j = 0; j &lt; 16; j++)
+            putchar('.');
 }</pre>
     <div class="q1grid" id="q1grid"></div>
   </section>
   <section class="question">
-    <h2>שאלה 2 — קיבולת משלוח מינימלית</h2>
-    <p>חלקו את המערך, לפי הסדר, ל־<code>D</code> קבוצות רציפות בדיוק. החזירו את הערך המינימלי האפשרי של סכום הקבוצה הגדולה ביותר.</p>
-    <div class="sig">int examT_q2(int weights[], int n, int D);</div>
-    <p><strong>דוגמה:</strong> עבור המשקלים <code>{1,2,3,4,5,6,7,8,9,10}</code> ו־<code>D=5</code> מוחזר <code>15</code>.</p>
-    <p class="req">דרישות: זמן O(n·log(sum(weights))), מקום נוסף O(1).</p>
+    <h2>שאלה 2 — ספירת מופעים במערך ממוין</h2>
+    <p>המערך ממוין בסדר עולה ועשוי להכיל כפילויות. החזירו כמה פעמים <code>x</code> מופיע בו.</p>
+    <div class="sig">int examT_q2(int arr[], int n, int x);</div>
+    <p><strong>דוגמה:</strong> עבור <code>{1,2,2,2,3,4}</code> ו־<code>x=2</code> מוחזר <code>3</code>; עבור <code>x=5</code> מוחזר <code>0</code>.</p>
+    <p class="req">דרישות: זמן Θ(log n), מקום נוסף Θ(1); אין לבצע סריקה ליניארית.</p>
   </section>
   <section class="question">
-    <h2>שאלה 3 — החלפת התבנית ab</h2>
-    <p>סרקו משמאל לימין. החליפו כל הופעה לא חופפת של <code>"ab"</code> בתו <code>'#'</code>, הזיזו את המשך המחרוזת שמאלה והחזירו את מספר ההחלפות.</p>
-    <div class="sig">int examT_q3(char *s);</div>
-    <p><strong>דוגמה:</strong> <code>"cababd"</code> הופכת ל־<code>"c##d"</code>, ומוחזר <code>2</code>.</p>
-    <p class="req">דרישות: שינוי במקום, זמן Θ(n), מקום נוסף Θ(1).</p>
+    <h2>שאלה 3 — תתי־מחרוזות עם שכיחות חסומה</h2>
+    <p>ספרו את כל תתי־המחרוזות הלא־ריקות שבהן מספר ההופעות של התו השכיח ביותר אינו עולה על <code>k</code>. אין לשנות את המחרוזת.</p>
+    <div class="sig">int examT_q3(char *s, int k);</div>
+    <p><strong>דוגמה:</strong> עבור <code>"aab"</code> ו־<code>k=1</code> מוחזר <code>4</code>.</p>
+    <p class="req">דרישות: זמן O(n²), מקום נוסף O(1).</p>
   </section>
   <section class="question">
-    <h2>שאלה 4 — ספירת ביטים דלוקים</h2>
-    <p>החזירו את מספר הביטים שערכם 1 בייצוג הבינארי של מספר שלם אי־שלילי.</p>
-    <div class="sig">int examT_q4(int n);</div>
-    <p><strong>דוגמה:</strong> עבור <code>13</code> (בבינארית <code>1101</code>) מוחזר <code>3</code>.</p>
+    <h2>שאלה 4 — קידומת משותפת ארוכה ביותר</h2>
+    <p>החזירו את אורך הקידומת המשותפת הארוכה ביותר של שתי המחרוזות.</p>
+    <div class="sig">int examT_q4(char *a, char *b);</div>
+    <p><strong>דוגמה:</strong> עבור <code>"flower"</code> ו־<code>"flow"</code> מוחזר <code>4</code>; עבור <code>"dog"</code> ו־<code>"cat"</code> מוחזר <code>0</code>.</p>
     <p class="req">הפונקציה עצמה חייבת להיות רקורסיבית; אין פונקציית מעטפת ואין לולאות.</p>
   </section>
-  <section class="question instructions">
-    <h2>הנחיות הגשה</h2>
-    <p>ניתן להוסיף משתנים מקומיים בלבד. אין לשנות את שמות הפונקציות או את הפרמטרים.</p>
-  </section>
+  <section class="question instructions"><h2>הנחיות הגשה</h2>
+    <p>ניתן להוסיף משתנים מקומיים בלבד. אין לשנות את שמות הפונקציות או את הפרמטרים.</p></section>
 </div>
