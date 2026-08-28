@@ -1101,8 +1101,10 @@ function canonicalizeLegacyCustomCases(q, cases){
   return cases.map(testCase => {
     if(!testCase || typeof testCase !== "object" || !testCase.args || typeof testCase.args !== "object" || Array.isArray(testCase.args)) return testCase;
     const args = {...testCase.args};
-    if(!Object.prototype.hasOwnProperty.call(args, "value") && Object.prototype.hasOwnProperty.call(args, alias)) args.value = args[alias];
-    delete args[alias];
+    if(!Object.prototype.hasOwnProperty.call(args, "value") && Object.prototype.hasOwnProperty.call(args, alias)){
+      args.value = args[alias];
+      delete args[alias];
+    }
     return {...testCase, args};
   });
 }

@@ -61,6 +61,21 @@ test("browser canonicalizes legacy custom aliases before strict validation", () 
     assert.deepEqual(original[0].args, args, question);
     assert.doesNotThrow(() => core.validateCases({driver, mutation:"allowed"}, canonical), question);
   }
+
+  const conflicts = [
+    ["q2", "x", {arr:[1,2], n:2, value:3, x:999}, "int_array_n_int"],
+    ["q3", "k", {s:"aabb", value:3, k:999}, "string_int"],
+    ["q4", "k", {arr:[1], n:1, value:3, k:999}, "int_array_n_int"]
+  ];
+  for (const [question, alias, args, driver] of conflicts) {
+    const canonical = canonicalize(question, [{name:"conflict", args, expect:"0"}]);
+    assert.equal(canonical[0].args[alias], 999, question);
+    assert.throws(
+      () => core.validateCases({driver, mutation:"allowed"}, canonical),
+      new RegExp(`unexpected.*${alias}`),
+      question
+    );
+  }
 });
 
 test("browser custom-case guide is derived from a valid base case", () => {
