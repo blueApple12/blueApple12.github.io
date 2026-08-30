@@ -1,51 +1,147 @@
-<div class="sheet">
-  <header class="exam-head"><div><h1>תרגול מבחן 008</h1><p>מבוא למדעי המחשב — מועד ב׳</p></div>
-    <div class="exam-meta">זמן מומלץ: 3 שעות · שפת C</div></header>
-  <p class="note">ענו על כל השאלות. שמרו על חתימות הפונקציות הנתונות.</p>
-  <section class="question"><h2>שאלה 1 — ניתוח סיבוכיות</h2>
-    <p>בחרו את סיבוכיות הזמן והמקום ההדוקות ביותר.</p>
-    <h3>א</h3><pre class="snip">void layered(int n) {
-    for (int i = 1; i &lt; n; i *= 2)
-        for (int j = 0; j &lt; n / i; j++)
-            for (int k = 0; k &lt; i; k++)
-                putchar('.');
+  <div class="sheet">
+    <div class="hdr">
+      <h1>מבוא למדעי המחשב מ'/ח'</h1>
+      <div class="sub">234114 / 234117 &nbsp;·&nbsp; מועד ב׳ &nbsp;·&nbsp; סמסטר אביב תשפ"ו</div>
+      <div class="meta">
+        <span>משך הבחינה: שלוש שעות</span>
+        <span>חומר עזר: אין</span>
+        <span>4 שאלות · 25 נקודות לשאלה</span>
+      </div>
+    </div>
+
+    <div class="note">תרגול מדומה — תחזית 12 מתוך 12 למועד ב׳ אביב 2026. אינו מבחן אמיתי של הטכניון.</div>
+
+    <!-- Q1 -->
+    <section class="q">
+      <h2>שאלה 1 <span class="pts">25 נק'</span> — סיבוכיות</h2>
+      <p class="lead">
+        לכל סעיף ציינו <strong>סיבוכיות זמן</strong> ו<strong>סיבוכיות מקום נוסף</strong>, בסימון Θ, כפונקציה של <code>n</code>.
+        חובה לפשט את הביטוי ככל שניתן. הניחו כי סיבוכיות הזמן והמקום של <code>printf</code> ו-<code>free</code> היא Θ(1),
+        וכי סיבוכיות הזמן של <code>malloc(n)</code> היא Θ(1) וסיבוכיות המקום שלה היא Θ(n).
+      </p>
+
+      <p><strong>א.</strong></p>
+<pre class="snip">void f1(int n) {
+    int i = 1;
+    while (i * i &lt;= n) {
+        printf("*");
+        i++;
+    }
 }</pre>
-    <h3>ב</h3><pre class="snip">void shrinking(int n) {
-    for (int left = n; left &gt; 0; left--)
-        for (int j = 0; j &lt; left; j++)
-            putchar('.');
+
+      <p><strong>ב.</strong></p>
+<pre class="snip">int f2(int n) {
+    if (n &lt;= 1) return 1;
+    for (int i = 0; i &lt; n; i++) {
+        printf("*");
+    }
+    return f2(n / 2);
 }</pre>
-    <h3>ג</h3><pre class="snip">void half(int n) {
-    if (n &lt;= 1) return;
-    half(n / 2);
-}
-void down(int n) {
-    if (n &lt;= 1) return;
-    down(n - 1);
-}
-void both(int n) {
-    half(n);
-    down(n);
+
+      <p><strong>ג.</strong></p>
+<pre class="snip">int f3(int n) {
+    if (n &lt;= 1) return 1;
+    int* arr = (int*) malloc(n * sizeof(int));
+    if (arr == NULL) return 0;
+    for (int i = 0; i &lt; n; i++) {
+        arr[i] = i;
+    }
+    free(arr);
+    return f3(n - 1);
 }</pre>
-    <div class="q1grid" id="q1grid"></div>
-  </section>
-  <section class="question"><h2>שאלה 2 — חיפוש מדרגות במטריצה</h2>
-    <p>כל שורה וכל עמודה ממוינות בסדר עולה. החזירו 1 אם <code>x</code> נמצא, אחרת 0.</p>
-    <div class="sig">#define N 3<br>int examT_q2(int mat[][N], int m, int x);</div>
-    <p><strong>דוגמה:</strong> במטריצה ששורותיה <code>{1,4,7},{2,5,8},{3,6,9}</code>, עבור <code>x=6</code> מוחזר 1.</p>
-    <p class="req">דרישות: התחילו בפינה הימנית העליונה; זמן O(m+N), מקום O(1).</p>
-  </section>
-  <section class="question"><h2>שאלה 3 — הסרת כפילויות במקום</h2>
-    <p>השאירו רק את ההופעה הראשונה של כל תו, לפי הסדר, וקצרו את המחרוזת במקום. החזירו את האורך החדש.</p>
-    <div class="sig">int examT_q3(char *s);</div>
-    <p><strong>דוגמה:</strong> <code>"programming"</code> הופכת ל־<code>"progamin"</code>, ומוחזר <code>8</code>.</p>
-    <p class="req">דרישות: שני סמנים ומערך seen בגודל 26; זמן Θ(n), מקום Θ(1).</p>
-  </section>
-  <section class="question"><h2>שאלה 4 — סכום מסודר של 1 ו־2</h2>
-    <p>החזירו את מספר הרצפים המסודרים של 1 ו־2 שסכומם <code>n</code>. הסדר חשוב.</p>
-    <div class="sig">int examT_q4(int n);</div>
-    <p><strong>דוגמה:</strong> עבור <code>n=4</code> מוחזר <code>5</code>.</p>
-    <p class="req">הפונקציה עצמה חייבת להיות רקורסיבית; אין מעטפת ואין לולאות.</p>
-  </section>
-  <section class="question instructions"><h2>הנחיות הגשה</h2><p>אין לשנות את חתימות הפונקציות.</p></section>
-</div>
+
+      <div class="q1grid" id="q1grid"></div>
+    </section>
+
+    <!-- Q2 -->
+    <section class="q">
+      <h2>שאלה 2 <span class="pts">25 נק'</span></h2>
+      <p><strong>הגדרה:</strong> מערך <code>arr</code> באורך <code>n</code> ייקרא <strong>מערך הררי</strong>
+      אם קיים אינדקס <code>p</code>, כאשר <code>0 &lt; p &lt; n-1</code>, כך ש-</p>
+      <ul class="rules">
+        <li><code>arr[0] &lt; arr[1] &lt; ... &lt; arr[p]</code> &nbsp;(עולה ממש עד <code>p</code>), וגם</li>
+        <li><code>arr[p] &gt; arr[p+1] &gt; ... &gt; arr[n-1]</code> &nbsp;(יורד ממש מ-<code>p</code> והלאה)</li>
+      </ul>
+      <div class="sig">int examT_q2(int arr[], int n);</div>
+      <p><strong>על הפונקציה להחזיר את האינדקס <code>p</code> של השיא</strong> — האיבר המקסימלי היחיד במערך.</p>
+      <table class="ex">
+        <tr><th>קלט</th><th>פלט</th><th>הסבר</th></tr>
+        <tr><td>arr = {1,3,7,9,6,2}, n = 6</td><td>3</td><td>arr[3] = 9</td></tr>
+        <tr><td>arr = {2,8,5}, n = 3</td><td>1</td><td>arr[1] = 8</td></tr>
+        <tr><td>arr = {3,4,5,6,7,2}, n = 6</td><td>4</td><td>השיא כמעט בסוף</td></tr>
+        <tr><td>arr = {1,5,4,3,2}, n = 5</td><td>1</td><td>השיא כמעט בהתחלה</td></tr>
+      </table>
+      <ul class="rules">
+        <li>ניתן להניח כי הקלט תקין, כי <code>n &ge; 3</code>, וכי המערך אכן הררי.</li>
+        <li><strong>אין לשנות את תוכן המערך</strong> ואין להקצות זיכרון דינמי.</li>
+        <li>פתרון בזמן Θ(n) אינו עומד בדרישה.</li>
+      </ul>
+      <div class="req"><b>דרישות סיבוכיות</b><span class="val">זמן Θ(log n)</span><span class="val">מקום נוסף Θ(1)</span></div>
+    </section>
+
+    <!-- Q3 -->
+    <section class="q">
+      <h2>שאלה 3 <span class="pts">25 נק'</span></h2>
+      <p>נתונה מחרוזת <code>s</code> באורך <code>n</code> המכילה אותיות אנגליות קטנות בלבד.</p>
+      <p>תת-מחרוזת של <code>s</code> תיקרא <strong>סיסמה חזקה</strong> אם מתקיימים <strong>כל</strong> התנאים הבאים:</p>
+      <ul class="rules">
+        <li>אורכה <strong>לפחות 3</strong>;</li>
+        <li>היא מכילה <strong>לפחות תנועה אחת</strong> (<code>a</code>, <code>e</code>, <code>i</code>, <code>o</code>, <code>u</code>);</li>
+        <li>היא מכילה <strong>לפחות עיצור אחד</strong> (כל אות שאינה תנועה);</li>
+        <li><strong>אף אות אינה מופיעה בה יותר מפעמיים.</strong></li>
+      </ul>
+      <div class="sig">int examT_q3(char* s);</div>
+      <p><strong>על הפונקציה להחזיר את מספר תתי-המחרוזות של <code>s</code> שהן סיסמאות חזקות.</strong>
+      תתי-מחרוזות במקומות שונים נספרות בנפרד, גם אם תוכנן זהה.</p>
+      <table class="ex">
+        <tr><th>קלט</th><th>פלט</th><th>הסבר</th></tr>
+        <tr><td>s = "abcde"</td><td>5</td><td>—</td></tr>
+        <tr><td>s = "banana"</td><td>8</td><td>—</td></tr>
+        <tr><td>s = "aeiou"</td><td>0</td><td>אין אף עיצור</td></tr>
+        <tr><td>s = "aaa"</td><td>0</td><td>‎'a' מופיע שלוש פעמים</td></tr>
+      </table>
+      <ul class="rules">
+        <li><strong>אין לשנות את תוכן המחרוזת <code>s</code>, אפילו לא באופן זמני.</strong></li>
+        <li>ניתן להניח כי הקלט תקין וכי <code>s</code> אינה ריקה.</li>
+        <li>מערך בגודל קבוע (26 תאים) נחשב מקום Θ(1). אין להקצות זיכרון דינמי.</li>
+        <li>בשלד נתונה לכם פונקציית העזר <code>is_vowel</code>. אינכם חייבים להשתמש בה.</li>
+        <li><strong>שימו לב לדרישת הזמן — כאן היא ריבועית, לא לינארית.</strong> התנאי "אף אות לא יותר
+        מפעמיים" נשבר לתמיד ברגע שנשבר, וזה מאפשר עצירה מוקדמת.</li>
+      </ul>
+      <div class="req"><b>דרישות סיבוכיות</b><span class="val">זמן O(n²)</span><span class="val">מקום נוסף O(1)</span></div>
+    </section>
+
+    <!-- Q4 -->
+    <section class="q">
+      <h2>שאלה 4 <span class="pts">25 נק'</span> — רקורסיה</h2>
+      <p>נתון מערך <code>arr</code> של מספרים שלמים באורך <code>n</code>.</p>
+      <p><strong>רצף עולה ממש</strong> הוא קטע רציף של המערך שבו כל איבר גדול ממש מקודמו.</p>
+      <div class="sig">int examT_q4(int* arr, int n);</div>
+      <p><strong>על הפונקציה להחזיר את אורכו של הרצף העולה ממש הארוך ביותר במערך.</strong>
+      עבור מערך ריק יש להחזיר 0.</p>
+      <table class="ex">
+        <tr><th>קלט</th><th>פלט</th><th>הסבר</th></tr>
+        <tr><td>arr = {1,3,2,4,5,6}, n = 6</td><td>4</td><td>‎2,4,5,6</td></tr>
+        <tr><td>arr = {3,2,1}, n = 3</td><td>1</td><td>אין עלייה כלל</td></tr>
+        <tr><td>arr = {2,2,3,4}, n = 4</td><td>3</td><td>‎2,3,4 — שוויון אינו עלייה</td></tr>
+        <tr><td>arr = {4,3,2,1,2,3,4,5}, n = 8</td><td>5</td><td>‎1,2,3,4,5</td></tr>
+      </table>
+      <ul class="rules">
+        <li><strong>על הפונקציה להיות רקורסיבית בלבד, ללא שימוש בלולאות</strong> — בכל הפונקציות שתכתבו.</li>
+        <li><strong>אסור להשתמש בפונקציית מעטפת</strong> — <code>examT_q4</code> עצמה חייבת לקרוא לעצמה.</li>
+        <li>אין להקצות זיכרון דינמי ואין לשנות את תוכן המערך.</li>
+        <li><strong>אין דרישות סיבוכיות בשאלה זו.</strong></li>
+      </ul>
+    </section>
+
+    <section class="q">
+      <h2>איך עובדים כאן</h2>
+      <ul class="rules">
+        <li>כתבו בעורך שמשמאל. שלושה קבצים, לשונית לכל שאלה. אל תשנו את <code>main</code>.</li>
+        <li><strong>הרץ בדיקות</strong> מריץ את הפונקציה שלכם מול מקרי הבדיקה של השאלה — כולל בדיקות של האילוצים (לולאות ברקורסיה, שינוי הקלט, פונקציית מעטפת).</li>
+        <li>סיבוכיות <em>אינה</em> נבדקת אוטומטית. פתרון שעובר את כל הבדיקות בסיבוכיות שגויה — נכשל בשאלה.</li>
+        <li>בסיום לחצו <strong>סיום והגשה</strong>, שמרו את קובץ ההגשה, ובקשו מ-Claude ציון עם <code>/grade</code>.</li>
+      </ul>
+    </section>
+
+  </div>

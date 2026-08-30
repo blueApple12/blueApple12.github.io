@@ -2,53 +2,113 @@ const SKELETONS = {
   q2: `#include <stdio.h>
 #include <stdlib.h>
 
-#define N 3
+#define DONT_KNOW "I_dont_know"
 
-int examT_q2(int mat[][N], int m, int x) {
-    /* write your solution here */
+void printIDontKnow() {
+    printf("%s", DONT_KNOW);
+    exit(0);
+}
+
+int examT_q2(int arr[], int n);
+
+int main(void) {
+    // uncomment next line if you don't know the answer
+    // printIDontKnow();
+
+    int n;
+    if (scanf("%d", &n) != 1) return 1;
+    int* arr = malloc(n * sizeof(int));
+    if (!arr) return 1;
+    for (int i = 0; i < n; i++) {
+        if (scanf("%d", &arr[i]) != 1) {
+            free(arr);
+            return 1;
+        }
+    }
+    printf("%d", examT_q2(arr, n));
+    free(arr);
     return 0;
 }
 
-int main(void) {
-    int m, x;
-    if (scanf("%d", &m) != 1) return 1;
-    int mat[m][N];
-    for (int row = 0; row < m; row++)
-        for (int col = 0; col < N; col++)
-            scanf("%d", &mat[row][col]);
-    scanf("%d", &x);
-    printf("%d\\n", examT_q2(mat, m, x));
+int examT_q2(int arr[], int n) {
+    // write your code here
     return 0;
 }`,
   q3: `#include <stdio.h>
 #include <stdlib.h>
 
-int examT_q3(char *s) {
-    /* write your solution here */
-    return 0;
+#define DONT_KNOW "I_dont_know"
+
+void printIDontKnow() {
+    printf("%s", DONT_KNOW);
+    exit(0);
+}
+
+int examT_q3(char* s);
+
+//This is a helper function made for you.
+//You are not obligated to use it, and are allowed to change it.
+int is_vowel(char c) {
+    return c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u';
 }
 
 int main(void) {
+    // uncomment next line if you don't know the answer
+    // printIDontKnow();
+
     int n;
     if (scanf("%d", &n) != 1) return 1;
-    char *s = malloc((size_t)n + 1U);
-    if (s == NULL) return 1;
-    scanf("%s", s);
+    char* s = malloc((n + 1) * sizeof(char));
+    if (!s) return 1;
+    if (scanf("%s", s) != 1) {
+        free(s);
+        return 1;
+    }
     printf("%d\\n", examT_q3(s));
     free(s);
     return 0;
+}
+
+int examT_q3(char* s) {
+    // write your code here
+    return 0;
 }`,
   q4: `#include <stdio.h>
+#include <stdlib.h>
 
-int examT_q4(int n) {
-    /* write your recursive solution here */
+#define DONT_KNOW "I_dont_know"
+
+void printIDontKnow() {
+    printf("%s", DONT_KNOW);
+    exit(0);
+}
+
+int examT_q4(int* arr, int n);
+
+int main(void) {
+    // uncomment next line if you don't know the answer
+    // printIDontKnow();
+
+    int n;
+    if (scanf("%d", &n) != 1) return 1;
+    int* arr = NULL;
+    if (n > 0) {
+        arr = malloc(n * sizeof(int));
+        if (!arr) return 1;
+        for (int i = 0; i < n; i++) {
+            if (scanf("%d", &arr[i]) != 1) {
+                free(arr);
+                return 1;
+            }
+        }
+    }
+    printf("%d\\n", examT_q4(arr, n));
+    free(arr);
     return 0;
 }
 
-int main(void) {
-    int n;
-    if (scanf("%d", &n) != 1) return 1;
-    printf("%d\\n", examT_q4(n));
+int examT_q4(int* arr, int n) {
+    // write your code here
     return 0;
 }`
 };
