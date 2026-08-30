@@ -1,0 +1,2827 @@
+<!doctype html>
+<html lang="he">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Moed Bet Simulator 015 — 234114</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@500;700;900&family=Assistant:wght@400;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<style>
+:root{
+  --paper:#f2f4f7; --card:#fff; --ink:#141821; --ink-soft:#525c6e; --ink-faint:#7b8698;
+  --rule:#d6dce6; --rule-soft:#e7ebf2;
+  --accent:#15558f; --accent-ink:#0f3f6c; --accent-wash:#e7eef7;
+  --ok:#1f7a45; --ok-wash:#e3f2e8; --bad:#b0342a; --bad-wash:#fbe8e6;
+  --warn:#8a5a00; --warn-wash:#fbf0dc;
+  /* OnlineGDB-ish IDE: light editor, black console */
+  --ide-chrome:#eef1f5; --ide-edge:#c8d0da; --ide-bg:#ffffff; --ide-text:#1f2430;
+  --gut-bg:#f4f6f9; --gut-fg:#9aa5b5;
+  --kw:#0033b3; --ty:#0033b3; --str:#067d17; --num:#1750eb;
+  --com:#8c8c8c; --fn:#00627a; --pp:#9e880d;
+  --term-bg:#111317; --term-fg:#d6dae2;
+  --run:#28a745; --run-hi:#218838;
+  --measure:66ch;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#0e1116; --card:#151a21; --ink:#e3e8f0; --ink-soft:#9aa5b7; --ink-faint:#6f7b8d;
+  --rule:#252c37; --rule-soft:#1d232c;
+  --accent:#6aa9e6; --accent-ink:#8fc0f2; --accent-wash:#16273a;
+  --ok:#4bbd77; --ok-wash:#12291d; --bad:#e2695d; --bad-wash:#2c1614;
+  --warn:#d3a45a; --warn-wash:#2b2113;
+  --ide-chrome:#1b202a; --ide-edge:#2b323e; --ide-bg:#12161d; --ide-text:#dfe4ec;
+  --gut-bg:#161b23; --gut-fg:#5d6878;
+  --kw:#cf8e6d; --ty:#c391c9; --str:#6aab73; --num:#48b0bd;
+  --com:#7a828f; --fn:#5ba3ef; --pp:#9d8fbf;
+}}
+:root[data-theme="dark"]{
+  --paper:#0e1116; --card:#151a21; --ink:#e3e8f0; --ink-soft:#9aa5b7; --ink-faint:#6f7b8d;
+  --rule:#252c37; --rule-soft:#1d232c;
+  --accent:#6aa9e6; --accent-ink:#8fc0f2; --accent-wash:#16273a;
+  --ok:#4bbd77; --ok-wash:#12291d; --bad:#e2695d; --bad-wash:#2c1614;
+  --warn:#d3a45a; --warn-wash:#2b2113;
+  --ide-chrome:#1b202a; --ide-edge:#2b323e; --ide-bg:#12161d; --ide-text:#dfe4ec;
+  --gut-bg:#161b23; --gut-fg:#5d6878;
+  --kw:#cf8e6d; --ty:#c391c9; --str:#6aab73; --num:#48b0bd;
+  --com:#7a828f; --fn:#5ba3ef; --pp:#9d8fbf;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--paper);color:var(--ink);
+  font-family:"Assistant",-apple-system,"Segoe UI",system-ui,sans-serif;font-size:15px;line-height:1.6;
+  -webkit-font-smoothing:antialiased;}
+
+/* top bar */
+.bar{position:sticky;top:0;z-index:40;display:flex;align-items:center;gap:14px;
+  padding:9px 16px;background:var(--card);border-bottom:1px solid var(--rule);flex-wrap:wrap}
+.brand{display:flex;flex-direction:column;line-height:1.15;margin-inline-end:auto}
+.brand b{font-family:"Frank Ruhl Libre",Georgia,serif;font-weight:700;font-size:16px}
+.brand span{font-size:11.5px;color:var(--ink-faint);letter-spacing:.06em;text-transform:uppercase}
+.pills{display:flex;gap:6px;flex-wrap:wrap}
+.pill{font-size:11.5px;font-weight:600;letter-spacing:.04em;padding:3px 9px;border-radius:999px;
+  border:1px solid var(--rule);color:var(--ink-faint);font-variant-numeric:tabular-nums}
+.pill.pass{background:var(--ok-wash);border-color:transparent;color:var(--ok)}
+.pill.fail{background:var(--bad-wash);border-color:transparent;color:var(--bad)}
+.clock{font-family:"JetBrains Mono",monospace;font-size:19px;font-weight:500;font-variant-numeric:tabular-nums;
+  padding:3px 12px;border-radius:6px;background:var(--accent-wash);color:var(--accent-ink);border:1px solid transparent}
+.clock.low{background:var(--bad-wash);color:var(--bad);border-color:var(--bad)}
+.clock.off{background:transparent;color:var(--ink-faint)}
+.btn{font:inherit;font-size:13px;font-weight:600;padding:6px 13px;border-radius:6px;
+  border:1px solid var(--rule);background:var(--card);color:var(--ink);cursor:pointer}
+.btn:hover{border-color:var(--accent);color:var(--accent)}
+.btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.primary:hover{filter:brightness(1.1);color:#fff}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+
+.split{display:grid;grid-template-columns:var(--ide-w,1fr) 6px 1fr;height:calc(100vh - 51px)}
+@media (max-width:1000px){.split{grid-template-columns:1fr;height:auto}
+  .pane[data-hide="1"]{display:none}.swap{display:flex!important}.vresizer,.hresizer{display:none!important}}
+.swap{display:none;gap:6px;width:100%;margin-top:6px}
+.swap .btn{flex:1}
+.swap .btn[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+
+/* paper */
+.pane.paper{direction:rtl;overflow-y:auto;border-inline-start:1px solid var(--rule);padding:0 0 80px;font-size:var(--paper-fs,15px)}
+.sheet{max-width:var(--measure);margin:0 auto;padding:26px 24px 0}
+.hdr{text-align:center;border-bottom:2.5px solid var(--ink);padding-bottom:14px;margin-bottom:8px}
+.hdr h1{font-family:"Frank Ruhl Libre",Georgia,serif;font-weight:900;font-size:25px;margin:0 0 2px;text-wrap:balance}
+.hdr .sub{font-size:14px;color:var(--ink-soft);font-weight:600}
+.hdr .meta{display:flex;justify-content:center;gap:18px;flex-wrap:wrap;margin-top:9px;font-size:12.5px;color:var(--ink-faint)}
+.note{background:var(--warn-wash);color:var(--warn);border-radius:6px;padding:8px 12px;font-size:12.5px;font-weight:600;margin:14px 0;text-align:center}
+.q{margin:30px 0 0;padding-top:22px;border-top:1px solid var(--rule)}
+.q:first-of-type{border-top:0}
+.q>h2{font-family:"Frank Ruhl Libre",Georgia,serif;font-size:19px;font-weight:700;margin:0 0 3px;display:flex;align-items:baseline;gap:9px}
+.q>h2 .pts{font-family:"Assistant",sans-serif;font-size:12px;font-weight:700;color:var(--accent);background:var(--accent-wash);padding:2px 8px;border-radius:4px}
+.q p{margin:9px 0}
+.q .lead{color:var(--ink-soft)}
+code,.mono{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:.88em}
+.q :not(pre)>code{background:var(--rule-soft);padding:1px 5px;border-radius:4px;direction:ltr;display:inline-block}
+pre.snip{direction:ltr;text-align:left;background:#111317;color:#d6dae2;border-radius:8px;padding:13px 15px;margin:12px 0;
+  overflow-x:auto;font-family:"JetBrains Mono",monospace;font-size:12.5px;line-height:1.6;tab-size:4}
+.sig{direction:ltr;text-align:left;border:1px solid var(--accent);border-inline-start-width:3px;background:var(--accent-wash);
+  color:var(--accent-ink);border-radius:6px;padding:9px 13px;margin:12px 0;font-family:"JetBrains Mono",monospace;font-size:13px;font-weight:500}
+table.ex{width:100%;border-collapse:collapse;margin:13px 0;font-size:13px}
+table.ex th,table.ex td{border:1px solid var(--rule);padding:6px 9px;text-align:right;vertical-align:top}
+table.ex th{background:var(--rule-soft);font-weight:700;font-size:12px;color:var(--ink-soft)}
+table.ex td:first-child,table.ex td:nth-child(2){direction:ltr;text-align:left;font-family:"JetBrains Mono",monospace;font-size:12px}
+table.ex td:nth-child(2){font-weight:700;color:var(--accent)}
+ul.rules{margin:11px 0;padding-inline-start:20px}
+ul.rules li{margin:5px 0}
+.req{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin:15px 0 4px;padding:10px 13px;border-radius:6px;
+  background:var(--rule-soft);border-inline-start:3px solid var(--accent)}
+.req b{font-size:12.5px;color:var(--ink-soft)}
+.req .val{font-family:"JetBrains Mono",monospace;font-size:13px;font-weight:700;color:var(--accent-ink);
+  background:var(--card);padding:2px 9px;border-radius:4px;direction:ltr}
+.q1grid{display:grid;gap:12px;margin:14px 0}
+.q1row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:9px 12px;background:var(--rule-soft);border-radius:6px}
+.q1row label{font-size:12.5px;font-weight:700;color:var(--ink-soft)}
+select{font:inherit;font-size:13px;font-family:"JetBrains Mono",monospace;padding:5px 8px;border-radius:5px;
+  border:1px solid var(--rule);background:var(--card);color:var(--ink);direction:ltr}
+select:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.done{border-color:var(--accent)}
+.mark{font-weight:700;font-size:14px;width:1em;display:inline-block}
+.mark.y{color:var(--ok)}.mark.n{color:var(--bad)}
+.q1score{margin-top:6px;font-size:12.5px;font-weight:700;color:var(--ink-soft)}
+
+/* ===== IDE, OnlineGDB flavour ===== */
+.pane.ide{direction:ltr;display:flex;flex-direction:column;min-height:0;background:var(--ide-bg)}
+@media (max-width:1000px){.pane.ide{min-height:88vh}}
+.tabs{display:flex;background:var(--ide-chrome);border-bottom:1px solid var(--ide-edge);flex-shrink:0}
+.tab{font:inherit;font-size:12.5px;font-family:"JetBrains Mono",monospace;padding:8px 15px;background:none;border:0;
+  border-bottom:2px solid transparent;color:var(--ink-faint);cursor:pointer;display:flex;align-items:center;gap:7px}
+.tab[aria-selected="true"]{color:var(--ink);background:var(--ide-bg);border-bottom-color:var(--accent)}
+.tab:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--ink-faint);opacity:.45}
+.dot.pass{background:#28a745;opacity:1}.dot.fail{background:#dc3545;opacity:1}
+.toolbar{display:flex;align-items:center;gap:7px;padding:6px 10px;background:var(--ide-chrome);
+  border-bottom:1px solid var(--ide-edge);flex-shrink:0;flex-wrap:wrap}
+.tbtn{font:inherit;font-size:12.5px;font-weight:600;font-family:"Assistant",sans-serif;padding:5px 12px;border-radius:4px;
+  cursor:pointer;background:var(--card);border:1px solid var(--ide-edge);color:var(--ink)}
+.tbtn:hover{background:var(--rule-soft)}
+.tbtn:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.tbtn.run{background:var(--run);border-color:var(--run);color:#fff}
+.tbtn.run:hover{background:var(--run-hi)}
+.tbtn:disabled{opacity:.55;cursor:not-allowed}
+.gcc{margin-left:auto;font-size:11px;color:var(--ink-faint);font-family:"JetBrains Mono",monospace}
+.edwrap{position:relative;flex:1 1 auto;min-height:200px;overflow:hidden;display:flex;background:var(--ide-bg)}
+.gutter{flex-shrink:0;padding:12px 8px 12px 14px;text-align:right;font-family:"JetBrains Mono",monospace;font-size:var(--ide-fs,13px);
+  line-height:1.55;color:var(--gut-fg);background:var(--gut-bg);border-right:1px solid var(--ide-edge);overflow:hidden;
+  user-select:none;font-variant-numeric:tabular-nums;white-space:pre}
+.edbox{position:relative;flex:1;overflow:auto}
+.edbox pre,.edbox textarea{margin:0;padding:12px 14px;font-family:"JetBrains Mono",ui-monospace,monospace;font-size:var(--ide-fs,13px);
+  line-height:1.55;tab-size:4;white-space:pre;word-wrap:normal;border:0}
+.edbox pre{position:absolute;inset:0;pointer-events:none;color:var(--ide-text);min-height:100%}
+.edbox textarea{position:absolute;inset:0;width:100%;height:100%;resize:none;background:transparent;color:transparent;
+  caret-color:var(--ink);outline:none;overflow:hidden}
+.edbox textarea::selection{background:#b5d5ff;color:transparent}
+.k{color:var(--kw);font-weight:600}.t{color:var(--ty)}.s{color:var(--str)}.n{color:var(--num)}
+.c{color:var(--com);font-style:italic}.f{color:var(--fn)}.p{color:var(--pp)}
+
+.chead{display:flex;align-items:center;gap:0;padding:0 8px;background:#0b0d11;border-bottom:1px solid #232833;flex-shrink:0}
+.ctab{font:inherit;font-size:11px;letter-spacing:.08em;text-transform:uppercase;background:none;border:0;padding:7px 11px;
+  color:#6f7c8f;cursor:pointer;border-bottom:2px solid transparent}
+.ctab[aria-selected="true"]{color:#e8eaf0;border-bottom-color:var(--run)}
+.ctab:focus-visible{outline:2px solid var(--run);outline-offset:-2px}
+.chead .grow{margin-left:auto}
+.chead .sum{font-size:11px;color:#6f7c8f;font-family:"JetBrains Mono",monospace;padding-inline:8px}
+.iconbtn{font:inherit;font-size:12px;line-height:1;background:#1c2029;border:1px solid #2b313d;color:#c9cfda;
+  border-radius:4px;padding:4px 7px;cursor:pointer;margin-left:4px}
+.iconbtn:hover{background:#262c37}
+.iconbtn[aria-pressed="true"]{background:#2f4a6b;border-color:#43periodo}
+#wrapOut{display:flex;flex-direction:column;overflow:hidden}
+#wrapOut .raw{flex:1;overflow:auto;margin:0}
+.cwrap{flex:1;overflow:auto;font-family:"JetBrains Mono",monospace;font-size:var(--ide-fs,13px);line-height:1.55;color:var(--term-fg)}
+.cbody{padding:9px 12px 16px}
+.empty{color:#5b6270;padding:12px}
+.ln{display:flex;gap:9px;padding:2px 0;align-items:flex-start}
+.tag{flex-shrink:0;width:46px;font-weight:700;font-size:11px;padding-top:1px}
+.tag.ok{color:#3fb950}.tag.no{color:#f0645a}.tag.warn{color:#d9a441}.tag.info{color:#6f8199}
+.ln .msg{color:#a9b0bd;word-break:break-word;min-width:0}
+.ln .msg em{color:#e8eaf0;font-style:normal;font-weight:700}
+.diffgrid{display:grid;grid-template-columns:auto 1fr;gap:1px 10px;margin:3px 0 6px;padding:6px 9px;background:#1a1d24;
+  border-radius:5px;border-left:2px solid #f0645a;font-size:11.5px}
+.diffgrid dt{color:#6f8199}.diffgrid dd{margin:0;color:#d5d9e2;word-break:break-all}
+.summary{display:flex;gap:12px;align-items:center;padding:7px 12px;margin:0 0 6px;border-radius:5px;font-weight:700;font-size:12px}
+.summary.ok{background:#14301f;color:#5ecb82}.summary.no{background:#2e1815;color:#f08a80}.summary.warn{background:#2e2413;color:#d9a441}
+pre.raw{margin:0;padding:10px 12px;white-space:pre-wrap;word-break:break-word;color:#d6dae2}
+pre.raw .err{color:#f0645a}
+pre.raw .warnmsg{color:#d9a441}
+pre.raw .hintmsg{color:#6f8199}
+pre.raw .hintmsg b{color:#a9b0bd}
+pre.raw .okmsg{color:#5ecb82}
+pre.raw .echo{color:#7fb2e5}
+.promptrow{display:flex;align-items:center;gap:8px;padding:7px 12px;border-top:1px solid #232833;background:#0b0d11}
+.promptrow .caret{color:#5ecb82;font-weight:700}
+.promptrow input{flex:1;background:transparent;border:0;outline:none;color:#e8eaf0;
+  font-family:"JetBrains Mono",monospace;font-size:12.5px;padding:3px 0}
+.promptrow input::placeholder{color:#4d5563}
+.sentrow{display:flex;align-items:center;gap:9px;padding:5px 12px;border-top:1px solid #232833;
+  background:#0b0d11;font-size:11px;flex-wrap:wrap}
+.sentrow .lbl{color:#6f7c8f;letter-spacing:.05em;text-transform:uppercase}
+.sentrow .sentlist{color:#7fb2e5;font-family:"JetBrains Mono",monospace;word-break:break-all}
+.stdin{display:flex;flex-direction:column;gap:6px;padding:9px 12px}
+.stdin label{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#6f7c8f}
+.stdin textarea{width:100%;height:74px;resize:vertical;background:#0b0d11;color:#d6dae2;border:1px solid #2b313d;
+  border-radius:5px;padding:7px;font-family:"JetBrains Mono",monospace;font-size:12px}
+
+/* test list */
+.tlist{display:flex;flex-direction:column;gap:1px}
+.trow{display:grid;grid-template-columns:auto 1fr auto auto;gap:10px;align-items:center;padding:4px 7px;border-radius:4px}
+.trow:hover{background:#1a1d24}
+.trow .nm{color:#6f8199;font-weight:700;font-size:11px;min-width:34px}
+.trow .ag{color:#a9b0bd;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11.5px}
+.trow .ex{color:#5ecb82;font-weight:700;font-variant-numeric:tabular-nums}
+.trow .go{background:none;border:0;color:#5ba3ef;cursor:pointer;font-size:12px;padding:1px 5px;border-radius:3px}
+.trow .go:hover{background:#26303d}
+.tcustom{margin:0 0 10px;padding:9px;background:#1a1d24;border-radius:6px;border:1px solid #2b313d}
+.tcustom summary{cursor:pointer;color:#a9b0bd;font-size:11.5px;font-weight:700;list-style:none}
+.tcustom summary::-webkit-details-marker{display:none}
+.tcustom summary::before{content:"\25b8 ";color:#5ba3ef}
+.tcustom[open] summary::before{content:"\25be "}
+.tcustom textarea{width:100%;height:110px;margin-top:8px;resize:vertical;background:#0b0d11;color:#c3c7d1;
+  border:1px solid #2b313d;border-radius:5px;padding:7px;font-family:"JetBrains Mono",monospace;font-size:11px}
+.tcustom .row{display:flex;gap:6px;margin-top:7px;align-items:center;flex-wrap:wrap}
+.tcustom .tbtn{background:#1c2029;border-color:#2b313d;color:#c9cfda}
+.tcustom .tbtn:hover{background:#262c37}
+.tcustom code{color:#cf8e6d;font-size:10.5px}
+.tcustom .msg{font-size:11px}
+.tcustom .msg.bad{color:#f0645a}.tcustom .msg.good{color:#5ecb82}
+.badge{font-size:10px;font-weight:700;padding:1px 6px;border-radius:99px;background:#2f4a6b;color:#a9c6e8}
+
+/* sketch */
+.sktools{display:flex;align-items:center;gap:5px}
+.swatch{width:20px;height:20px;border-radius:50%;cursor:pointer;border:2px solid transparent;padding:0}
+.swatch[aria-pressed="true"]{border-color:#e8eaf0;box-shadow:0 0 0 1px #111317}
+.skwrap{position:relative;flex:1;background:#0b0d11}
+.skwrap canvas{display:block;width:100%;height:100%;touch-action:none;cursor:crosshair}
+.skwrap.panning canvas{cursor:grab}
+.skhint{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);font-size:10.5px;color:#6f7c8f;
+  background:rgba(11,13,17,.9);padding:3px 9px;border-radius:99px;pointer-events:none;white-space:nowrap}
+.skhint b{color:#a9b0bd}
+
+.modal{position:fixed;inset:0;z-index:90;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(8,11,16,.72)}
+.modal[data-open="1"]{display:flex}
+.sheet2{background:var(--card);color:var(--ink);border-radius:12px;max-width:560px;width:100%;padding:22px 24px;
+  box-shadow:0 10px 40px rgba(0,0,0,.35);direction:rtl;max-height:86vh;overflow-y:auto}
+.sheet2 h3{font-family:"Frank Ruhl Libre",serif;font-size:19px;margin:0 0 8px}
+.sheet2 p{margin:8px 0;font-size:13.5px;color:var(--ink-soft)}
+.sheet2 .acts{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap}
+.tally{display:grid;grid-template-columns:auto 1fr auto;gap:6px 12px;margin:14px 0;font-size:13px;align-items:center}
+.tally .nm{font-weight:700}
+.tally .bar{height:6px;border-radius:3px;background:var(--rule-soft);overflow:hidden}
+.tally .bar i{display:block;height:100%;background:var(--ok)}
+.tally .sc{font-family:"JetBrains Mono",monospace;font-variant-numeric:tabular-nums;font-size:12px}
+textarea.paste{width:100%;height:130px;font-family:"JetBrains Mono",monospace;font-size:11px;border:1px solid var(--rule);
+  border-radius:6px;padding:8px;background:var(--paper);color:var(--ink);direction:ltr}
+
+/* ---- resizable panes ---- */
+.vresizer{cursor:col-resize;background:var(--rule);position:relative;touch-action:none}
+.vresizer:hover,.vresizer.active{background:var(--accent)}
+.vresizer::after{content:"";position:absolute;top:0;bottom:0;left:-4px;right:-4px}
+.hresizer{height:6px;flex-shrink:0;cursor:row-resize;background:var(--ide-edge);touch-action:none}
+.hresizer:hover,.hresizer.active{background:var(--accent)}
+.console{flex-shrink:0;height:36%;min-height:170px;max-height:calc(100% - 160px);display:flex;flex-direction:column;
+  background:var(--term-bg);border-top:1px solid var(--ide-edge)}
+
+/* ---- toolbar: line-length readout + font zoom ---- */
+.linelen{font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--ink-faint);
+  padding:2px 7px;border-radius:4px;background:var(--rule-soft);font-variant-numeric:tabular-nums}
+.linelen.over{color:#fff;background:var(--bad)}
+.fsize{display:flex;gap:4px;margin-inline-start:auto}
+.toolbar .fsize{margin-inline-start:0}
+.gcc{margin-left:0}
+
+/* ---- 80-char print margin ---- */
+.ruler50{position:absolute;top:0;bottom:0;left:calc(14px + 80ch);width:1px;
+  background:var(--bad);opacity:.28;pointer-events:none;
+  font-family:"JetBrains Mono",monospace;font-size:var(--ide-fs,13px)}
+
+/* ---- simple word-autocomplete popup ---- */
+.ac-pop{position:absolute;z-index:20;min-width:120px;max-width:260px;
+  background:var(--ide-chrome);border:1px solid var(--ide-edge);border-radius:6px;
+  box-shadow:0 6px 20px rgba(0,0,0,.25);overflow:hidden;font-family:"JetBrains Mono",monospace;font-size:12.5px}
+.ac-item{padding:5px 10px;cursor:pointer;color:var(--ink)}
+.ac-item.sel,.ac-item:hover{background:var(--accent);color:#fff}
+
+/* ---- paper: font-size control bar ---- */
+.papertools{position:sticky;top:0;z-index:6;display:flex;gap:8px;align-items:center;justify-content:flex-start;
+  padding:6px 20px;background:var(--card);border-bottom:1px solid var(--rule);direction:rtl}
+.papertools .fsizeLabel{font-size:11.5px;color:var(--ink-faint);letter-spacing:.03em}
+
+/* ---- extra-time select ---- */
+.extratime{direction:rtl;text-align:right;font:inherit;font-size:12px;font-family:"Assistant",sans-serif;
+  padding:5px 8px;border-radius:6px;border:1px solid var(--rule);background:var(--card);color:var(--ink-soft);cursor:pointer}
+
+/* ---- RTL fix: Hebrew count phrases inside the (LTR) IDE pane must not
+   get their two halves reordered by the bidi algorithm. Isolate them. ---- */
+.summary, .q1score, .sentrow .lbl{direction:rtl;text-align:right;unicode-bidi:isolate}
+.summary bdi, pre.raw bdi{unicode-bidi:isolate;font-variant-numeric:tabular-nums}
+
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+
+<div class="bar">
+  <div class="brand">
+    <b>מבוא למדעי המחשב מ׳/ח׳ — 234114</b>
+    <span>Round 15 · Moed Bet · Spring 5787 · practice</span>
+  </div>
+  <div class="pills" id="pills"></div>
+  <div class="clock off" id="clock">3:00:00</div>
+  <select class="extratime" id="extraTime" title="זמן נוסף (התאמות)">
+    <option value="0">ללא זמן נוסף</option>
+    <option value="10">+10 דק'</option>
+    <option value="15">+15 דק'</option>
+    <option value="20">+20 דק'</option>
+    <option value="25">+25 דק'</option>
+    <option value="30">+30 דק'</option>
+    <option value="45">+45 דק'</option>
+    <option value="60">+60 דק'</option>
+    <option value="90">+90 דק'</option>
+  </select>
+  <button class="btn" id="startBtn">התחל מבחן</button>
+  <button class="btn primary" id="submitBtn">סיום והגשה</button>
+  <div class="swap">
+    <button class="btn" id="swPaper" aria-pressed="true">שאלון</button>
+    <button class="btn" id="swIde" aria-pressed="false">עורך</button>
+  </div>
+</div>
+
+<div class="split">
+  <div class="pane ide" id="paneIde">
+    <div class="tabs" role="tablist">
+      <button class="tab" role="tab" data-q="q2" aria-selected="true"><span class="dot" id="dot-q2"></span>examT_q2.c</button>
+      <button class="tab" role="tab" data-q="q3" aria-selected="false"><span class="dot" id="dot-q3"></span>examT_q3.c</button>
+      <button class="tab" role="tab" data-q="q4" aria-selected="false"><span class="dot" id="dot-q4"></span>examT_q4.c</button>
+    </div>
+    <div class="toolbar">
+      <button class="tbtn run" id="runBtn">▶ Run</button>
+      <button class="tbtn" id="testBtn">בדוק מול המקרים</button>
+      <button class="tbtn" id="resetBtn">אפס קובץ</button>
+      <button class="tbtn" id="dlBtn">שמור .c</button>
+      <span class="gcc" id="gccLabel">gcc 13.2 · -std=c99</span>
+      <span class="linelen" id="lineLen" title="אורך השורה הנוכחית">0/80</span>
+      <span class="fsize" title="גודל גופן בעורך">
+        <button class="iconbtn" id="codeFsMinus" title="הקטן גופן">A-</button>
+        <button class="iconbtn" id="codeFsPlus" title="הגדל גופן">A+</button>
+      </span>
+    </div>
+    <div class="edwrap">
+      <div class="gutter" id="gutter">1</div>
+      <div class="edbox" id="edbox">
+        <div class="ruler50" id="ruler50" aria-hidden="true"></div>
+        <pre id="hl" aria-hidden="true"></pre>
+        <textarea id="ed" spellcheck="false" autocapitalize="off" autocorrect="off" aria-label="עורך קוד C"></textarea>
+        <div class="ac-pop" id="acPop" hidden></div>
+      </div>
+    </div>
+    <div class="hresizer" id="hResizer" title="גרור לשינוי גובה המסוף"></div>
+    <div class="console" id="console">
+      <div class="chead">
+        <button class="ctab" id="tabOut"    aria-selected="true">Output</button>
+        <button class="ctab" id="tabTests"  aria-selected="false">Tests</button>
+        <button class="ctab" id="tabCases"  aria-selected="false">Test cases</button>
+        <button class="ctab" id="tabSketch" aria-selected="false">Scratch</button>
+        <span class="grow"></span>
+        <span class="sum" id="chsum"></span>
+        <span class="sktools" id="sktools" hidden>
+          <button class="swatch" id="cBlue"  style="background:#5ba3ef" aria-pressed="true"  title="כחול"></button>
+          <button class="swatch" id="cWhite" style="background:#eef1f6" aria-pressed="false" title="לבן"></button>
+          <button class="iconbtn" id="skErase" aria-pressed="false">מחק</button>
+          <button class="iconbtn" id="skUndo">↶</button>
+          <button class="iconbtn" id="skHome">⌖</button>
+          <button class="iconbtn" id="skClear">נקה</button>
+        </span>
+        <button class="iconbtn" id="expandBtn" title="הגדל / הקטן">⤢</button>
+      </div>
+      <div class="cwrap" id="wrapOut">
+        <pre class="raw" id="rawOut">לחץ ▶ Run כדי להדר ולהריץ את הקובץ. אם התוכנית תבקש קלט, תוכל להקליד אותו כאן למטה.</pre>
+        <div class="sentrow" id="sentRow" hidden>
+          <span class="lbl">נשלח ל-stdin</span>
+          <span class="sentlist" id="sentList"></span>
+          <button class="iconbtn" id="clearStdin">התחל קלט מחדש</button>
+        </div>
+        <div class="promptrow" id="promptRow" hidden>
+          <span class="caret">&gt;</span>
+          <input id="stdinLine" spellcheck="false" autocomplete="off" placeholder="הקלד שורת קלט ולחץ Enter">
+        </div>
+      </div>
+      <div class="cwrap" id="wrapTests" hidden><div class="cbody" id="out"><div class="empty">לחץ "בדוק מול המקרים" כדי להריץ את הפונקציה מול כל מקרי הבדיקה.</div></div></div>
+      <div class="cwrap" id="wrapCases" hidden><div class="cbody" id="cases"></div></div>
+      <div class="skwrap" id="skwrap" hidden>
+        <canvas id="sk"></canvas>
+        <div class="skhint">גרור = ציור · גלגל = זום · רווח/אמצעי = הזזה · <b>Ctrl+Z</b> = בטל</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="vresizer" id="vResizer" title="גרור לשינוי הרוחב"></div>
+  <div class="pane paper" id="panePaper">
+    <div class="papertools">
+      <button class="iconbtn" id="paperFsMinus" title="הקטן טקסט">A-</button>
+      <span class="fsizeLabel">גודל טקסט</span>
+      <button class="iconbtn" id="paperFsPlus" title="הגדל טקסט">A+</button>
+    </div>
+<div class="sheet">
+  <header class="exam-head"><div><h1>תרגול מבחן 015</h1><p>מבוא למדעי המחשב — מועד ב׳</p></div>
+    <div class="exam-meta">זמן מומלץ: 3 שעות · שפת C</div></header>
+  <p class="note">ענו על כל השאלות. שמרו על חתימות הפונקציות הנתונות.</p>
+  <section class="question">
+    <h2>שאלה 1 — ניתוח סיבוכיות</h2>
+    <p>לכל קטע קוד בחרו את סיבוכיות הזמן והמקום ההדוקות ביותר.</p>
+    <h3>א</h3>
+    <pre class="snip">void layers015_a(int n) {
+    for (int i = 1; i &lt; n; i *= 2)
+        for (int j = 0; j &lt; n / i; j++)
+            putchar('.');
+}</pre>
+    <h3>ב</h3>
+    <pre class="snip">void shrink015_b(int n) {
+    for (int left = n; left &gt; 0; left--)
+        for (int j = 0; j &lt; left; j++)
+            putchar('.');
+}</pre>
+    <h3>ג</h3>
+    <pre class="snip">void countdown015_c(int n) {
+    if (n &lt;= 0) return;
+    countdown015_c(n - 1);
+}</pre>
+    <div class="q1grid" id="q1grid"></div>
+  </section>
+<section class="question">
+    <h2>שאלה 2 — שיא במערך הררי</h2>
+    <p>המערך עולה ממש ולאחר מכן יורד ממש, והשיא אינו בקצה. החזירו את אינדקס השיא היחיד.</p>
+    <div class="sig">int examT_q2(int arr[], int n);</div>
+    <p><strong>דוגמה:</strong> עבור <code>{1,3,7,9,6,2}</code> מוחזר <code>3</code>.</p>
+    <p class="req">דרישות: זמן Θ(log n), מקום נוסף Θ(1).</p>
+  </section>
+<section class="question">
+    <h2>שאלה 3 — הסרת כל המופעים של תו, במקום</h2>
+    <p>מחקו במקום את כל המופעים של התו <code>c</code> מתוך <code>s</code> (שני סמנים: קריאה וכתיבה), הזיזו את שאר התווים שמאלה, והחזירו את האורך החדש.</p>
+    <div class="sig">int examT_q3(char *s, char c);</div>
+    <p><strong>דוגמה:</strong> <code>s="banana"</code>, <code>c='a'</code> — <code>s</code> הופכת ל־<code>"bnn"</code>, ומוחזר <code>3</code>.</p>
+    <p class="req">דרישות: שינוי במקום (המחרוזת חייבת להתקצר בפועל), זמן Θ(n), מקום נוסף Θ(1).</p>
+  </section>
+<section class="question">
+    <h2>שאלה 4 — ספירת ערכים שונים ללא מיון ומערך עזר</h2>
+    <p>ספרו כמה ערכים שונים מופיעים במערך, בעזרת רקורסיה בלבד — ללא לולאות, ללא מיון וללא מערך עזר. <code>examT_q4</code> עצמה חייבת לרוץ רקורסיבית; השתמשו בעזר רקורסיבי <code>contains(arr,n,x)</code> הבודק האם ערך מופיע שוב בהמשך המערך (ערך נספר בהופעתו האחרונה בסריקה משמאל לימין).</p>
+    <div class="sig">int examT_q4(int *arr, int n);</div>
+    <p><strong>דוגמה:</strong> עבור <code>{1,2,1,3}</code> מוחזר <code>3</code>.</p>
+    <p class="req">הפונקציה עצמה ועזר ה־contains חייבים להיות רקורסיביים; אין לולאות, אין מיון, אין מערך נוסף.</p>
+  </section>
+  <section class="question instructions"><h2>הנחיות הגשה</h2>
+    <p>ניתן להוסיף משתנים מקומיים בלבד. אין לשנות את שמות הפונקציות או את הפרמטרים.</p></section>
+</div>
+
+  </div>
+</div>
+
+<div class="modal" id="modal">
+  <div class="sheet2">
+    <h3 id="mTitle"></h3>
+    <div id="mBody"></div>
+    <div class="acts" id="mActs"></div>
+  </div>
+</div>
+
+<script id="exam-tests" type="application/json">{
+  "version": 2,
+  "questions": {
+    "q2": {
+      "driver": "int_array_n",
+      "mutation": "forbidden",
+      "cases": [
+        {
+          "name": "t01",
+          "args": {
+            "arr": [
+              1,
+              3,
+              7,
+              9,
+              6,
+              2
+            ],
+            "n": 6
+          },
+          "expect": "3"
+        },
+        {
+          "name": "t02",
+          "args": {
+            "arr": [
+              1,
+              3,
+              2
+            ],
+            "n": 3
+          },
+          "expect": "1"
+        },
+        {
+          "name": "t03",
+          "args": {
+            "arr": [
+              0,
+              10,
+              5
+            ],
+            "n": 3
+          },
+          "expect": "1"
+        },
+        {
+          "name": "t04",
+          "args": {
+            "arr": [
+              -5,
+              -2,
+              -1,
+              -3
+            ],
+            "n": 4
+          },
+          "expect": "2"
+        },
+        {
+          "name": "t05",
+          "args": {
+            "arr": [
+              1,
+              2,
+              3,
+              4,
+              0
+            ],
+            "n": 5
+          },
+          "expect": "3"
+        },
+        {
+          "name": "t06",
+          "args": {
+            "arr": [
+              0,
+              5,
+              4,
+              3,
+              2,
+              1
+            ],
+            "n": 6
+          },
+          "expect": "1"
+        },
+        {
+          "name": "t07",
+          "args": {
+            "arr": [
+              2,
+              4,
+              8,
+              16,
+              9,
+              3
+            ],
+            "n": 6
+          },
+          "expect": "3"
+        },
+        {
+          "name": "t08",
+          "args": {
+            "arr": [
+              1,
+              100,
+              50
+            ],
+            "n": 3
+          },
+          "expect": "1"
+        },
+        {
+          "name": "t09",
+          "args": {
+            "arr": [
+              -10,
+              -5,
+              0,
+              5,
+              1
+            ],
+            "n": 5
+          },
+          "expect": "3"
+        },
+        {
+          "name": "t10",
+          "args": {
+            "arr": [
+              3,
+              6,
+              9,
+              12,
+              15,
+              14
+            ],
+            "n": 6
+          },
+          "expect": "4"
+        },
+        {
+          "name": "t11",
+          "args": {
+            "arr": [
+              1,
+              2,
+              10,
+              9,
+              8,
+              7,
+              6
+            ],
+            "n": 7
+          },
+          "expect": "2"
+        },
+        {
+          "name": "t12",
+          "args": {
+            "arr": [
+              5,
+              9,
+              8
+            ],
+            "n": 3
+          },
+          "expect": "1"
+        },
+        {
+          "name": "t13",
+          "args": {
+            "arr": [
+              1,
+              4,
+              7,
+              11,
+              10,
+              2
+            ],
+            "n": 6
+          },
+          "expect": "3"
+        },
+        {
+          "name": "t14",
+          "args": {
+            "arr": [
+              -4,
+              -3,
+              -2,
+              -1,
+              -5
+            ],
+            "n": 5
+          },
+          "expect": "3"
+        }
+      ]
+    },
+    "q3": {
+      "driver": "string_char",
+      "mutation": "allowed",
+      "cases": [
+        {
+          "name": "t01_worked",
+          "args": {
+            "s": "banana",
+            "value": "a"
+          },
+          "expect": "3"
+        },
+        {
+          "name": "t02_none_present",
+          "args": {
+            "s": "hello",
+            "value": "z"
+          },
+          "expect": "5"
+        },
+        {
+          "name": "t03_all_same",
+          "args": {
+            "s": "aaaa",
+            "value": "a"
+          },
+          "expect": "0"
+        },
+        {
+          "name": "t04_first_char",
+          "args": {
+            "s": "abcabc",
+            "value": "a"
+          },
+          "expect": "4"
+        },
+        {
+          "name": "t05_last_char",
+          "args": {
+            "s": "abcabc",
+            "value": "c"
+          },
+          "expect": "4"
+        },
+        {
+          "name": "t06_single_char_removed",
+          "args": {
+            "s": "x",
+            "value": "x"
+          },
+          "expect": "0"
+        },
+        {
+          "name": "t07_single_char_kept",
+          "args": {
+            "s": "x",
+            "value": "y"
+          },
+          "expect": "1"
+        },
+        {
+          "name": "t08_alternating",
+          "args": {
+            "s": "ababab",
+            "value": "b"
+          },
+          "expect": "3"
+        },
+        {
+          "name": "t09_long",
+          "args": {
+            "s": "mississippi",
+            "value": "s"
+          },
+          "expect": "7"
+        },
+        {
+          "name": "t10_long2",
+          "args": {
+            "s": "mississippi",
+            "value": "i"
+          },
+          "expect": "7"
+        },
+        {
+          "name": "t11_underscore",
+          "args": {
+            "s": "a_b_c_d",
+            "value": "_"
+          },
+          "expect": "4"
+        },
+        {
+          "name": "t12_random",
+          "args": {
+            "s": "dadbab",
+            "value": "a"
+          },
+          "expect": "4"
+        },
+        {
+          "name": "t13_random",
+          "args": {
+            "s": "bbbaabbededbea",
+            "value": "a"
+          },
+          "expect": "11"
+        },
+        {
+          "name": "t14_random",
+          "args": {
+            "s": "dcbbcd",
+            "value": "c"
+          },
+          "expect": "4"
+        }
+      ]
+    },
+    "q4": {
+      "driver": "int_array_n",
+      "mutation": "forbidden",
+      "cases": [
+        {
+          "name": "t01_worked",
+          "args": {
+            "arr": [
+              1,
+              2,
+              1,
+              3
+            ],
+            "n": 4
+          },
+          "expect": "3"
+        },
+        {
+          "name": "t02_empty",
+          "args": {
+            "arr": [],
+            "n": 0
+          },
+          "expect": "0"
+        },
+        {
+          "name": "t03_one",
+          "args": {
+            "arr": [
+              9
+            ],
+            "n": 1
+          },
+          "expect": "1"
+        },
+        {
+          "name": "t04_all_same",
+          "args": {
+            "arr": [
+              4,
+              4,
+              4,
+              4
+            ],
+            "n": 4
+          },
+          "expect": "1"
+        },
+        {
+          "name": "t05_all_distinct",
+          "args": {
+            "arr": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "n": 5
+          },
+          "expect": "5"
+        },
+        {
+          "name": "t06_negatives",
+          "args": {
+            "arr": [
+              -1,
+              -1,
+              2,
+              3,
+              -1
+            ],
+            "n": 5
+          },
+          "expect": "3"
+        },
+        {
+          "name": "t07_pairs",
+          "args": {
+            "arr": [
+              1,
+              1,
+              2,
+              2,
+              3,
+              3
+            ],
+            "n": 6
+          },
+          "expect": "3"
+        },
+        {
+          "name": "t8_random",
+          "args": {
+            "arr": [
+              1,
+              -5,
+              4,
+              4
+            ],
+            "n": 4
+          },
+          "expect": "3"
+        },
+        {
+          "name": "t9_random",
+          "args": {
+            "arr": [
+              5,
+              3,
+              -3,
+              4,
+              3,
+              -5
+            ],
+            "n": 6
+          },
+          "expect": "5"
+        },
+        {
+          "name": "t10_random",
+          "args": {
+            "arr": [
+              -4,
+              0,
+              5
+            ],
+            "n": 3
+          },
+          "expect": "3"
+        },
+        {
+          "name": "t11_random",
+          "args": {
+            "arr": [
+              -5,
+              -3,
+              3
+            ],
+            "n": 3
+          },
+          "expect": "3"
+        },
+        {
+          "name": "t12_random",
+          "args": {
+            "arr": [
+              3,
+              0,
+              -4,
+              1,
+              2,
+              0,
+              -3
+            ],
+            "n": 7
+          },
+          "expect": "6"
+        },
+        {
+          "name": "t13_random",
+          "args": {
+            "arr": [
+              2,
+              -4,
+              2,
+              3,
+              4,
+              -4,
+              1,
+              -2,
+              0,
+              3
+            ],
+            "n": 10
+          },
+          "expect": "7"
+        }
+      ]
+    }
+  }
+}
+</script>
+<script>
+"use strict";
+"use strict";
+const ExamDrivers = (() => {
+  const IDS = ["q2", "q3", "q4"];
+  const LEGACY = {
+    q2: {driver:"int_array_n_int", mutation:"allowed"},
+    q3: {driver:"string_int", mutation:"forbidden"},
+    q4: {driver:"int_array_n_int", mutation:"allowed"}
+  };
+  const DRIVER_IDS = new Set([
+    "int_array_n_int",
+    "int_array_n",
+    "sentinel_int_array_int",
+    "matrix_rows_int",
+    "string_only",
+    "string_int",
+    "string_char",
+    "two_strings",
+    "int_only",
+    "two_ints",
+    "two_int_arrays"
+  ]);
+  const MUTATION_POLICIES = new Set(["allowed", "forbidden"]);
+
+  function isObject(value) {
+    return value !== null && typeof value === "object" && !Array.isArray(value);
+  }
+
+  function copy(value) {
+    if (Array.isArray(value)) return value.map(copy);
+    if (isObject(value)) {
+      const result = {};
+      for (const key of Object.keys(value)) result[key] = copy(value[key]);
+      return result;
+    }
+    return value;
+  }
+
+  function invalid(question, message, caseName) {
+    const suffix = caseName === undefined ? "" : ` case ${String(caseName || "<unknown>")}`;
+    throw new Error(`Invalid manifest ${question}${suffix}: ${message}`);
+  }
+
+  function rejectExtraQuestions(questions) {
+    for (const key of Object.keys(questions)) {
+      if (!IDS.includes(key)) throw new Error(`Invalid manifest: unexpected question ${key}`);
+    }
+  }
+
+  function rejectUnexpectedKeys(scope, value, allowed) {
+    const allowedKeys = new Set(allowed);
+    for (const key of Object.keys(value)) {
+      if (!allowedKeys.has(key)) throw new Error(`Invalid manifest ${scope}: unexpected key ${key}`);
+    }
+  }
+
+  function normalizeQuestion(question, source, options) {
+    if (!isObject(source)) invalid(question, "question definition must be an object");
+    rejectUnexpectedKeys(`question ${question}`, source, ["driver", "mutation", "cases"]);
+    if (typeof source.mutation !== "string" || !MUTATION_POLICIES.has(source.mutation)) {
+      invalid(question, `unrecognized mutation policy ${String(source.mutation)}`);
+    }
+    if (typeof source.driver !== "string" || !DRIVER_IDS.has(source.driver)) {
+      invalid(question, `unrecognized driver ${String(source.driver)}`);
+    }
+    if (!Array.isArray(source.cases)) invalid(question, "cases must be an array");
+    if (options.requireMinimum && source.cases.length < 12) {
+      invalid(question, `at least 12 cases are required (got ${source.cases.length})`);
+    }
+
+    const names = new Set();
+    const cases = source.cases.map((item) => {
+      if (!isObject(item)) invalid(question, "case must be an object");
+      rejectUnexpectedKeys(`${question} case`, item, ["name", "args", "expect"]);
+      const caseName = item.name;
+      if (typeof caseName !== "string" || caseName.trim().length === 0) {
+        invalid(question, "case name must be a nonempty string", caseName);
+      }
+      if (names.has(caseName)) invalid(question, "case name must be unique", caseName);
+      names.add(caseName);
+      if (!isObject(item.args)) invalid(question, "args must be an object", caseName);
+      if (typeof item.expect !== "string" || !/^-?\d+$/.test(item.expect)) {
+        invalid(question, "expect must be a decimal string", caseName);
+      }
+      return copy(item);
+    });
+    return {driver:source.driver, mutation:source.mutation, cases};
+  }
+
+  function canonicalizeLegacyCases(question, cases) {
+    const alias = question === "q2" ? "x" : "k";
+    if (!Array.isArray(cases)) return cases;
+    return cases.map((item) => {
+      const result = copy(item);
+      if (isObject(result) && isObject(result.args) && !Object.prototype.hasOwnProperty.call(result.args, "value") && Object.prototype.hasOwnProperty.call(result.args, alias)) {
+        result.args.value = result.args[alias];
+        delete result.args[alias];
+      }
+      return result;
+    });
+  }
+
+  function normalizeManifest(raw, options = {}) {
+    if (!isObject(raw)) throw new Error("Invalid manifest: manifest must be an object");
+    const hasVersion = Object.prototype.hasOwnProperty.call(raw, "version");
+    let questions;
+    if (hasVersion) {
+      rejectUnexpectedKeys("top-level", raw, ["version", "questions"]);
+      if (raw.version !== 2) throw new Error(`Invalid manifest version ${String(raw.version)}`);
+      if (!isObject(raw.questions)) throw new Error("Invalid manifest: questions must be an object");
+      questions = raw.questions;
+    } else {
+      questions = raw;
+    }
+    rejectExtraQuestions(questions);
+
+    const normalizedQuestions = {};
+    for (const id of IDS) {
+      if (!Object.prototype.hasOwnProperty.call(questions, id)) {
+        throw new Error(`Invalid manifest: missing question ${id}`);
+      }
+      const source = hasVersion ? questions[id] : {...LEGACY[id], cases:canonicalizeLegacyCases(id, questions[id])};
+      normalizedQuestions[id] = normalizeQuestion(id, source, options);
+    }
+    return {version:2, questions:normalizedQuestions};
+  }
+
+  const INT_MIN = -2147483648;
+  const INT_MAX = 2147483647;
+  const ARGUMENT_KEYS = {
+    int_array_n_int: ["arr", "n", "value"],
+    int_array_n: ["arr", "n"],
+    sentinel_int_array_int: ["arr", "value"],
+    matrix_rows_int: ["mat", "m", "cols", "value"],
+    string_only: ["s"],
+    string_int: ["s", "value"],
+    string_char: ["s", "value"],
+    two_strings: ["a", "b"],
+    int_only: ["value"],
+    two_ints: ["first", "second"],
+    two_int_arrays: ["a", "na", "b", "nb"]
+  };
+
+  function argumentError(driver, message) {
+    throw new Error(`Invalid arguments for ${driver}: ${message}`);
+  }
+
+  function requireArgumentObject(driver, args) {
+    if (!isObject(args)) argumentError(driver, "arguments must be an object");
+    const keys = ARGUMENT_KEYS[driver];
+    if (!keys) argumentError(driver, "unrecognized driver");
+    for (const key of keys) {
+      if (!Object.prototype.hasOwnProperty.call(args, key)) {
+        argumentError(driver, `missing argument ${key}`);
+      }
+    }
+    const allowed = new Set(keys);
+    for (const key of Object.keys(args)) {
+      if (!allowed.has(key)) argumentError(driver, `unexpected argument ${key}`);
+    }
+    return keys;
+  }
+
+  function validateInteger(driver, value, name) {
+    if (!Number.isSafeInteger(value) || value < INT_MIN || value > INT_MAX) {
+      argumentError(driver, `${name} must be a signed 32-bit integer`);
+    }
+    return value;
+  }
+
+  function validateString(driver, value, name) {
+    if (typeof value !== "string") argumentError(driver, `${name} must be a string`);
+    if (value.includes("\0")) argumentError(driver, `${name} must not contain NUL`);
+    return value;
+  }
+
+  function validateChar(driver, value, name) {
+    validateString(driver, value, name);
+    if (utf8Bytes(value).length !== 1) {
+      argumentError(driver, `${name} must be a single character encoded as a single-byte value`);
+    }
+    return value;
+  }
+
+  function validateIntegerArray(driver, value, name, options = {}) {
+    if (!Array.isArray(value)) argumentError(driver, `${name} must be an array`);
+    const result = value.map((item, index) => {
+      const number = validateInteger(driver, item, `${name}[${index}]`);
+      if (options.rejectSentinel && number === INT_MIN) {
+        argumentError(driver, `${name}[${index}] must not be INT_MIN`);
+      }
+      return number;
+    });
+    return result;
+  }
+
+  function validateArgs(driver, args) {
+    requireArgumentObject(driver, args);
+    const result = {};
+    if (driver === "int_array_n_int") {
+      result.arr = validateIntegerArray(driver, args.arr, "arr");
+      result.n = validateInteger(driver, args.n, "n");
+      if (result.n !== result.arr.length) argumentError(driver, "n must match arr length");
+      result.value = validateInteger(driver, args.value, "value");
+    } else if (driver === "int_array_n") {
+      result.arr = validateIntegerArray(driver, args.arr, "arr");
+      result.n = validateInteger(driver, args.n, "n");
+      if (result.n !== result.arr.length) argumentError(driver, "n must match arr length");
+    } else if (driver === "sentinel_int_array_int") {
+      result.arr = validateIntegerArray(driver, args.arr, "arr", {rejectSentinel:true});
+      result.value = validateInteger(driver, args.value, "value");
+      if (result.value === INT_MIN) argumentError(driver, "value must not be INT_MIN");
+    } else if (driver === "matrix_rows_int") {
+      if (!Array.isArray(args.mat)) argumentError(driver, "mat must be an array of rows");
+      result.mat = args.mat.map((row, rowIndex) => {
+        if (!Array.isArray(row)) argumentError(driver, `mat row ${rowIndex} must be an array`);
+        return validateIntegerArray(driver, row, `mat[${rowIndex}]`);
+      });
+      result.m = validateInteger(driver, args.m, "m");
+      result.cols = validateInteger(driver, args.cols, "cols");
+      if (result.m !== result.mat.length) argumentError(driver, "m must match matrix rows");
+      if (result.m < 1) argumentError(driver, "m must be positive");
+      const actualCols = result.mat[0].length;
+      if (actualCols < 1) argumentError(driver, "matrix must have at least one column");
+      if (!result.mat.every((row) => row.length === actualCols)) {
+        argumentError(driver, "matrix must be rectangular");
+      }
+      if (result.cols !== actualCols) argumentError(driver, "cols must match matrix columns");
+      result.value = validateInteger(driver, args.value, "value");
+    } else if (driver === "string_only") {
+      result.s = validateString(driver, args.s, "s");
+    } else if (driver === "string_int") {
+      result.s = validateString(driver, args.s, "s");
+      result.value = validateInteger(driver, args.value, "value");
+    } else if (driver === "string_char") {
+      result.s = validateString(driver, args.s, "s");
+      result.value = validateChar(driver, args.value, "value");
+    } else if (driver === "two_strings") {
+      result.a = validateString(driver, args.a, "a");
+      result.b = validateString(driver, args.b, "b");
+    } else if (driver === "int_only") {
+      result.value = validateInteger(driver, args.value, "value");
+    } else if (driver === "two_ints") {
+      result.first = validateInteger(driver, args.first, "first");
+      result.second = validateInteger(driver, args.second, "second");
+    } else if (driver === "two_int_arrays") {
+      result.a = validateIntegerArray(driver, args.a, "a");
+      result.na = validateInteger(driver, args.na, "na");
+      result.b = validateIntegerArray(driver, args.b, "b");
+      result.nb = validateInteger(driver, args.nb, "nb");
+      if (result.na !== result.a.length) argumentError(driver, "na must match a length");
+      if (result.nb !== result.b.length) argumentError(driver, "nb must match b length");
+    }
+    return copy(result);
+  }
+
+  function utf8Bytes(value) {
+    const bytes = [];
+    for (let index = 0; index < value.length; index++) {
+      let codePoint = value.codePointAt(index);
+      if (codePoint > 0xffff) index++;
+      if (codePoint >= 0xd800 && codePoint <= 0xdfff) codePoint = 0xfffd;
+      if (codePoint <= 0x7f) bytes.push(codePoint);
+      else if (codePoint <= 0x7ff) bytes.push(0xc0 | (codePoint >> 6), 0x80 | (codePoint & 0x3f));
+      else if (codePoint <= 0xffff) bytes.push(0xe0 | (codePoint >> 12), 0x80 | ((codePoint >> 6) & 0x3f), 0x80 | (codePoint & 0x3f));
+      else bytes.push(0xf0 | (codePoint >> 18), 0x80 | ((codePoint >> 12) & 0x3f), 0x80 | ((codePoint >> 6) & 0x3f), 0x80 | (codePoint & 0x3f));
+    }
+    return bytes;
+  }
+
+  function escapedByte(byte, quote) {
+    if (byte === 0x5c) return "\\\\";
+    if (byte === quote) return `\\${String.fromCharCode(byte)}`;
+    if (byte === 0x0a) return "\\n";
+    if (byte === 0x0d) return "\\r";
+    if (byte === 0x09) return "\\t";
+    if (byte === 0x08) return "\\b";
+    if (byte === 0x0c) return "\\f";
+    if (byte >= 0x20 && byte <= 0x7e) return String.fromCharCode(byte);
+    return `\\${byte.toString(8).padStart(3, "0")}`;
+  }
+
+  function cString(value) {
+    if (typeof value !== "string") throw new TypeError("cString expects a string");
+    return `"${utf8Bytes(value).map((byte) => escapedByte(byte, 0x22)).join("")}"`;
+  }
+
+  function cChar(value) {
+    if (typeof value !== "string" || Array.from(value).length !== 1) {
+      throw new TypeError("cChar expects a single character");
+    }
+    const bytes = utf8Bytes(value);
+    if (bytes.length !== 1) throw new TypeError("cChar expects a single-byte character");
+    return `'${bytes.map((byte) => escapedByte(byte, 0x27)).join("")}'`;
+  }
+
+  function preview(value, limit = 8) {
+    if (Array.isArray(value)) {
+      const items = value.slice(0, limit).map((item) => Array.isArray(item) ? preview(item, limit) : String(item));
+      if (value.length > limit) items.push("...");
+      return `[${items.join(", ")}]`;
+    }
+    return String(value);
+  }
+
+  function stringPreview(value, limit = 64) {
+    const chars = Array.from(value);
+    const clipped = chars.length > limit ? `${chars.slice(0, limit).join("")}...` : value;
+    return cString(clipped);
+  }
+
+  function formatArgs(driver, args) {
+    const validated = validateArgs(driver, args);
+    return ARGUMENT_KEYS[driver].map((key) => {
+      const value = validated[key];
+      if (typeof value === "string") {
+        const literal = driver === "string_char" && key === "value" ? cChar(value) : stringPreview(value);
+        return `${key}=${literal} (len=${Array.from(value).length})`;
+      }
+      if (Array.isArray(value)) return `${key}=${preview(value)} (len=${value.length})`;
+      return `${key}=${String(value)}`;
+    }).join(", ");
+  }
+
+  function validateCases(question, cases) {
+    const config = driverQuestion(question);
+    if (!Array.isArray(cases)) throw new Error("Invalid driver cases: cases must be an array");
+    const names = new Set();
+    return cases.map((testCase) => {
+      if (!isObject(testCase)) throw new Error("Invalid driver case: case must be an object");
+      const name = testCase.name;
+      if (typeof name !== "string" || name.trim().length === 0) {
+        throw new Error("Invalid driver case: case name must be a nonempty string");
+      }
+      if (names.has(name)) throw new Error(`Invalid driver case ${name}: case name must be unique`);
+      names.add(name);
+      if (typeof testCase.expect !== "string" || !/^-?\d+$/.test(testCase.expect)) {
+        throw new Error(`Invalid driver case ${name}: expect must be a decimal string`);
+      }
+      return {name, args:validateArgs(config.driver, testCase.args), expect:testCase.expect};
+    });
+  }
+
+  function driverQuestion(question) {
+    if (!isObject(question)) throw new Error("Invalid driver question: question must be an object");
+    if (typeof question.driver !== "string" || !DRIVER_IDS.has(question.driver)) {
+      throw new Error("Invalid driver question: unrecognized driver");
+    }
+    if (typeof question.mutation !== "string" || !MUTATION_POLICIES.has(question.mutation)) {
+      throw new Error("Invalid driver question: unrecognized mutation policy");
+    }
+    return {driver:question.driver, mutation:question.mutation};
+  }
+
+  function selectedFunction(q) {
+    if (!IDS.includes(q)) throw new Error(`Invalid driver question ${String(q)}`);
+    return `examT_${q}`;
+  }
+
+  function readIntegerArray(name, length) {
+    return `int* ${name}=NULL; if(${length}>0){ ${name}=(int*)malloc(sizeof(*${name})*(size_t)${length}); if(!${name}) return 1; for(int i=0;i<${length};i++) if(scanf("%d",&${name}[i])!=1) return 1; }`;
+  }
+
+  function readString(name, length) {
+    return `int ${length}; if(scanf("%d",&${length})!=1 || ${length}<0 || ${length}>(INT_MAX-2)/2) return 1; size_t ${name}_capacity=2U*(size_t)${length}+2U; char* ${name}=(char*)malloc(${name}_capacity); if(!${name}) return 1; for(int i=0;i<${length};i++){ int byte; if(scanf("%d",&byte)!=1 || byte<1 || byte>255) return 1; ${name}[i]=(char)byte; } ${name}[${length}]='\\0';`;
+  }
+
+  function sourceFor(read, call, mutation, cleanup = "") {
+    return `\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n#include <limits.h>\nint main(void){ int T; if(scanf("%d",&T)!=1 || T<0) return 1; for(int t=0;t<T;t++){ ${read} ${mutation.before} int result=${call}; ${mutation.compare} printf("%d %d\\n", result, mutated); ${mutation.cleanup} ${cleanup} } return 0; }`;
+  }
+
+  function stdinString(value) {
+    const bytes = utf8Bytes(value);
+    return [bytes.length, ...bytes];
+  }
+
+  function stdinChar(driver, value) {
+    const bytes = utf8Bytes(value);
+    if (bytes.length !== 1) argumentError(driver, "value must be a single-byte character");
+    return bytes[0];
+  }
+
+  function noMutation() {
+    return {before:"", compare:"int mutated=0;", cleanup:""};
+  }
+
+  function arrayMutation(policy, name, count) {
+    if (policy !== "forbidden") return noMutation();
+    const before = `${name}_before`;
+    const size = `sizeof(*${name})*(size_t)${count}`;
+    return {
+      before: `int* ${before}=NULL; if(${count}>0){ ${before}=(int*)malloc(${size}); if(!${before}){ free(${name}); return 1; } memcpy(${before},${name},${size}); }`,
+      compare: `int mutated=0; if(${count}>0 && memcmp(${before},${name},${size})!=0) mutated=1;`,
+      cleanup: `free(${before});`
+    };
+  }
+
+  function matrixMutation(policy) {
+    if (policy !== "forbidden") return noMutation();
+    return {
+      before: "int mat_before[m][N]; memcpy(mat_before,mat,sizeof mat);",
+      compare: "int mutated=memcmp(mat_before,mat,sizeof mat)!=0;",
+      cleanup: ""
+    };
+  }
+
+  function stringMutation(policy, name, length) {
+    if (policy !== "forbidden") return noMutation();
+    const before = `${name}_before`;
+    const size = `(size_t)${length}+1U`;
+    return {
+      before: `char* ${before}=(char*)malloc(${size}); if(!${before}){ free(${name}); return 1; } memcpy(${before},${name},${size});`,
+      compare: `int mutated=memcmp(${before},${name},${size})!=0;`,
+      cleanup: `free(${before});`
+    };
+  }
+
+  function twoStringsMutation(policy) {
+    if (policy !== "forbidden") return noMutation();
+    return {
+      before: "char* a_before=(char*)malloc((size_t)a_len+1U); char* b_before=(char*)malloc((size_t)b_len+1U); if(!a_before || !b_before){ free(a_before); free(b_before); free(a); free(b); return 1; } memcpy(a_before,a,(size_t)a_len+1U); memcpy(b_before,b,(size_t)b_len+1U);",
+      compare: "int mutated=memcmp(a_before,a,(size_t)a_len+1U)!=0 || memcmp(b_before,b,(size_t)b_len+1U)!=0;",
+      cleanup: "free(a_before); free(b_before);"
+    };
+  }
+
+  function twoArraysMutation(policy) {
+    if (policy !== "forbidden") return noMutation();
+    return {
+      before: "int* a_before=NULL; int* b_before=NULL; if(na>0){ a_before=(int*)malloc(sizeof(*a)*(size_t)na); if(!a_before){ free(a); free(b); return 1; } memcpy(a_before,a,sizeof(*a)*(size_t)na); } if(nb>0){ b_before=(int*)malloc(sizeof(*b)*(size_t)nb); if(!b_before){ free(a_before); free(a); free(b); return 1; } memcpy(b_before,b,sizeof(*b)*(size_t)nb); }",
+      compare: "int mutated=(na>0 && memcmp(a_before,a,sizeof(*a)*(size_t)na)!=0) || (nb>0 && memcmp(b_before,b,sizeof(*b)*(size_t)nb)!=0);",
+      cleanup: "free(a_before); free(b_before);"
+    };
+  }
+
+  const DRIVER_REGISTRY = Object.freeze({
+    int_array_n_int: {
+      validate: (args) => validateArgs("int_array_n_int", args),
+      read: () => `int n; if(scanf("%d",&n)!=1 || n<0) return 1; ${readIntegerArray("arr", "n")} int value; if(scanf("%d",&value)!=1) return 1;`,
+      call: (fn) => `${fn}(arr, n, value)`,
+      snapshot: (mutation) => arrayMutation(mutation, "arr", "n"),
+      cleanup: () => "free(arr);",
+      stdin: (args) => [args.n, ...args.arr, args.value],
+      format: (args) => formatArgs("int_array_n_int", args)
+    },
+    int_array_n: {
+      validate: (args) => validateArgs("int_array_n", args),
+      read: () => `int n; if(scanf("%d",&n)!=1 || n<0) return 1; ${readIntegerArray("arr", "n")}`,
+      call: (fn) => `${fn}(arr, n)`,
+      snapshot: (mutation) => arrayMutation(mutation, "arr", "n"),
+      cleanup: () => "free(arr);",
+      stdin: (args) => [args.n, ...args.arr],
+      format: (args) => formatArgs("int_array_n", args)
+    },
+    sentinel_int_array_int: {
+      validate: (args) => validateArgs("sentinel_int_array_int", args),
+      read: () => `int n; if(scanf("%d",&n)!=1 || n<0) return 1; size_t probe=1; while(probe<=(size_t)n) probe*=2U; int* arr=(int*)malloc(sizeof(*arr)*(probe+1U)); if(!arr) return 1; for(int i=0;i<n;i++) if(scanf("%d",&arr[i])!=1) return 1; for(size_t i=(size_t)n;i<=probe;i++) arr[i]=INT_MIN; int value; if(scanf("%d",&value)!=1) return 1;`,
+      call: (fn) => `${fn}(arr, value)`,
+      snapshot: (mutation) => arrayMutation(mutation, "arr", "(probe+1U)"),
+      cleanup: () => "free(arr);",
+      stdin: (args) => [args.arr.length, ...args.arr, args.value],
+      format: (args) => formatArgs("sentinel_int_array_int", args)
+    },
+    matrix_rows_int: {
+      validate: (args) => validateArgs("matrix_rows_int", args),
+      read: () => `int m, cols; if(scanf("%d%d",&m,&cols)!=2 || m<1 || cols!=N) return 1; int mat[m][N]; for(int row=0;row<m;row++) for(int col=0;col<N;col++) if(scanf("%d",&mat[row][col])!=1) return 1; int value; if(scanf("%d",&value)!=1) return 1;`,
+      call: (fn) => `${fn}(mat, m, value)`,
+      snapshot: (mutation) => matrixMutation(mutation),
+      cleanup: () => "",
+      stdin: (args) => [args.m, args.cols, ...args.mat.flat(), args.value],
+      format: (args) => formatArgs("matrix_rows_int", args)
+    },
+    string_only: {
+      validate: (args) => validateArgs("string_only", args),
+      read: () => readString("buf", "len"),
+      call: (fn) => `${fn}(buf)`,
+      snapshot: (mutation) => stringMutation(mutation, "buf", "len"),
+      cleanup: () => "free(buf);",
+      stdin: (args) => stdinString(args.s),
+      format: (args) => formatArgs("string_only", args)
+    },
+    string_int: {
+      validate: (args) => validateArgs("string_int", args),
+      read: () => `${readString("buf", "len")} int value; if(scanf("%d",&value)!=1) return 1;`,
+      call: (fn) => `${fn}(buf, value)`,
+      snapshot: (mutation) => stringMutation(mutation, "buf", "len"),
+      cleanup: () => "free(buf);",
+      stdin: (args) => [...stdinString(args.s), args.value],
+      format: (args) => formatArgs("string_int", args)
+    },
+    string_char: {
+      validate: (args) => validateArgs("string_char", args),
+      read: () => `${readString("buf", "len")} int value_input; if(scanf("%d",&value_input)!=1 || value_input<1 || value_input>255) return 1; char value=(char)value_input;`,
+      call: (fn) => `${fn}(buf, value)`,
+      snapshot: (mutation) => stringMutation(mutation, "buf", "len"),
+      cleanup: () => "free(buf);",
+      stdin: (args) => [...stdinString(args.s), stdinChar("string_char", args.value)],
+      format: (args) => formatArgs("string_char", args)
+    },
+    two_strings: {
+      validate: (args) => validateArgs("two_strings", args),
+      read: () => `${readString("a", "a_len")} ${readString("b", "b_len")}`,
+      call: (fn) => `${fn}(a, b)`,
+      snapshot: (mutation) => twoStringsMutation(mutation),
+      cleanup: () => "free(a); free(b);",
+      stdin: (args) => [...stdinString(args.a), ...stdinString(args.b)],
+      format: (args) => formatArgs("two_strings", args)
+    },
+    int_only: {
+      validate: (args) => validateArgs("int_only", args),
+      read: () => `int value; if(scanf("%d",&value)!=1) return 1;`,
+      call: (fn) => `${fn}(value)`,
+      snapshot: () => noMutation(),
+      cleanup: () => "",
+      stdin: (args) => [args.value],
+      format: (args) => formatArgs("int_only", args)
+    },
+    two_ints: {
+      validate: (args) => validateArgs("two_ints", args),
+      read: () => `int first, second; if(scanf("%d%d",&first,&second)!=2) return 1;`,
+      call: (fn) => `${fn}(first, second)`,
+      snapshot: () => noMutation(),
+      cleanup: () => "",
+      stdin: (args) => [args.first, args.second],
+      format: (args) => formatArgs("two_ints", args)
+    },
+    two_int_arrays: {
+      validate: (args) => validateArgs("two_int_arrays", args),
+      read: () => `int na; if(scanf("%d",&na)!=1 || na<0) return 1; ${readIntegerArray("a", "na")} int nb; if(scanf("%d",&nb)!=1 || nb<0) return 1; ${readIntegerArray("b", "nb")}`,
+      call: (fn) => `${fn}(a, na, b, nb)`,
+      snapshot: (mutation) => twoArraysMutation(mutation),
+      cleanup: () => "free(a); free(b);",
+      stdin: (args) => [args.na, ...args.a, args.nb, ...args.b],
+      format: (args) => formatArgs("two_int_arrays", args)
+    }
+  });
+
+  function driverFor(q, question, cases) {
+    const config = driverQuestion(question);
+    if (!Array.isArray(cases)) throw new Error("Invalid driver cases: cases must be an array");
+    const entry = DRIVER_REGISTRY[config.driver];
+    return sourceFor(entry.read(), entry.call(selectedFunction(q)), entry.snapshot(config.mutation), entry.cleanup());
+  }
+
+  function driverStdin(question, cases) {
+    const config = driverQuestion(question);
+    if (!Array.isArray(cases)) throw new Error("Invalid driver cases: cases must be an array");
+    const entry = DRIVER_REGISTRY[config.driver];
+    const lines = [String(cases.length)];
+    for (const testCase of cases) {
+      if (!isObject(testCase)) throw new Error("Invalid driver case: case must be an object");
+      const args = entry.validate(testCase.args);
+      lines.push(...entry.stdin(args).map(String));
+    }
+    return lines.join("\n") + "\n";
+  }
+
+  return {normalizeManifest, validateArgs, validateCases, cString, cChar, formatArgs, driverFor, driverStdin};
+})();
+
+const Q1_KEY = JSON.parse(decodeURIComponent(atob("JTdCJTIyYSUyMiUzQSU3QiUyMnRpbWUlMjIlM0ElMjIlQ0UlOTgobiUyMGxvZyUyMG4pJTIyJTJDJTIyc3BhY2UlMjIlM0ElMjIlQ0UlOTgoMSklMjIlN0QlMkMlMjJiJTIyJTNBJTdCJTIydGltZSUyMiUzQSUyMiVDRSU5OChuJUMyJUIyKSUyMiUyQyUyMnNwYWNlJTIyJTNBJTIyJUNFJTk4KDEpJTIyJTdEJTJDJTIyYyUyMiUzQSU3QiUyMnRpbWUlMjIlM0ElMjIlQ0UlOTgobiklMjIlMkMlMjJzcGFjZSUyMiUzQSUyMiVDRSU5OChuKSUyMiU3RCU3RA==")));
+/* Every exam page shares this ONE origin (blueapple12.github.io), so
+   localStorage is shared across /exam/<n>/ paths too. Key everything to
+   the page's own path, or exam 2's save would clobber exam 1's. */
+const PAGE_ID = (location.pathname.replace(/\/index\.html$/, "").replace(/\/+$/, "").split("/").filter(Boolean).pop()) || "exam";
+const LS_KEY = "examstate-" + PAGE_ID + "-v1";
+const EXAM_ID = "exam/" + PAGE_ID;
+const PAPER_ID = document.querySelector(".brand b").textContent.trim() + " — " + document.querySelector(".brand span").textContent.trim();
+
+const SKELETONS = {
+  q2: `#include <stdio.h>
+#include <stdlib.h>
+
+int examT_q2(int arr[], int n) {
+    /* write your solution here */
+    return 0;
+}
+
+int main(void) {
+    int n;
+    if (scanf("%d", &n) != 1) return 1;
+    int *arr = malloc((size_t)n * sizeof(*arr));
+    if (n > 0 && arr == NULL) return 1;
+    for (int i = 0; i < n; i++) scanf("%d", &arr[i]);
+    printf("%d\\n", examT_q2(arr, n));
+    free(arr);
+    return 0;
+}`,
+  q3: `#include <stdio.h>
+#include <stdlib.h>
+
+int examT_q3(char *s, char c) {
+    /* write your solution here */
+    return 0;
+}
+
+int main(void) {
+    int n;
+    if (scanf("%d", &n) != 1) return 1;
+    char *s = malloc((size_t)n + 1U);
+    if (s == NULL) return 1;
+    scanf("%s", s);
+    char c;
+    scanf(" %c", &c);
+    printf("%d\\n", examT_q3(s, c));
+    free(s);
+    return 0;
+}`,
+  q4: `#include <stdio.h>
+#include <stdlib.h>
+
+int examT_q4(int arr[], int n) {
+    /* write your solution here */
+    return 0;
+}
+
+int main(void) {
+    int n;
+    if (scanf("%d", &n) != 1) return 1;
+    int *arr = malloc((size_t)n * sizeof(*arr));
+    if (n > 0 && arr == NULL) return 1;
+    for (int i = 0; i < n; i++) scanf("%d", &arr[i]);
+    printf("%d\\n", examT_q4(arr, n));
+    free(arr);
+    return 0;
+}`
+};
+
+
+/* ==== EXAM-SPECIFIC: SOLUTIONS (replace) ==== */
+const SOLUTIONS = {
+  q2: {
+    archetype: "binary-search-slope",
+    complexity: "Θ(log n) time, Θ(1) space",
+    code: `int examT_q2(int arr[], int n) {
+    int lo = 0, hi = n - 1;
+    while (lo < hi) {
+        int mid = lo + (hi - lo) / 2;
+        if (arr[mid] < arr[mid + 1]) lo = mid + 1;
+        else hi = mid;
+    }
+    return lo;
+}`
+  },
+  q3: {
+    archetype: "in-place-two-pointers",
+    complexity: "Θ(n) time, Θ(1) space",
+    code: `int examT_q3(char *s, char c) {
+    int read = 0, write = 0;
+    while (s[read] != '\\0') {
+        if (s[read] != c) {
+            s[write++] = s[read];
+        }
+        read++;
+    }
+    s[write] = '\\0';
+    return write;
+}`
+  },
+  q4: {
+    archetype: "contains-helper-last-occurrence-recursion",
+    complexity: "no complexity requirement stated",
+    code: `static int examT_q4_contains(int *arr, int n, int x) {
+    if (n == 0) return 0;
+    if (arr[0] == x) return 1;
+    return examT_q4_contains(arr + 1, n - 1, x);
+}
+
+int examT_q4(int *arr, int n) {
+    if (n == 0) return 0;
+    if (examT_q4_contains(arr + 1, n - 1, arr[0])) {
+        return examT_q4(arr + 1, n - 1);
+    }
+    return 1 + examT_q4(arr + 1, n - 1);
+}`
+  }
+};
+
+/* ==== /END SOLUTIONS ==== */
+const COMPLEXITY_OPTS = ["— בחר —","Θ(1)","Θ(log log n)","Θ(log n)","Θ(log n · log log n)","Θ(√n)","Θ(n)","Θ(n log n)","Θ(n log log n)","Θ(n²)","Θ(n² log n)","Θ(n³)","Θ(2ⁿ)"];
+const Q1_PARTS = [{id:"a",label:"סעיף א'"},{id:"b",label:"סעיף ב'"},{id:"c",label:"סעיף ג'"}];
+const KEYWORDS = new Set(["if","else","for","while","do","return","break","continue","switch","case","default","sizeof","struct","typedef","const","static","goto","union","enum","extern","register","volatile"]);
+const TYPES = new Set(["int","char","long","short","unsigned","signed","float","double","bool","size_t","void","FILE"]);
+
+const TEST_MANIFEST = ExamDrivers.normalizeManifest(
+  JSON.parse(document.getElementById("exam-tests").textContent)
+);
+const QUESTION_TESTS = TEST_MANIFEST.questions;
+const BASE_TESTS = Object.fromEntries(
+  ["q2","q3","q4"].map(q => [q, QUESTION_TESTS[q].cases])
+);
+let CUSTOM = {};
+const effTests = q => (CUSTOM[q] && CUSTOM[q].length) ? CUSTOM[q] : BASE_TESTS[q];
+const isCustom = q => !!(CUSTOM[q] && CUSTOM[q].length);
+
+const UI_KEY = "examUiPrefsV1";
+const UIPREFS = Object.assign({ideW:50, consoleH:null, codeFs:13, paperFs:15}, (() => {
+  try{ return JSON.parse(localStorage.getItem(UI_KEY) || "{}"); }catch(e){ return {}; }
+})());
+function saveUI(){ try{ localStorage.setItem(UI_KEY, JSON.stringify(UIPREFS)); }catch(e){} }
+
+const STATE = {
+  code:{q2:SKELETONS.q2, q3:SKELETONS.q3, q4:SKELETONS.q4},
+  q1:{a:{time:"",space:""}, b:{time:"",space:""}, c:{time:"",space:""}},
+  results:{}, startedAt:null, active:"q2", stdin:"", extraMs:0
+};
+let q1Revealed = false;
+
+function save(){ try{ localStorage.setItem(LS_KEY, JSON.stringify({code:STATE.code,q1:STATE.q1,startedAt:STATE.startedAt,stdin:STATE.stdin,extraMs:STATE.extraMs})); }catch(e){} }
+(function load(){
+  try{
+    const d = JSON.parse(localStorage.getItem(LS_KEY) || "null");
+    if(d){
+      if(d.code) ["q2","q3","q4"].forEach(q => { if(typeof d.code[q] === "string") STATE.code[q] = d.code[q]; });
+      if(d.q1) STATE.q1 = d.q1;
+      if(d.startedAt) STATE.startedAt = d.startedAt;
+      if(typeof d.stdin === "string") STATE.stdin = d.stdin;
+      if(typeof d.extraMs === "number") STATE.extraMs = d.extraMs;
+    }
+    const savedCustom = JSON.parse(localStorage.getItem(LS_KEY + "-tests") || "{}") || {};
+    if(savedCustom && typeof savedCustom === "object"){
+      const loadedCustom = {};
+      let customChanged = false;
+      ["q2","q3","q4"].forEach(q => {
+        if(!Array.isArray(savedCustom[q])) return;
+        loadedCustom[q] = validateCases(q, savedCustom[q]);
+        if(JSON.stringify(loadedCustom[q]) !== JSON.stringify(savedCustom[q])) customChanged = true;
+      });
+      CUSTOM = loadedCustom;
+      if(customChanged) localStorage.setItem(LS_KEY + "-tests", JSON.stringify(CUSTOM));
+    }
+  }catch(e){}
+})();
+
+/* ================= editor ================= */
+const ed = document.getElementById("ed"), hl = document.getElementById("hl");
+const gutter = document.getElementById("gutter"), edbox = document.getElementById("edbox");
+const esc = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+
+function highlight(src){
+  const out = [];
+  const re = /(\/\/[^\n]*|\/\*[\s\S]*?\*\/)|("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*')|(^[ \t]*#[^\n]*)|\b(0[xX][0-9a-fA-F]+|\d+)\b|\b([A-Za-z_]\w*)\b/gm;
+  let last = 0, m;
+  while((m = re.exec(src))){
+    if(m.index > last) out.push(esc(src.slice(last, m.index)));
+    if(m[1]) out.push('<span class="c">' + esc(m[1]) + "</span>");
+    else if(m[2]) out.push('<span class="s">' + esc(m[2]) + "</span>");
+    else if(m[3]) out.push('<span class="p">' + esc(m[3]) + "</span>");
+    else if(m[4]) out.push('<span class="n">' + esc(m[4]) + "</span>");
+    else{
+      const w = m[5];
+      if(KEYWORDS.has(w)) out.push('<span class="k">' + w + "</span>");
+      else if(TYPES.has(w)) out.push('<span class="t">' + w + "</span>");
+      else if(w === "NULL" || w === "true" || w === "false") out.push('<span class="n">' + w + "</span>");
+      else if(/^\s*\(/.test(src.slice(m.index + w.length))) out.push('<span class="f">' + w + "</span>");
+      else out.push(w);
+    }
+    last = m.index + m[0].length;
+  }
+  out.push(esc(src.slice(last)));
+  return out.join("");
+}
+function syncEditor(){
+  const src = ed.value;
+  hl.innerHTML = highlight(src) + "\n";
+  let g = "";
+  const lines = src.split("\n").length;
+  for(let i=1;i<=lines;i++) g += i + "\n";
+  gutter.textContent = g;
+  const h = Math.max(edbox.clientHeight, hl.scrollHeight);
+  ed.style.height = h + "px"; hl.style.minHeight = h + "px";
+}
+edbox.addEventListener("scroll", () => { gutter.scrollTop = edbox.scrollTop; });
+
+/* ---------- line-length readout (the "you hit 80 characters" ask) ---------- */
+const lineLenEl = document.getElementById("lineLen");
+function updateLineLen(){
+  const v = ed.value, a = ed.selectionStart;
+  const s0 = v.lastIndexOf("\n", a - 1) + 1;
+  let e0 = v.indexOf("\n", a); if(e0 === -1) e0 = v.length;
+  const len = e0 - s0;
+  lineLenEl.textContent = len + "/80";
+  lineLenEl.classList.toggle("over", len > 80);
+}
+
+/* ---------- same-file word autocomplete (no AI - just words already
+   in the file, plus the C keywords/types this page already knows) ---------- */
+const acPop = document.getElementById("acPop");
+const AC_BASE = [...KEYWORDS, ...TYPES, "NULL","printf","scanf","malloc","free","sizeof","strlen","main","return"];
+let acItems = [], acIndex = 0;
+function currentWordRange(){
+  if(ed.selectionStart !== ed.selectionEnd) return null;
+  const v = ed.value, pos = ed.selectionStart;
+  let s0 = pos;
+  while(s0 > 0 && /[A-Za-z0-9_]/.test(v[s0 - 1])) s0--;
+  if(s0 === pos) return null;
+  return {start:s0, end:pos, word:v.slice(s0, pos)};
+}
+function hideAC(){ acItems = []; acPop.hidden = true; }
+let acMirror = null;
+function acCaretXY(){
+  if(!acMirror){
+    acMirror = document.createElement("div");
+    const cs = getComputedStyle(ed);
+    ["fontFamily","fontSize","lineHeight","letterSpacing","paddingTop","paddingRight","paddingBottom","paddingLeft","borderWidth","boxSizing"]
+      .forEach(p => acMirror.style[p] = cs[p]);
+    Object.assign(acMirror.style, {position:"absolute", visibility:"hidden", whiteSpace:"pre-wrap", wordWrap:"break-word", top:"0", left:"-9999px", tabSize:"4"});
+    document.body.appendChild(acMirror);
+  }
+  acMirror.style.width = ed.clientWidth + "px";
+  acMirror.textContent = ed.value.slice(0, ed.selectionStart);
+  const marker = document.createElement("span");
+  marker.textContent = "​";
+  acMirror.appendChild(marker);
+  const x = marker.offsetLeft, y = marker.offsetTop;
+  acMirror.removeChild(marker);
+  return {x, y};
+}
+function renderAC(){
+  acPop.innerHTML = acItems.map((w,i) =>
+    '<div class="ac-item' + (i === acIndex ? " sel" : "") + '" data-i="' + i + '">' + esc(w) + "</div>").join("");
+  const xy = acCaretXY();
+  acPop.style.left = Math.max(0, xy.x - ed.scrollLeft) + "px";
+  acPop.style.top = (xy.y - ed.scrollTop + 22) + "px";
+  acPop.hidden = false;
+}
+function updateAutocomplete(){
+  const r = currentWordRange();
+  if(!r || r.word.length < 2){ hideAC(); return; }
+  const seen = new Set(AC_BASE);
+  const re = /[A-Za-z_][A-Za-z0-9_]*/g; let m;
+  while((m = re.exec(ed.value))) seen.add(m[0]);
+  const lw = r.word.toLowerCase();
+  const cand = [...seen].filter(w => w !== r.word && w.toLowerCase().startsWith(lw))
+                        .sort((x,y) => x.length - y.length || x.localeCompare(y)).slice(0, 7);
+  if(!cand.length){ hideAC(); return; }
+  acItems = cand; acIndex = 0;
+  renderAC();
+}
+function acceptAC(){
+  const r = currentWordRange();
+  if(!r || !acItems.length){ hideAC(); return; }
+  const word = acItems[acIndex], v = ed.value;
+  ed.value = v.slice(0, r.start) + word + v.slice(r.end);
+  ed.selectionStart = ed.selectionEnd = r.start + word.length;
+  hideAC();
+  ed.dispatchEvent(new Event("input"));
+}
+acPop.addEventListener("mousedown", e => {
+  const item = e.target.closest(".ac-item");
+  if(!item) return;
+  e.preventDefault();
+  acIndex = Number(item.dataset.i);
+  acceptAC();
+});
+ed.addEventListener("blur", () => setTimeout(hideAC, 130));
+
+ed.addEventListener("input", () => {
+  STATE.code[STATE.active] = ed.value; syncEditor(); save();
+  updateLineLen(); updateAutocomplete();
+});
+ed.addEventListener("click", updateLineLen);
+ed.addEventListener("keyup", e => { if(!["Enter","Tab"].includes(e.key)) updateLineLen(); });
+
+/* ---------- CLion-ish editing: auto-indent, bracket/quote pairs, dedent ---------- */
+const AC_PAIRS = {"(":")", "[":"]", "{":"}"};
+const AC_CLOSERS = new Set(Object.values(AC_PAIRS));
+const AC_QUOTES = new Set(['"', "'"]);
+function lineStartOf(text, pos){ return text.lastIndexOf("\n", pos - 1) + 1; }
+function leadingWs(text, pos){ const s0 = lineStartOf(text, pos); return /^[ \t]*/.exec(text.slice(s0, pos))[0]; }
+
+ed.addEventListener("keydown", e => {
+  if(!acPop.hidden){
+    if(e.key === "ArrowDown"){ e.preventDefault(); acIndex = (acIndex + 1) % acItems.length; renderAC(); return; }
+    if(e.key === "ArrowUp"){ e.preventDefault(); acIndex = (acIndex - 1 + acItems.length) % acItems.length; renderAC(); return; }
+    if(e.key === "Tab" || e.key === "Enter"){ e.preventDefault(); acceptAC(); return; }
+    if(e.key === "Escape"){ e.preventDefault(); hideAC(); return; }
+  }
+
+  const a = ed.selectionStart, b = ed.selectionEnd, v = ed.value, collapsed = a === b;
+
+  if(e.key === "Tab"){
+    e.preventDefault();
+    ed.value = v.slice(0, a) + "    " + v.slice(b);
+    ed.selectionStart = ed.selectionEnd = a + 4;
+    ed.dispatchEvent(new Event("input"));
+    return;
+  }
+
+  if(e.key === "Enter"){
+    e.preventDefault();
+    const indent = leadingWs(v, a);
+    const prevCh = v[a - 1], nextCh = v[a];
+    const opens = prevCh === "{" || prevCh === "(" || prevCh === "[";
+    const ins = "\n" + indent + (opens ? "    " : "");
+    if(opens && AC_PAIRS[prevCh] === nextCh){
+      const tail = "\n" + indent;
+      ed.value = v.slice(0, a) + ins + tail + v.slice(b);
+    }else{
+      ed.value = v.slice(0, a) + ins + v.slice(b);
+    }
+    ed.selectionStart = ed.selectionEnd = a + ins.length;
+    ed.dispatchEvent(new Event("input"));
+    return;
+  }
+
+  if(e.key === "Backspace" && collapsed && a > 0 && AC_PAIRS[v[a - 1]] && AC_PAIRS[v[a - 1]] === v[a]){
+    e.preventDefault();
+    ed.value = v.slice(0, a - 1) + v.slice(a + 1);
+    ed.selectionStart = ed.selectionEnd = a - 1;
+    ed.dispatchEvent(new Event("input"));
+    return;
+  }
+
+  if(e.key === "Backspace" && collapsed && a > 0){
+    /* cursor sits inside pure leading whitespace -> delete a whole indent
+       level (up to 4 spaces) at once, not space-by-space. */
+    const s0 = lineStartOf(v, a);
+    const before = v.slice(s0, a);
+    if(before.length > 0 && /^ +$/.test(before)){
+      const cut = Math.min(4, ((before.length - 1) % 4) + 1);
+      e.preventDefault();
+      ed.value = v.slice(0, a - cut) + v.slice(a);
+      ed.selectionStart = ed.selectionEnd = a - cut;
+      ed.dispatchEvent(new Event("input"));
+      return;
+    }
+  }
+
+  if(collapsed && (AC_CLOSERS.has(e.key) || AC_QUOTES.has(e.key)) && v[a] === e.key){
+    e.preventDefault();
+    ed.selectionStart = ed.selectionEnd = a + 1;
+    ed.dispatchEvent(new Event("input"));
+    return;
+  }
+
+  if(collapsed && e.key === "}"){
+    /* rest of this line blank, and the next line is already just "}" (the
+       usual case right after the auto-split on Enter) -> move past it
+       instead of inserting a duplicate closing brace. */
+    const eol = v.indexOf("\n", a);
+    const restOfLine = v.slice(a, eol === -1 ? v.length : eol);
+    if(/^[ \t]*$/.test(restOfLine) && eol !== -1){
+      let p = eol + 1;
+      while(p < v.length && (v[p] === " " || v[p] === "\t")) p++;
+      if(v[p] === "}"){
+        e.preventDefault();
+        ed.selectionStart = ed.selectionEnd = p + 1;
+        ed.dispatchEvent(new Event("input"));
+        return;
+      }
+    }
+    const ws = leadingWs(v, a);
+    const s0 = lineStartOf(v, a);
+    if(ws.length === a - s0 && ws.length >= 4){
+      e.preventDefault();
+      const cut = 4;
+      ed.value = v.slice(0, s0) + ws.slice(0, -cut) + "}" + v.slice(a);
+      ed.selectionStart = ed.selectionEnd = s0 + ws.length - cut + 1;
+      ed.dispatchEvent(new Event("input"));
+      return;
+    }
+  }
+
+  if(collapsed && AC_PAIRS[e.key]){
+    e.preventDefault();
+    ed.value = v.slice(0, a) + e.key + AC_PAIRS[e.key] + v.slice(b);
+    ed.selectionStart = ed.selectionEnd = a + 1;
+    ed.dispatchEvent(new Event("input"));
+    return;
+  }
+
+  if(collapsed && AC_QUOTES.has(e.key)){
+    e.preventDefault();
+    ed.value = v.slice(0, a) + e.key + e.key + v.slice(b);
+    ed.selectionStart = ed.selectionEnd = a + 1;
+    ed.dispatchEvent(new Event("input"));
+    return;
+  }
+
+  if(e.key === "Escape"){ hideAC(); }
+});
+function openTab(q){
+  STATE.active = q;
+  document.querySelectorAll(".tab").forEach(t => t.setAttribute("aria-selected", String(t.dataset.q === q)));
+  ed.value = STATE.code[q]; syncEditor(); renderResults(q);
+  if(!document.getElementById("wrapCases").hidden) renderCases();
+  if(typeof RUN !== "undefined"){
+    RUN.lines = []; RUN.everRun = false;
+    setPrompt(false);
+    document.getElementById("sentRow").hidden = true;
+    rawOut.textContent = "לחץ ▶ Run כדי להדר ולהריץ את הקובץ הזה.";
+  }
+}
+document.querySelectorAll(".tab").forEach(t => t.addEventListener("click", () => openTab(t.dataset.q)));
+
+/* ================= gcc via Wandbox ================= */
+const CE = "https://godbolt.org/api/compiler/cg132/compile";
+const joinText = a => (a || []).map(x => x.text).join("\n");
+/* Compiler Explorer: same gcc 13.2, but ~180ms instead of ~1.9s. */
+async function gcc(code, stdin, args){
+  const r = await fetch(CE, {
+    method:"POST",
+    headers:{"Content-Type":"application/json", "Accept":"application/json"},
+    body: JSON.stringify({
+      source: code,
+      options:{
+        userArguments: args || "-std=c99 -Wall -fno-diagnostics-color -lm",
+        executeParameters:{args:[], stdin: stdin || ""},
+        filters:{execute:true},
+        compilerOptions:{executorRequest:true}
+      }
+    })
+  });
+  if(!r.ok) throw new Error("שרת ההידור החזיר " + r.status);
+  const j = await r.json();
+  const build = j.buildResult || {};
+  return {
+    buildFailed: build.code !== undefined && build.code !== 0,
+    diagnostics: (joinText(build.stderr) + "\n" + joinText(build.stdout)).trim(),
+    stdout: joinText(j.stdout),
+    stderr: joinText(j.stderr),
+    exit: j.code,
+    timedOut: !!j.timedOut,
+    didExecute: !!j.didExecute
+  };
+}
+function compileErrText(j){
+  return (j.compiler_error || "").trim() || (j.compiler_message || "").trim();
+}
+/* gcc writes warnings and errors to the same stream; only "error:" is fatal */
+function isCompileError(text){ return String(text || "").indexOf("error:") !== -1; }
+
+/* strip comments + string literals, for the constraint scan */
+function bareCode(src){
+  return src.replace(/\/\*[\s\S]*?\*\//g," ").replace(/\/\/[^\n]*/g," ")
+            .replace(/"(?:\\.|[^"\\])*"/g,'""').replace(/'(?:\\.|[^'\\])*'/g,"''");
+}
+function funcBody(src, name){
+  const b = bareCode(src);
+  const re = new RegExp("\\b" + name + "\\s*\\([^)]*\\)\\s*\\{");
+  const m = re.exec(b);
+  if(!m) return null;
+  let i = m.index + m[0].length, depth = 1;
+  for(; i < b.length && depth > 0; i++){
+    if(b[i] === "{") depth++;
+    else if(b[i] === "}") depth--;
+  }
+  return b.slice(m.index + m[0].length, i - 1);
+}
+function constraintCheck(q, src){
+  const v = [];
+  if(q === "q4"){
+    const whole = bareCode(src);
+    const mainBody = funcBody(src, "main") || "";
+    const outsideMain = whole.split(mainBody).join(" ");
+    if(/\b(for|while)\s*\(/.test(outsideMain)) v.push("יש לולאה (for/while) מחוץ ל-main — שאלה 4 אוסרת לולאות");
+    if(/\b(malloc|calloc|realloc)\s*\(/.test(outsideMain)) v.push("יש הקצאת זיכרון דינמי — שאלה 4 אוסרת זאת");
+    const body = funcBody(src, "examT_q4");
+    if(body !== null && !/\bexamT_q4\s*\(/.test(body)) v.push("examT_q4 אינה קוראת לעצמה — אסורה פונקציית מעטפת");
+  }
+  return v;
+}
+
+/* ---- driver: run every case in one compile ---- */
+function renameMain(src){
+  return src.replace(/\bint\s+main\s*\(\s*(void)?\s*\)/, "int __student_main(void)");
+}
+
+/* ================= panels ================= */
+const out = document.getElementById("out"), chsum = document.getElementById("chsum");
+const rawOut = document.getElementById("rawOut");
+
+function line(tag, cls, msg){
+  const d = document.createElement("div");
+  d.className = "ln";
+  d.innerHTML = '<span class="tag ' + cls + '">' + tag + '</span><span class="msg">' + msg + "</span>";
+  return d;
+}
+
+/* ---- ▶ Run : their own file, their own stdin ---- */
+/* ---- interactive run ------------------------------------------------
+   The program cannot be paused mid-execution over HTTP, so each line you
+   type is appended to stdin and the program is re-run from the start.
+   These programs are deterministic, so the transcript is identical to a
+   real interactive session - and at ~180ms a round trip it feels live. */
+let RUN = {lines:[], busy:false, everRun:false};
+
+function renderRun(res, ms){
+  const sent = RUN.lines;
+  let html = "";
+  if(res === null){
+    html = '<span class="hintmsg">לחץ ▶ Run כדי להדר ולהריץ.</span>';
+    rawOut.innerHTML = html;
+    return;
+  }
+  if(res.diagnostics){
+    html += '<span class="' + (res.buildFailed ? "err" : "warnmsg") + '">' + esc(res.diagnostics) + "</span>\n";
+  }
+  if(res.buildFailed){
+    rawOut.innerHTML = html + '\n<span class="err">ההידור נכשל — התוכנית לא רצה.</span>';
+    setPrompt(false);
+    return;
+  }
+  html += '<span class="okmsg">✓ הודר ב-gcc 13.2' + (ms ? " · " + ms + "ms" : "") + "</span>\n\n";
+  if(sent.length){
+    html += sent.map(l => '<span class="echo">' + esc(l) + "</span>").join("\n") + "\n";
+  }
+  html += esc(res.stdout || "");
+  if(res.stderr) html += '\n<span class="err">' + esc(res.stderr) + "</span>";
+  html += "\n\n[exit " + res.exit + (res.timedOut ? " · חריגת זמן" : "") + "]";
+  if(res.timedOut){
+    html += '\n<span class="err">התוכנית נעצרה בכפייה — כנראה לולאה אינסופית.</span>';
+  }else if(res.exit !== 0 && !(res.stdout || "").trim()){
+    html += sent.length
+      ? '\n<span class="hintmsg">התוכנית עדיין מחכה לקלט — scanf לא קיבל את כל מה שהוא צריך. הקלד את השורה הבאה למטה.</span>'
+      : '\n<span class="hintmsg">התוכנית מבקשת קלט. הקלד שורה למטה ולחץ Enter — למשל <b>6</b>, ואז <b>1 3 7 9 6 2</b>, ואז <b>5</b>.</span>';
+  }
+  rawOut.innerHTML = html;
+  setPrompt(!res.timedOut);
+}
+
+function setPrompt(on){
+  document.getElementById("promptRow").hidden = !on;
+  document.getElementById("sentRow").hidden = !RUN.lines.length;
+  document.getElementById("sentList").textContent = RUN.lines.join(" ⏎ ");
+  if(on) setTimeout(() => stdinLine.focus(), 0);
+}
+
+/* compile-only check: fast (~180ms), no execution, so a syntax error is
+   reported before the student is asked to type any input. */
+async function gccCheck(code){
+  const r = await fetch(CE, {
+    method:"POST", headers:{"Content-Type":"application/json", "Accept":"application/json"},
+    body: JSON.stringify({source: code, options:{
+      userArguments:"-std=c99 -Wall -fno-diagnostics-color",
+      filters:{execute:false}, compilerOptions:{}
+    }})
+  });
+  if(!r.ok) throw new Error("שרת ההידור החזיר " + r.status);
+  const j = await r.json();
+  return {failed: j.code !== 0, diagnostics: joinText(j.stderr).trim()};
+}
+
+async function doRun(){
+  if(RUN.busy) return;
+  RUN.busy = true;
+  const b = document.getElementById("runBtn");
+  b.disabled = true; b.textContent = "מריץ…";
+  const t0 = Date.now();
+  try{
+    const res = await gcc(STATE.code[STATE.active], RUN.lines.length ? RUN.lines.join("\n") + "\n" : "");
+    RUN.everRun = true;
+    renderRun(res, Date.now() - t0);
+  }catch(e){
+    rawOut.innerHTML = '<span class="err">' + esc(e.message) + "</span>\n\nאין חיבור לשרת ההידור. בדוק את החיבור לאינטרנט ונסה שוב.";
+  }finally{
+    RUN.busy = false;
+    b.disabled = false; b.textContent = "▶ Run";
+  }
+}
+
+const stdinLine = document.getElementById("stdinLine");
+stdinLine.addEventListener("keydown", e => {
+  if(e.key !== "Enter") return;
+  e.preventDefault();
+  const v = stdinLine.value;
+  if(v.length) RUN.lines.push(v);
+  stdinLine.value = "";
+  STATE.stdin = RUN.lines.join("\n"); save();
+  doRun();
+});
+document.getElementById("clearStdin").addEventListener("click", () => {
+  RUN.lines = [];
+  STATE.stdin = ""; save();
+  setPrompt(true);
+  rawOut.textContent = "הזן קלט מהתחלה.";
+});
+
+/* Run click: compile-CHECK only, then show the prompt. Nothing executes
+   until the student presses Enter (even on an empty line, which just
+   runs with no further input - covers programs that need none). */
+document.getElementById("runBtn").addEventListener("click", async function(){
+  if(RUN.busy) return;
+  RUN.busy = true;
+  RUN.lines = [];
+  STATE.stdin = ""; save();
+  const b = this;
+  b.disabled = true; b.textContent = "בודק…";
+  showPanel("out");
+  setPrompt(false);
+  document.getElementById("sentRow").hidden = true;
+  rawOut.textContent = "בודק קומפילציה…";
+  const t0 = Date.now();
+  try{
+    const chk = await gccCheck(STATE.code[STATE.active]);
+    const ms = Date.now() - t0;
+    if(chk.failed){
+      RUN.everRun = false;
+      rawOut.innerHTML = (chk.diagnostics ? '<span class="err">' + esc(chk.diagnostics) + "</span>\n\n" : "") +
+        '<span class="err">ההידור נכשל — התוכנית לא רצה.</span>';
+    }else{
+      RUN.everRun = true;
+      let html = "";
+      if(chk.diagnostics) html += '<span class="warnmsg">' + esc(chk.diagnostics) + "</span>\n\n";
+      html += '<span class="okmsg">✓ הודר בהצלחה' + (ms ? " · " + ms + "ms" : "") + "</span>\n";
+      html += '<span class="hintmsg">אם התוכנית מבקשת קלט, הקלד אותו למטה ולחץ Enter. '
+            + 'אם היא לא צריכה קלט, לחץ Enter בתיבה הריקה כדי להריץ.</span>';
+      rawOut.innerHTML = html;
+      setPrompt(true);
+    }
+  }catch(e){
+    rawOut.innerHTML = '<span class="err">' + esc(e.message) + "</span>\n\nאין חיבור לשרת ההידור. בדוק את החיבור לאינטרנט ונסה שוב.";
+  }finally{
+    RUN.busy = false;
+    b.disabled = false; b.textContent = "▶ Run";
+  }
+});
+
+/* ---- test all cases in one compile ---- */
+async function runTests(q, pick){
+  showPanel("tests");
+  out.innerHTML = "";
+  const question = QUESTION_TESTS[q];
+  const all = effTests(q);
+  const cases = (typeof pick === "number") ? [all[pick]] : all;
+  out.appendChild(line("gcc","info","מהדר ומריץ " + cases.length + " מקרי בדיקה…"));
+
+  const violations = constraintCheck(q, STATE.code[q]);
+  const prog = renameMain(STATE.code[q]) + "\n" + ExamDrivers.driverFor(q, question, cases);
+  let j;
+  try{ j = await gcc(prog, ExamDrivers.driverStdin(question, cases), "-std=c99 -w -fno-diagnostics-color -lm"); }
+  catch(e){
+    out.innerHTML = "";
+    out.appendChild(line("שגיאה","no","<em>" + esc(e.message) + "</em> — אין חיבור לשרת ההידור."));
+    return;
+  }
+  const cerr = j.diagnostics;
+  if(j.buildFailed){
+    out.innerHTML = "";
+    out.appendChild(line("compile","no","<em>שגיאת הידור:</em>"));
+    const pre = document.createElement("pre");
+    pre.className = "raw"; pre.style.color = "#f0645a"; pre.textContent = cerr;
+    out.appendChild(pre);
+    STATE.results[q] = {passed:0, failed:cases.length, error:cerr, violations, total:cases.length};
+    setDot(q,false); updatePills();
+    return;
+  }
+
+  const lines = (j.stdout || "").trim().split("\n").filter(x => x.length);
+  out.innerHTML = "";
+  let pass = 0, fail = 0;
+  const frag = document.createDocumentFragment();
+  cases.forEach((tc, i) => {
+    const parts = (lines[i] || "").trim().split(/\s+/);
+    const got = parts[0];
+    const args = ExamDrivers.formatArgs(question.driver, tc.args);
+    const mutationForbidden = question.mutation === "forbidden" && parts[1] === "1";
+    if(got === undefined || got === ""){
+      fail++;
+      frag.appendChild(line(tc.name,"no","<em>" + esc(args) + "</em>"));
+      const d = document.createElement("dl"); d.className = "diffgrid";
+      d.innerHTML = "<dt>שגיאה</dt><dd>התוכנית לא הדפיסה תוצאה (קריסה או לולאה אינסופית?)</dd>";
+      frag.appendChild(d);
+      return;
+    }
+    if(String(got) === String(tc.expect) && !mutationForbidden){
+      pass++;
+      frag.appendChild(line(tc.name,"ok", esc(args) + ' <span style="color:#5b6270">→ ' + esc(got) + "</span>"));
+    }else{
+      fail++;
+      frag.appendChild(line(tc.name,"no","<em>" + esc(args) + "</em>"));
+      const d = document.createElement("dl"); d.className = "diffgrid";
+      d.innerHTML = mutationForbidden
+        ? "<dt>אילוץ</dt><dd>הפונקציה שינתה קלט למרות שמדיניות השאלה אוסרת זאת</dd>"
+        : "<dt>ציפיתי</dt><dd>" + esc(String(tc.expect)) + "</dd><dt>קיבלתי</dt><dd>" + esc(got) + "</dd>";
+      frag.appendChild(d);
+    }
+  });
+
+  const sum = document.createElement("div");
+  const clean = fail === 0 && !violations.length;
+  sum.className = "summary " + (fail === 0 ? (violations.length ? "warn" : "ok") : "no");
+  sum.innerHTML = "<bdi>" + pass + "</bdi> עברו · <bdi>" + fail + "</bdi> נכשלו" + (typeof pick === "number" ? "  (מקרה בודד)" : "");
+  out.appendChild(sum);
+  if(cerr) out.appendChild(line("warn","warn","<em>אזהרות הידור:</em> " + esc(cerr.split("\n")[0])));
+  violations.forEach(v => out.appendChild(line("אילוץ","warn","<em>" + esc(v) + "</em>")));
+  out.appendChild(frag);
+  if(clean) out.appendChild(line("שים לב","info","הבדיקות עברו, אבל <em>סיבוכיות אינה נבדקת כאן</em> — ודא ידנית מול הדרישה בשאלון."));
+
+  if(typeof pick !== "number"){
+    STATE.results[q] = {passed:pass, failed:fail, violations, total:cases.length};
+    setDot(q, clean); updatePills();
+  }
+  chsum.textContent = pass + "/" + cases.length;
+}
+document.getElementById("testBtn").addEventListener("click", async function(){
+  const b = this; b.disabled = true; b.textContent = "רץ…";
+  try{ await runTests(STATE.active); } finally{ b.disabled = false; b.textContent = "בדוק מול המקרים"; }
+});
+function setDot(q, ok){ document.getElementById("dot-" + q).className = "dot " + (ok ? "pass" : "fail"); }
+function renderResults(q){
+  const r = STATE.results[q];
+  out.innerHTML = "";
+  if(!r){ out.innerHTML = '<div class="empty">לחץ "בדוק מול המקרים" כדי להריץ את הפונקציה מול כל מקרי הבדיקה.</div>'; chsum.textContent = ""; return; }
+  const sum = document.createElement("div");
+  sum.className = "summary " + (r.failed === 0 ? ((r.violations && r.violations.length) ? "warn" : "ok") : "no");
+  sum.innerHTML = (r.error ? "שגיאת הידור" : "<bdi>" + r.passed + "</bdi> עברו · <bdi>" + r.failed + "</bdi> נכשלו") + " (הרצה קודמת)";
+  out.appendChild(sum);
+  chsum.textContent = r.error ? "" : r.passed + "/" + (r.total || "?");
+}
+function updatePills(){
+  const p = document.getElementById("pills"); p.innerHTML = "";
+  if(q1Revealed){
+    const s1 = document.createElement("span");
+    const c = q1Correct();
+    s1.className = "pill" + (c === 6 ? " pass" : " fail");
+    s1.textContent = "Q1 " + c + "/6";
+    p.appendChild(s1);
+  }
+  ["q2","q3","q4"].forEach(q => {
+    const r = STATE.results[q];
+    const s = document.createElement("span");
+    s.className = "pill" + (r ? ((r.failed === 0 && (!r.violations || !r.violations.length)) ? " pass" : " fail") : "");
+    s.textContent = q.toUpperCase() + " " + (r ? (r.error ? "✗" : r.passed + "/" + (r.total || "?")) : "—");
+    p.appendChild(s);
+  });
+}
+
+/* ---- downloads (plain blob - no capability needed off-artifact) ---- */
+function offerFile(filename, data){
+  const blob = new Blob([data], {type:"application/octet-stream"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob); a.download = filename;
+  document.body.appendChild(a); a.click();
+  setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+}
+document.getElementById("dlBtn").addEventListener("click", () => offerFile("examT_" + STATE.active + ".c", STATE.code[STATE.active]));
+
+/* ================= test cases panel ================= */
+/* BEGIN CUSTOM CASE HELPERS */
+function canonicalizeLegacyCustomCases(q, cases){
+  const alias = q === "q2" ? "x" : "k";
+  return cases.map(testCase => {
+    if(!testCase || typeof testCase !== "object" || !testCase.args || typeof testCase.args !== "object" || Array.isArray(testCase.args)) return testCase;
+    const args = {...testCase.args};
+    if(!Object.prototype.hasOwnProperty.call(args, "value") && Object.prototype.hasOwnProperty.call(args, alias)){
+      args.value = args[alias];
+      delete args[alias];
+    }
+    return {...testCase, args};
+  });
+}
+function customCaseExample(q){
+  const testCase = ExamDrivers.validateCases(QUESTION_TESTS[q], [BASE_TESTS[q][0]])[0];
+  return JSON.stringify([testCase], null, 1);
+}
+function mergeCustomCases(q, existing, incoming){
+  return validateCases(q, (existing || []).concat(incoming));
+}
+/* END CUSTOM CASE HELPERS */
+const CUSTOM_KEY = LS_KEY + "-tests";
+function validateCases(q, arr){
+  if(!Array.isArray(arr)) throw new Error("ה-JSON חייב להיות מערך של מקרי בדיקה");
+  if(!arr.length) throw new Error("המערך ריק");
+  const cases = canonicalizeLegacyCustomCases(q, arr).map((c,i) => {
+    if(!c || typeof c !== "object") throw new Error("מקרה " + (i+1) + ": אינו אובייקט");
+    if(c.expect === undefined || c.expect === null) throw new Error("מקרה " + (i+1) + ": חסר expect");
+    return {name:String(c.name || ("c" + (i+1))), args:c.args, expect:String(c.expect)};
+  });
+  return ExamDrivers.validateCases(QUESTION_TESTS[q], cases);
+}
+function renderCases(){
+  const q = STATE.active, host = document.getElementById("cases"), list = effTests(q);
+  const caseExample = customCaseExample(q);
+  host.innerHTML = "";
+  const det = document.createElement("details");
+  det.className = "tcustom";
+  det.innerHTML =
+    "<summary>מקרי בדיקה משלך (JSON)" + (isCustom(q) ? ' <span class="badge">פעיל</span>' : "") + "</summary>" +
+    '<div style="margin-top:7px;color:#6f8199;font-size:11px">מבנה לשאלה ' + q.toUpperCase() + ' (' + esc(QUESTION_TESTS[q].driver) + '):<br><code>' + esc(caseExample) + "</code></div>" +
+    '<textarea id="tcin" spellcheck="false" placeholder="' + esc(caseExample) + '"></textarea>' +
+    '<div class="row">' +
+      '<button class="tbtn" id="tcLoad">טען והחלף</button>' +
+      '<button class="tbtn" id="tcAdd">הוסף</button>' +
+      '<button class="tbtn" id="tcFile">טען מקובץ…</button>' +
+      '<button class="tbtn" id="tcSave">שמור כקובץ</button>' +
+      '<button class="tbtn" id="tcReset">חזור למקוריים</button>' +
+      '<input type="file" id="tcPick" accept=".json,application/json" hidden>' +
+      '<span class="msg" id="tcMsg"></span></div>';
+  host.appendChild(det);
+  if(isCustom(q)) det.open = true;
+  const ta = det.querySelector("#tcin");
+  if(isCustom(q)) ta.value = JSON.stringify(CUSTOM[q], null, 1);
+  const msg = det.querySelector("#tcMsg");
+  const say = (t, ok) => { msg.textContent = t; msg.className = "msg " + (ok ? "good" : "bad"); };
+  const persistTests = () => { try{ localStorage.setItem(CUSTOM_KEY, JSON.stringify(CUSTOM)); }catch(e){} };
+
+  function apply(mode){
+    let parsed;
+    try{ parsed = JSON.parse(ta.value); }catch(e){ say("JSON לא תקין: " + e.message, false); return; }
+    let cs;
+    try{ cs = validateCases(q, parsed); }catch(e){ say(e.message, false); return; }
+    CUSTOM[q] = mode === "add" ? mergeCustomCases(q, effTests(q), cs) : cs;
+    persistTests(); say(CUSTOM[q].length + " מקרי בדיקה פעילים", true);
+    renderCases(); updatePills();
+  }
+  det.querySelector("#tcLoad").addEventListener("click", () => apply("replace"));
+  det.querySelector("#tcAdd").addEventListener("click", () => apply("add"));
+  det.querySelector("#tcSave").addEventListener("click", () => offerFile("tests-" + q + ".json", JSON.stringify(effTests(q), null, 1)));
+  const pick = det.querySelector("#tcPick");
+  det.querySelector("#tcFile").addEventListener("click", () => pick.click());
+  pick.addEventListener("change", () => {
+    const f = pick.files && pick.files[0];
+    if(!f) return;
+    const fr = new FileReader();
+    fr.onload = () => {
+      let data;
+      try{ data = JSON.parse(String(fr.result)); }catch(e){ say("הקובץ אינו JSON תקין: " + e.message, false); return; }
+      let loaded = 0; const problems = [];
+      const take = (qq, arr) => { try{ CUSTOM[qq] = validateCases(qq, arr); loaded += CUSTOM[qq].length; }catch(e){ problems.push(qq.toUpperCase() + ": " + e.message); } };
+      if(Array.isArray(data)) take(q, data);
+      else if(data && typeof data === "object") ["q2","q3","q4"].forEach(qq => { if(Array.isArray(data[qq])) take(qq, data[qq]); });
+      else { say("מבנה לא מוכר", false); return; }
+      if(!loaded && problems.length){ say(problems.join(" · "), false); return; }
+      persistTests();
+      say(loaded + " מקרי בדיקה נטענו" + (problems.length ? " (" + problems.join(" · ") + ")" : ""), !problems.length);
+      renderCases(); updatePills();
+    };
+    fr.readAsText(f); pick.value = "";
+  });
+  det.querySelector("#tcReset").addEventListener("click", () => { delete CUSTOM[q]; persistTests(); renderCases(); updatePills(); });
+
+  const box = document.createElement("div");
+  box.className = "tlist";
+  list.forEach((tc, i) => {
+    const row = document.createElement("div");
+    row.className = "trow";
+    const args = ExamDrivers.formatArgs(QUESTION_TESTS[q].driver, tc.args);
+    row.innerHTML = '<span class="nm">' + esc(tc.name) + '</span><span class="ag" title="' + esc(args) + '">' +
+      esc(args) + '</span><span class="ex">' + esc(String(tc.expect)) + "</span>";
+    const b = document.createElement("button");
+    b.className = "go"; b.textContent = "▶"; b.title = "הרץ רק את זה";
+    b.addEventListener("click", () => runTests(q, i));
+    row.appendChild(b); box.appendChild(row);
+  });
+  host.appendChild(box);
+}
+
+/* ================= Q1 ================= */
+const q1grid = document.getElementById("q1grid");
+Q1_PARTS.forEach(part => {
+  const row = document.createElement("div");
+  row.className = "q1row";
+  row.innerHTML = "<label>" + part.label + "</label>";
+  ["time","space"].forEach(kind => {
+    const lab = document.createElement("label");
+    lab.textContent = kind === "time" ? "זמן" : "מקום";
+    lab.style.fontWeight = "400";
+    const sel = document.createElement("select");
+    COMPLEXITY_OPTS.forEach((o,i) => {
+      const op = document.createElement("option");
+      op.value = i === 0 ? "" : o; op.textContent = o;
+      sel.appendChild(op);
+    });
+    sel.value = STATE.q1[part.id][kind] || "";
+    if(sel.value) sel.classList.add("done");
+    const mark = document.createElement("span");
+    mark.className = "mark"; mark.id = "mark-" + part.id + "-" + kind;
+    sel.addEventListener("change", () => {
+      STATE.q1[part.id][kind] = sel.value;
+      sel.classList.toggle("done", !!sel.value);
+      if(q1Revealed) hideQ1Marks();
+      q1Score(); save();
+    });
+    row.appendChild(lab); row.appendChild(sel); row.appendChild(mark);
+  });
+  q1grid.appendChild(row);
+});
+const q1box = document.createElement("div");
+q1box.className = "q1score";
+q1grid.parentNode.insertBefore(q1box, q1grid.nextSibling);
+const q1Correct = () => Q1_PARTS.reduce((n,p) => n + ["time","space"].filter(k => STATE.q1[p.id][k] === Q1_KEY[p.id][k]).length, 0);
+const q1Answered = () => Q1_PARTS.reduce((n,p) => n + ["time","space"].filter(k => STATE.q1[p.id][k]).length, 0);
+function hideQ1Marks(){
+  q1Revealed = false;
+  document.querySelectorAll("#q1grid .mark").forEach(m => { m.className = "mark"; m.textContent = ""; });
+  q1btn.textContent = "בדוק את כל הסעיפים";
+  q1Score(); updatePills();
+}
+function revealQ1(){
+  q1Revealed = true;
+  Q1_PARTS.forEach(p => ["time","space"].forEach(k => {
+    const m = document.getElementById("mark-" + p.id + "-" + k), v = STATE.q1[p.id][k];
+    if(!m) return;
+    if(!v){ m.className = "mark n"; m.textContent = "–"; m.title = "לא נענה"; return; }
+    const ok = v === Q1_KEY[p.id][k];
+    m.className = "mark " + (ok ? "y" : "n");
+    m.textContent = ok ? "✓" : "✗";
+  }));
+  q1btn.textContent = "הסתר תוצאות";
+  q1Score(); updatePills();
+}
+function q1Score(){
+  if(!q1Revealed){ const a = q1Answered(); q1box.textContent = a ? ("נענו " + a + " מתוך 6") : ""; return; }
+  q1box.textContent = "נכונות: " + q1Correct() + " מתוך 6";
+}
+const q1btn = document.createElement("button");
+q1btn.className = "btn"; q1btn.style.marginTop = "10px";
+q1btn.textContent = "בדוק את כל הסעיפים";
+q1btn.addEventListener("click", () => { q1Revealed ? hideQ1Marks() : revealQ1(); });
+q1grid.parentNode.insertBefore(q1btn, q1box.nextSibling);
+
+/* ================= clock (+ optional extra time) ================= */
+const clock = document.getElementById("clock");
+const BASE_DURATION = 3 * 60 * 60 * 1000;
+const totalDuration = () => BASE_DURATION + (STATE.extraMs || 0);
+function fmtDur(ms){
+  const h = Math.floor(ms/3600000), m = Math.floor(ms%3600000/60000), s0 = Math.floor(ms%60000/1000);
+  return h + ":" + String(m).padStart(2,"0") + ":" + String(s0).padStart(2,"0");
+}
+function tickClock(){
+  if(!STATE.startedAt){ clock.textContent = fmtDur(totalDuration()); clock.className = "clock off"; return; }
+  const left = totalDuration() - (Date.now() - STATE.startedAt);
+  if(left <= 0){ clock.textContent = "0:00:00"; clock.className = "clock low"; return; }
+  clock.textContent = fmtDur(left);
+  clock.className = "clock" + (left < 15*60*1000 ? " low" : "");
+}
+const extraTimeSel = document.getElementById("extraTime");
+extraTimeSel.value = String(Math.round((STATE.extraMs || 0) / 60000));
+extraTimeSel.addEventListener("change", () => {
+  STATE.extraMs = Number(extraTimeSel.value) * 60000;
+  save(); tickClock();
+});
+const paintStartBtn = () => { document.getElementById("startBtn").textContent = STATE.startedAt ? "אפס מבחן" : "התחל מבחן"; };
+function startClock(){ STATE.startedAt = Date.now(); save(); tickClock(); paintStartBtn(); }
+function restartExam(){
+  STATE.startedAt = null;
+  STATE.code = {q2:SKELETONS.q2, q3:SKELETONS.q3, q4:SKELETONS.q4};
+  STATE.q1 = {a:{time:"",space:""}, b:{time:"",space:""}, c:{time:"",space:""}};
+  STATE.results = {}; save();
+  document.querySelectorAll("#q1grid select").forEach(s => { s.value = ""; s.classList.remove("done"); });
+  hideQ1Marks();
+  ["q2","q3","q4"].forEach(q => { document.getElementById("dot-" + q).className = "dot"; });
+  ed.value = STATE.code[STATE.active];
+  syncEditor(); renderResults(STATE.active); updatePills(); tickClock(); paintStartBtn();
+}
+document.getElementById("startBtn").addEventListener("click", () => {
+  if(STATE.startedAt) askConfirm("לאפס את המבחן? השעון נעצר, הקוד חוזר לשלד, ותשובות שאלה 1 והתוצאות יימחקו. דף הטיוטה ומקרי הבדיקה שלך יישמרו.\n\n(זמן נוסף וההעדפות שלך על גודל/פריסה לא ייפגעו.)", restartExam);
+  else startClock();
+});
+setInterval(tickClock, 1000);
+
+/* ================= resizable layout + font zoom (shared across every exam) ================= */
+function applySplit(){ document.documentElement.style.setProperty("--ide-w", UIPREFS.ideW + "%"); }
+function applyFonts(){
+  document.documentElement.style.setProperty("--ide-fs", UIPREFS.codeFs + "px");
+  document.documentElement.style.setProperty("--paper-fs", UIPREFS.paperFs + "px");
+}
+function applyConsoleHeight(){
+  const paneH = paneIde.clientHeight || window.innerHeight;
+  const h = UIPREFS.consoleH ? Math.min(Math.max(UIPREFS.consoleH, 170), Math.max(220, paneH - 160))
+                              : Math.round(paneH * 0.36);
+  document.getElementById("console").style.height = h + "px";
+  syncEditor();
+}
+(function(){
+  const vres = document.getElementById("vResizer"), splitEl = document.querySelector(".split");
+  let dragging = false, startX = 0, startPct = UIPREFS.ideW;
+  vres.addEventListener("pointerdown", e => {
+    dragging = true; startX = e.clientX; startPct = UIPREFS.ideW;
+    vres.setPointerCapture(e.pointerId); vres.classList.add("active");
+  });
+  vres.addEventListener("pointermove", e => {
+    if(!dragging) return;
+    const rect = splitEl.getBoundingClientRect();
+    const pct = startPct + ((e.clientX - startX) / rect.width) * 100;
+    UIPREFS.ideW = Math.min(78, Math.max(22, pct));
+    applySplit();
+  });
+  const endVres = () => { if(!dragging) return; dragging = false; vres.classList.remove("active"); saveUI(); syncEditor(); };
+  vres.addEventListener("pointerup", endVres);
+  vres.addEventListener("pointercancel", endVres);
+
+  const hres = document.getElementById("hResizer");
+  let vdrag = false, startY = 0, startH = 0;
+  hres.addEventListener("pointerdown", e => {
+    vdrag = true; startY = e.clientY;
+    startH = document.getElementById("console").getBoundingClientRect().height;
+    hres.setPointerCapture(e.pointerId); hres.classList.add("active");
+  });
+  hres.addEventListener("pointermove", e => {
+    if(!vdrag) return;
+    const paneH = paneIde.clientHeight;
+    let h = startH - (e.clientY - startY);
+    h = Math.min(Math.max(h, 170), Math.max(220, paneH - 160));
+    UIPREFS.consoleH = Math.round(h);
+    document.getElementById("console").style.height = h + "px";
+    syncEditor();
+  });
+  const endHres = () => { if(!vdrag) return; vdrag = false; hres.classList.remove("active"); saveUI(); };
+  hres.addEventListener("pointerup", endHres);
+  hres.addEventListener("pointercancel", endHres);
+
+  document.getElementById("codeFsMinus").addEventListener("click", () => {
+    UIPREFS.codeFs = Math.max(10, UIPREFS.codeFs - 1); applyFonts(); saveUI(); syncEditor();
+  });
+  document.getElementById("codeFsPlus").addEventListener("click", () => {
+    UIPREFS.codeFs = Math.min(22, UIPREFS.codeFs + 1); applyFonts(); saveUI(); syncEditor();
+  });
+  document.getElementById("paperFsMinus").addEventListener("click", () => {
+    UIPREFS.paperFs = Math.max(12, UIPREFS.paperFs - 1); applyFonts(); saveUI();
+  });
+  document.getElementById("paperFsPlus").addEventListener("click", () => {
+    UIPREFS.paperFs = Math.min(22, UIPREFS.paperFs + 1); applyFonts(); saveUI();
+  });
+})();
+
+/* ================= modal ================= */
+const modal = document.getElementById("modal");
+function openModal(title, html, acts){
+  document.getElementById("mTitle").textContent = title;
+  document.getElementById("mBody").innerHTML = html;
+  const a = document.getElementById("mActs"); a.innerHTML = "";
+  acts.forEach(x => { const b = document.createElement("button"); b.className = x.cls || "btn"; b.textContent = x.label; b.addEventListener("click", x.fn); a.appendChild(b); });
+  modal.dataset.open = "1";
+}
+const closeModal = () => { modal.dataset.open = "0"; };
+modal.addEventListener("click", e => { if(e.target === modal) closeModal(); });
+function askConfirm(msg, onYes){
+  openModal("אישור", "<p>" + esc(msg) + "</p>", [
+    {label:"כן, בצע", cls:"btn primary", fn:() => { closeModal(); onYes(); }},
+    {label:"ביטול", cls:"btn", fn:closeModal}
+  ]);
+}
+document.getElementById("resetBtn").addEventListener("click", () => {
+  askConfirm("לאפס את הקובץ לשלד המקורי? הקוד שכתבת יימחק.", () => {
+    STATE.code[STATE.active] = SKELETONS[STATE.active];
+    ed.value = STATE.code[STATE.active]; syncEditor(); save();
+  });
+});
+
+/* ================= submit ================= */
+document.getElementById("submitBtn").addEventListener("click", () => {
+  const sub = {
+    exam: EXAM_ID, paper: PAPER_ID,
+    startedAt: STATE.startedAt ? new Date(STATE.startedAt).toISOString() : null,
+    submittedAt: new Date().toISOString(),
+    elapsedSeconds: STATE.startedAt ? Math.round((Date.now() - STATE.startedAt)/1000) : null,
+    q1: STATE.q1, code: STATE.code, selfTest: STATE.results,
+    customTests: CUSTOM
+  };
+  const rows = ["q2","q3","q4"].map(q => {
+    const r = STATE.results[q], total = effTests(q).length;
+    const pct = (r && !r.error) ? Math.round(100*r.passed/total) : 0;
+    const txt = r ? (r.error ? "שגיאת הידור" : r.passed + "/" + total) : "לא הורצו";
+    return '<div class="nm">' + q.toUpperCase() + '</div><div class="bar"><i style="width:' + pct + '%"></i></div><div class="sc">' + txt + "</div>";
+  }).join("");
+  const a = q1Answered();
+  openModal("סיום והגשה",
+    "<p>לפני ההגשה — כך נראה המצב:</p><div class='tally'>" + rows +
+    '<div class="nm">Q1</div><div class="bar"><i style="width:' + Math.round(100*a/6) + '%"></i></div><div class="sc">' + a + "/6</div></div>" +
+    '<p>שמור את קובץ ההגשה, ואז בטרמינל: <code dir="ltr">/grade &lt;path-to-file&gt;</code></p>' +
+    '<p style="color:var(--ink-faint);font-size:12.5px">הבדיקות כאן אינן בודקות סיבוכיות. הציון מ-Claude כן.</p>',
+    [{label:"שמור קובץ הגשה", cls:"btn primary", fn:() => offerFile("exam-" + PAGE_ID + "-submission.json", JSON.stringify(sub, null, 2))},
+     {label:"פתרונות לדוגמה", cls:"btn", fn:showSolutions},
+     {label:"חזור למבחן", cls:"btn", fn:closeModal}]);
+});
+
+function showSolutions(){
+  const q1rows = Q1_PARTS.map(p =>
+    "<div style='display:flex;gap:10px;padding:5px 0;font-size:13px'><b style='min-width:60px'>" + esc(p.label) + "</b>" +
+    "<span>זמן <bdi>" + esc(Q1_KEY[p.id].time) + "</bdi> &nbsp;·&nbsp; מקום <bdi>" + esc(Q1_KEY[p.id].space) + "</bdi></span></div>"
+  ).join("");
+  const qBlocks = ["q2","q3","q4"].map(q => {
+    const sol = SOLUTIONS[q];
+    if(!sol) return "";
+    return (
+      '<h4 style="font-family:\'Frank Ruhl Libre\',serif;margin:18px 0 3px">' + q.toUpperCase() +
+        (sol.archetype ? ' <span class="badge">' + esc(sol.archetype) + "</span>" : "") + "</h4>" +
+      (sol.complexity ? '<p style="color:var(--ink-faint);font-size:12px;margin:0 0 6px">' + esc(sol.complexity) + "</p>" : "") +
+      '<pre class="raw" style="background:#111317;border-radius:8px;direction:ltr;text-align:left;overflow-x:auto;padding:11px 13px;font-size:12px">' +
+        highlight(sol.code) + "</pre>"
+    );
+  }).join("");
+  openModal("פתרונות לדוגמה",
+    '<p style="color:var(--warn);font-weight:700">אלו פתרונות לדוגמה בלבד — אין כאן ציון. לציון אמיתי הרץ <code dir="ltr">/grade</code> על קובץ ההגשה.</p>' +
+    '<h4 style="font-family:\'Frank Ruhl Libre\',serif;margin:14px 0 2px">שאלה 1</h4>' + q1rows + qBlocks,
+    [{label:"סגור", cls:"btn primary", fn:closeModal}]);
+}
+
+/* ================= scratch pad ================= */
+let showPanel;
+(function(){
+  const wrap = document.getElementById("skwrap"), cv = document.getElementById("sk");
+  const tools = document.getElementById("sktools"), cons = document.getElementById("console");
+  const ctx = cv.getContext("2d"), SK_KEY = LS_KEY + "-sketch";
+  const COLORS = {blue:"#5ba3ef", white:"#eef1f6"};
+  let strokes = [], redo = [], view = {x:0,y:0,s:1};
+  let colour = "blue", erasing = false, drawing = null, panning = null, spaceHeld = false;
+  const dpr = () => Math.min(window.devicePixelRatio || 1, 2);
+  try{
+    const d = JSON.parse(localStorage.getItem(SK_KEY) || "null");
+    if(d && Array.isArray(d.strokes)){ strokes = d.strokes; if(d.view) view = d.view; }
+  }catch(e){}
+  const persist = () => { try{ localStorage.setItem(SK_KEY, JSON.stringify({strokes, view})); }catch(e){} };
+  function fit(){
+    const r = wrap.getBoundingClientRect();
+    if(r.width < 2 || r.height < 2) return;
+    cv.width = Math.round(r.width*dpr()); cv.height = Math.round(r.height*dpr());
+    draw();
+  }
+  const toWorld = (px,py) => ({x:(px - view.x)/view.s, y:(py - view.y)/view.s});
+  function draw(){
+    const r = wrap.getBoundingClientRect();
+    ctx.setTransform(dpr(),0,0,dpr(),0,0);
+    ctx.fillStyle = "#0b0d11"; ctx.fillRect(0,0,r.width,r.height);
+    const step = 40*view.s;
+    if(step > 9){
+      ctx.strokeStyle = "#161a21"; ctx.lineWidth = 1; ctx.beginPath();
+      for(let x = view.x % step; x < r.width; x += step){ ctx.moveTo(x,0); ctx.lineTo(x,r.height); }
+      for(let y = view.y % step; y < r.height; y += step){ ctx.moveTo(0,y); ctx.lineTo(r.width,y); }
+      ctx.stroke();
+    }
+    ctx.lineCap = "round"; ctx.lineJoin = "round";
+    for(const st of strokes){
+      const p = st.pts;
+      if(p.length < 2) continue;
+      ctx.strokeStyle = COLORS[st.c] || COLORS.blue;
+      ctx.lineWidth = Math.max(0.7, st.w*view.s);
+      ctx.beginPath();
+      ctx.moveTo(p[0]*view.s + view.x, p[1]*view.s + view.y);
+      for(let i=2;i<p.length;i+=2) ctx.lineTo(p[i]*view.s + view.x, p[i+1]*view.s + view.y);
+      if(p.length === 2) ctx.lineTo(p[0]*view.s + view.x + .4, p[1]*view.s + view.y);
+      ctx.stroke();
+    }
+  }
+  function eraseAt(w){
+    const R = 12/view.s, before = strokes.length;
+    strokes = strokes.filter(st => {
+      for(let i=0;i<st.pts.length;i+=2) if(Math.abs(st.pts[i]-w.x) < R && Math.abs(st.pts[i+1]-w.y) < R) return false;
+      return true;
+    });
+    if(strokes.length !== before){ draw(); persist(); }
+  }
+  cv.addEventListener("pointerdown", e => {
+    cv.setPointerCapture(e.pointerId);
+    const r = cv.getBoundingClientRect(), px = e.clientX - r.left, py = e.clientY - r.top;
+    if(e.button === 1 || e.button === 2 || spaceHeld){ panning = {px,py,vx:view.x,vy:view.y}; wrap.classList.add("panning"); return; }
+    const w = toWorld(px,py);
+    if(erasing){ eraseAt(w); drawing = {erase:true}; return; }
+    drawing = {c:colour, w:2.2, pts:[w.x,w.y]};
+    strokes.push(drawing); redo = [];
+  });
+  cv.addEventListener("pointermove", e => {
+    const r = cv.getBoundingClientRect(), px = e.clientX - r.left, py = e.clientY - r.top;
+    if(panning){ view.x = panning.vx + (px - panning.px); view.y = panning.vy + (py - panning.py); draw(); return; }
+    if(!drawing) return;
+    const w = toWorld(px,py);
+    if(drawing.erase){ eraseAt(w); return; }
+    const p = drawing.pts, n = p.length;
+    if(n >= 2 && Math.abs(p[n-2]-w.x) < 0.6/view.s && Math.abs(p[n-1]-w.y) < 0.6/view.s) return;
+    p.push(w.x,w.y); draw();
+  });
+  function endStroke(){
+    if(panning){ panning = null; wrap.classList.remove("panning"); persist(); }
+    if(drawing){ drawing = null; persist(); }
+  }
+  cv.addEventListener("pointerup", endStroke);
+  cv.addEventListener("pointercancel", endStroke);
+  cv.addEventListener("contextmenu", e => e.preventDefault());
+  cv.addEventListener("wheel", e => {
+    e.preventDefault();
+    const r = cv.getBoundingClientRect(), px = e.clientX - r.left, py = e.clientY - r.top;
+    const b = toWorld(px,py);
+    view.s = Math.min(5, Math.max(0.2, view.s*(e.deltaY < 0 ? 1.12 : 1/1.12)));
+    view.x = px - b.x*view.s; view.y = py - b.y*view.s;
+    draw(); persist();
+  }, {passive:false});
+  window.addEventListener("keydown", e => {
+    if(e.code === "Space" && document.activeElement !== ed) spaceHeld = true;
+    const z = (e.ctrlKey || e.metaKey) && (e.key === "z" || e.key === "Z");
+    if(z && !wrap.hidden && document.activeElement !== ed){
+      e.preventDefault();
+      if(e.shiftKey){ const st = redo.pop(); if(st){ strokes.push(st); draw(); persist(); } }
+      else { const st = strokes.pop(); if(st){ redo.push(st); draw(); persist(); } }
+    }
+  });
+  window.addEventListener("keyup", e => { if(e.code === "Space") spaceHeld = false; });
+  function pickColour(c){
+    colour = c; erasing = false;
+    document.getElementById("cBlue").setAttribute("aria-pressed", String(c === "blue"));
+    document.getElementById("cWhite").setAttribute("aria-pressed", String(c === "white"));
+    document.getElementById("skErase").setAttribute("aria-pressed","false");
+  }
+  document.getElementById("cBlue").addEventListener("click", () => pickColour("blue"));
+  document.getElementById("cWhite").addEventListener("click", () => pickColour("white"));
+  document.getElementById("skErase").addEventListener("click", function(){ erasing = !erasing; this.setAttribute("aria-pressed", String(erasing)); });
+  document.getElementById("skUndo").addEventListener("click", () => { const st = strokes.pop(); if(st) redo.push(st); draw(); persist(); });
+  document.getElementById("skHome").addEventListener("click", () => { view = {x:0,y:0,s:1}; draw(); persist(); });
+  document.getElementById("skClear").addEventListener("click", () => {
+    if(!strokes.length) return;
+    askConfirm("לנקות את כל דף הטיוטה?", () => { redo = strokes.slice().reverse(); strokes = []; draw(); persist(); });
+  });
+  showPanel = function(which){
+    const map = {out:"tabOut", tests:"tabTests", cases:"tabCases", sketch:"tabSketch"};
+    Object.keys(map).forEach(k => document.getElementById(map[k]).setAttribute("aria-selected", String(k === which)));
+    document.getElementById("wrapOut").hidden = which !== "out";
+    document.getElementById("wrapTests").hidden = which !== "tests";
+    document.getElementById("wrapCases").hidden = which !== "cases";
+    wrap.hidden = which !== "sketch";
+    tools.hidden = which !== "sketch";
+    if(which === "cases") renderCases();
+    if(which === "sketch") requestAnimationFrame(fit);
+  };
+  document.getElementById("tabOut").addEventListener("click", () => showPanel("out"));
+  document.getElementById("tabTests").addEventListener("click", () => showPanel("tests"));
+  document.getElementById("tabCases").addEventListener("click", () => showPanel("cases"));
+  document.getElementById("tabSketch").addEventListener("click", () => showPanel("sketch"));
+  document.getElementById("expandBtn").addEventListener("click", () => {
+    const paneH = paneIde.clientHeight;
+    const cur = document.getElementById("console").getBoundingClientRect().height;
+    const tall = Math.round(paneH * 0.66), compact = Math.round(paneH * 0.36);
+    UIPREFS.consoleH = (cur < paneH * 0.5) ? tall : compact;
+    applyConsoleHeight(); saveUI();
+    if(!wrap.hidden) requestAnimationFrame(fit);
+  });
+  if(window.ResizeObserver) new ResizeObserver(() => { if(!wrap.hidden) fit(); }).observe(wrap);
+  window.addEventListener("resize", () => { if(!wrap.hidden) fit(); });
+})();
+
+/* ================= small screens + boot ================= */
+const panePaper = document.getElementById("panePaper"), paneIde = document.getElementById("paneIde");
+function swapPane(showPaper){
+  panePaper.dataset.hide = showPaper ? "0" : "1";
+  paneIde.dataset.hide = showPaper ? "1" : "0";
+  document.getElementById("swPaper").setAttribute("aria-pressed", String(showPaper));
+  document.getElementById("swIde").setAttribute("aria-pressed", String(!showPaper));
+  if(!showPaper) syncEditor();
+}
+document.getElementById("swPaper").addEventListener("click", () => swapPane(true));
+document.getElementById("swIde").addEventListener("click", () => swapPane(false));
+if(window.matchMedia("(max-width:1000px)").matches) swapPane(true);
+
+openTab("q2");
+q1Score();
+updatePills();
+tickClock();
+paintStartBtn();
+window.addEventListener("resize", () => { applyConsoleHeight(); syncEditor(); });
+applySplit(); applyFonts(); applyConsoleHeight(); updateLineLen();
+</script>
+</body>
+</html>
