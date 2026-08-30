@@ -2,518 +2,60 @@
   "version": 2,
   "questions": {
     "q2": {
-      "driver": "int_array_n",
-      "mutation": "forbidden",
+      "driver": "matrix_rows_int", "mutation": "forbidden",
       "cases": [
-        {
-          "name": "t01_worked",
-          "args": {
-            "arr": [
-              1,
-              1,
-              2,
-              2,
-              3,
-              3,
-              4,
-              5,
-              5
-            ],
-            "n": 9
-          },
-          "expect": "4"
-        },
-        {
-          "name": "t02_single_only",
-          "args": {
-            "arr": [
-              7
-            ],
-            "n": 1
-          },
-          "expect": "7"
-        },
-        {
-          "name": "t03_single_first",
-          "args": {
-            "arr": [
-              1,
-              2,
-              2,
-              3,
-              3
-            ],
-            "n": 5
-          },
-          "expect": "1"
-        },
-        {
-          "name": "t04_single_last",
-          "args": {
-            "arr": [
-              1,
-              1,
-              2,
-              2,
-              3
-            ],
-            "n": 5
-          },
-          "expect": "3"
-        },
-        {
-          "name": "t05_single_middle",
-          "args": {
-            "arr": [
-              1,
-              1,
-              2,
-              3,
-              3
-            ],
-            "n": 5
-          },
-          "expect": "2"
-        },
-        {
-          "name": "t06_negatives",
-          "args": {
-            "arr": [
-              -5,
-              -5,
-              -3,
-              -1,
-              -1
-            ],
-            "n": 5
-          },
-          "expect": "-3"
-        },
-        {
-          "name": "t07_two_pairs_plus",
-          "args": {
-            "arr": [
-              2,
-              2,
-              4,
-              4,
-              6,
-              6,
-              8
-            ],
-            "n": 7
-          },
-          "expect": "8"
-        },
-        {
-          "name": "t8_random",
-          "args": {
-            "arr": [
-              13,
-              13,
-              16,
-              16,
-              25,
-              25,
-              34,
-              34,
-              47,
-              58,
-              58
-            ],
-            "n": 11
-          },
-          "expect": "47"
-        },
-        {
-          "name": "t9_random",
-          "args": {
-            "arr": [
-              29,
-              31,
-              31,
-              49,
-              49
-            ],
-            "n": 5
-          },
-          "expect": "29"
-        },
-        {
-          "name": "t10_random",
-          "args": {
-            "arr": [
-              4,
-              4,
-              7,
-              7,
-              31,
-              31,
-              37,
-              37,
-              49,
-              52,
-              52,
-              58,
-              58
-            ],
-            "n": 13
-          },
-          "expect": "49"
-        },
-        {
-          "name": "t11_random",
-          "args": {
-            "arr": [
-              4,
-              4,
-              8,
-              16,
-              16,
-              22,
-              22,
-              40,
-              40,
-              55,
-              55
-            ],
-            "n": 11
-          },
-          "expect": "8"
-        },
-        {
-          "name": "t12_random",
-          "args": {
-            "arr": [
-              7,
-              7,
-              49,
-              49,
-              51,
-              55,
-              55
-            ],
-            "n": 7
-          },
-          "expect": "51"
-        },
-        {
-          "name": "t13_random",
-          "args": {
-            "arr": [
-              5,
-              10,
-              10,
-              19,
-              19,
-              22,
-              22,
-              28,
-              28,
-              40,
-              40
-            ],
-            "n": 11
-          },
-          "expect": "5"
-        }
+        { "name": "t01", "args": { "mat": [[1,4,7],[2,5,8],[3,6,9]], "m": 3, "cols": 3, "value": 6 }, "expect": "1" },
+        { "name": "t02", "args": { "mat": [[1,4,7],[2,5,8],[3,6,9]], "m": 3, "cols": 3, "value": 10 }, "expect": "0" },
+        { "name": "t03", "args": { "mat": [[1,2,3]], "m": 1, "cols": 3, "value": 2 }, "expect": "1" },
+        { "name": "t04", "args": { "mat": [[1,2,3]], "m": 1, "cols": 3, "value": 0 }, "expect": "0" },
+        { "name": "t05", "args": { "mat": [[1,3,5],[2,4,6]], "m": 2, "cols": 3, "value": 6 }, "expect": "1" },
+        { "name": "t06", "args": { "mat": [[1,3,5],[2,4,6]], "m": 2, "cols": 3, "value": 3 }, "expect": "1" },
+        { "name": "t07", "args": { "mat": [[1,3,5],[2,4,6]], "m": 2, "cols": 3, "value": 7 }, "expect": "0" },
+        { "name": "t08", "args": { "mat": [[-9,-6,-3],[-8,-5,-2],[-7,-4,-1]], "m": 3, "cols": 3, "value": -4 }, "expect": "1" },
+        { "name": "t09", "args": { "mat": [[-9,-6,-3],[-8,-5,-2],[-7,-4,-1]], "m": 3, "cols": 3, "value": 0 }, "expect": "0" },
+        { "name": "t10", "args": { "mat": [[1,5,9],[2,6,10],[3,7,11],[4,8,12]], "m": 4, "cols": 3, "value": 1 }, "expect": "1" },
+        { "name": "t11", "args": { "mat": [[1,5,9],[2,6,10],[3,7,11],[4,8,12]], "m": 4, "cols": 3, "value": 8 }, "expect": "1" },
+        { "name": "t12", "args": { "mat": [[1,5,9],[2,6,10],[3,7,11],[4,8,12]], "m": 4, "cols": 3, "value": 13 }, "expect": "0" },
+        { "name": "t13", "args": { "mat": [[0,10,20],[5,15,25],[9,19,29]], "m": 3, "cols": 3, "value": 19 }, "expect": "1" },
+        { "name": "t14", "args": { "mat": [[0,10,20],[5,15,25],[9,19,29]], "m": 3, "cols": 3, "value": 14 }, "expect": "0" }
       ]
     },
     "q3": {
-      "driver": "string_int",
-      "mutation": "forbidden",
+      "driver": "string_only", "mutation": "allowed",
       "cases": [
-        {
-          "name": "t01",
-          "args": {
-            "s": "aab",
-            "value": 1
-          },
-          "expect": "4"
-        },
-        {
-          "name": "t02",
-          "args": {
-            "s": "aab",
-            "value": 2
-          },
-          "expect": "6"
-        },
-        {
-          "name": "t03",
-          "args": {
-            "s": "abc",
-            "value": 1
-          },
-          "expect": "6"
-        },
-        {
-          "name": "t04",
-          "args": {
-            "s": "aaa",
-            "value": 1
-          },
-          "expect": "3"
-        },
-        {
-          "name": "t05",
-          "args": {
-            "s": "aaa",
-            "value": 2
-          },
-          "expect": "5"
-        },
-        {
-          "name": "t06",
-          "args": {
-            "s": "aaa",
-            "value": 3
-          },
-          "expect": "6"
-        },
-        {
-          "name": "t07",
-          "args": {
-            "s": "abca",
-            "value": 1
-          },
-          "expect": "9"
-        },
-        {
-          "name": "t08",
-          "args": {
-            "s": "abca",
-            "value": 2
-          },
-          "expect": "10"
-        },
-        {
-          "name": "t09",
-          "args": {
-            "s": "abab",
-            "value": 1
-          },
-          "expect": "7"
-        },
-        {
-          "name": "t10",
-          "args": {
-            "s": "abab",
-            "value": 2
-          },
-          "expect": "10"
-        },
-        {
-          "name": "t11",
-          "args": {
-            "s": "aabb",
-            "value": 1
-          },
-          "expect": "5"
-        },
-        {
-          "name": "t12",
-          "args": {
-            "s": "aabb",
-            "value": 2
-          },
-          "expect": "10"
-        },
-        {
-          "name": "t13",
-          "args": {
-            "s": "mississippi",
-            "value": 2
-          },
-          "expect": "42"
-        },
-        {
-          "name": "t14",
-          "args": {
-            "s": "xyzxyz",
-            "value": 1
-          },
-          "expect": "15"
-        }
+        { "name": "t01", "args": { "s": "programming" }, "expect": "8" },
+        { "name": "t02", "args": { "s": "aaaa" }, "expect": "1" },
+        { "name": "t03", "args": { "s": "abc" }, "expect": "3" },
+        { "name": "t04", "args": { "s": "abacabad" }, "expect": "4" },
+        { "name": "t05", "args": { "s": "mississippi" }, "expect": "4" },
+        { "name": "t06", "args": { "s": "banana" }, "expect": "3" },
+        { "name": "t07", "args": { "s": "abcdefghijklmnopqrstuvwxyz" }, "expect": "26" },
+        { "name": "t08", "args": { "s": "aabbcc" }, "expect": "3" },
+        { "name": "t09", "args": { "s": "zyxzyx" }, "expect": "3" },
+        { "name": "t10", "args": { "s": "letter" }, "expect": "4" },
+        { "name": "t11", "args": { "s": "swiss" }, "expect": "3" },
+        { "name": "t12", "args": { "s": "committee" }, "expect": "6" },
+        { "name": "t13", "args": { "s": "abracadabra" }, "expect": "5" },
+        { "name": "t14", "args": { "s": "qwertyqwerty" }, "expect": "6" }
       ]
     },
     "q4": {
-      "driver": "int_array_n_int",
-      "mutation": "forbidden",
+      "driver": "int_only", "mutation": "allowed",
       "cases": [
-        {
-          "name": "t01",
-          "args": {
-            "arr": [
-              1,
-              2,
-              3
-            ],
-            "n": 3,
-            "value": 3
-          },
-          "expect": "2"
-        },
-        {
-          "name": "t02",
-          "args": {
-            "arr": [],
-            "n": 0,
-            "value": 0
-          },
-          "expect": "1"
-        },
-        {
-          "name": "t03",
-          "args": {
-            "arr": [],
-            "n": 0,
-            "value": 5
-          },
-          "expect": "0"
-        },
-        {
-          "name": "t04",
-          "args": {
-            "arr": [
-              1
-            ],
-            "n": 1,
-            "value": 1
-          },
-          "expect": "1"
-        },
-        {
-          "name": "t05",
-          "args": {
-            "arr": [
-              1,
-              1,
-              1
-            ],
-            "n": 3,
-            "value": 2
-          },
-          "expect": "3"
-        },
-        {
-          "name": "t06",
-          "args": {
-            "arr": [
-              0,
-              0
-            ],
-            "n": 2,
-            "value": 0
-          },
-          "expect": "4"
-        },
-        {
-          "name": "t07",
-          "args": {
-            "arr": [
-              -1,
-              1
-            ],
-            "n": 2,
-            "value": 0
-          },
-          "expect": "2"
-        },
-        {
-          "name": "t08",
-          "args": {
-            "arr": [
-              2,
-              4,
-              6
-            ],
-            "n": 3,
-            "value": 5
-          },
-          "expect": "0"
-        },
-        {
-          "name": "t09",
-          "args": {
-            "arr": [
-              2,
-              4,
-              6
-            ],
-            "n": 3,
-            "value": 6
-          },
-          "expect": "2"
-        },
-        {
-          "name": "t10",
-          "args": {
-            "arr": [
-              3,
-              -2,
-              5
-            ],
-            "n": 3,
-            "value": 3
-          },
-          "expect": "2"
-        },
-        {
-          "name": "t11",
-          "args": {
-            "arr": [
-              1,
-              2,
-              2,
-              3
-            ],
-            "n": 4,
-            "value": 4
-          },
-          "expect": "2"
-        },
-        {
-          "name": "t12",
-          "args": {
-            "arr": [
-              5,
-              5,
-              5
-            ],
-            "n": 3,
-            "value": 10
-          },
-          "expect": "3"
-        },
-        {
-          "name": "t13",
-          "args": {
-            "arr": [
-              -2,
-              -1,
-              3,
-              4
-            ],
-            "n": 4,
-            "value": 2
-          },
-          "expect": "2"
-        },
-        {
-          "name": "t14",
-          "args": {
-            "arr": [
-              1,
-              -1,
-              1,
-              -1
-            ],
-            "n": 4,
-            "value": 0
-          },
-          "expect": "6"
-        }
+        { "name": "t01", "args": { "value": 0 }, "expect": "1" },
+        { "name": "t02", "args": { "value": 1 }, "expect": "1" },
+        { "name": "t03", "args": { "value": 2 }, "expect": "2" },
+        { "name": "t04", "args": { "value": 3 }, "expect": "3" },
+        { "name": "t05", "args": { "value": 4 }, "expect": "5" },
+        { "name": "t06", "args": { "value": 5 }, "expect": "8" },
+        { "name": "t07", "args": { "value": 6 }, "expect": "13" },
+        { "name": "t08", "args": { "value": 7 }, "expect": "21" },
+        { "name": "t09", "args": { "value": 8 }, "expect": "34" },
+        { "name": "t10", "args": { "value": 9 }, "expect": "55" },
+        { "name": "t11", "args": { "value": 10 }, "expect": "89" },
+        { "name": "t12", "args": { "value": 11 }, "expect": "144" },
+        { "name": "t13", "args": { "value": 12 }, "expect": "233" },
+        { "name": "t14", "args": { "value": 15 }, "expect": "987" }
       ]
     }
   }
