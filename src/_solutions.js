@@ -1,71 +1,72 @@
 const SOLUTIONS = {
   q2: {
-    archetype: "חיפוש בינארי על השיפוע — arr[mid] < arr[mid+1] מעיד שהשיא מימין",
+    archetype: "חיפוש דוהר (galloping) למציאת חסם, ואז חיפוש בינארי",
     complexity: "זמן Θ(log n) · מקום Θ(1)",
-    code: `int examT_q2(int arr[], int n) {
-    int low = 0, high = n - 1;
-    while (low < high) {
+    code: `int examT_q2(int* arr, int x) {
+    if (arr[0] == EMPTY) {
+        return -1;
+    }
+    int high = 1;
+    while (arr[high] != EMPTY && arr[high] < x) {
+        high *= 2;
+    }
+    int low = high / 2;
+    while (low <= high) {
         int mid = low + (high - low) / 2;
-        if (arr[mid] < arr[mid + 1]) {
+        if (arr[mid] == EMPTY || arr[mid] > x) {
+            high = mid - 1;
+        } else if (arr[mid] < x) {
             low = mid + 1;
         } else {
-            high = mid;
+            return mid;
         }
     }
-    return low;
+    return -1;
 }`
   },
   q3: {
-    archetype: "הרחבה מכל התחלה — מונים נצברים ועצירה מוקדמת כשהתנאי נשבר לתמיד",
-    complexity: "זמן O(n²) · מקום נוסף O(1)",
+    archetype: "מעבר יחיד עם היסטוגרמה ומערך אינדקסי הופעה ראשונה",
+    complexity: "זמן Θ(n) · מקום נוסף Θ(1)",
     code: `int examT_q3(char* s) {
-    int n = 0;
-    while (s[n] != '\\0') {
-        n++;
+    int count[26] = {0};
+    int first[26];
+    for (int c = 0; c < 26; c++) {
+        first[c] = -1;
     }
-    int total = 0;
-    for (int i = 0; i < n; i++) {
-        int count[26] = {0};
-        int vowels = 0, consonants = 0;
-        for (int j = i; j < n; j++) {
-            int c = s[j] - 'a';
-            count[c]++;
-            if (count[c] > 2) {
-                break;
-            }
-            if (is_vowel(s[j])) {
-                vowels++;
-            } else {
-                consonants++;
-            }
-            if (j - i + 1 >= 3 && vowels > 0 && consonants > 0) {
-                total++;
-            }
+    for (int i = 0; s[i] != '\\0'; i++) {
+        int c = s[i] - 'a';
+        if (count[c] == 0) {
+            first[c] = i;
+        }
+        count[c]++;
+    }
+    int best = -1;
+    for (int c = 0; c < 26; c++) {
+        if (count[c] == 1 && (best == -1 || first[c] < best)) {
+            best = first[c];
         }
     }
-    return total;
+    return best;
 }`
   },
   q4: {
-    archetype: "רקורסיה כפולה — אורך הרצף שמתחיל כאן, מול המיטב שבהמשך",
+    archetype: "הכלה עם ריבוי ברקורסיה: ספירת תו ברקורסיה, ואז צעד קדימה",
     complexity: "אין דרישת סיבוכיות",
-    code: `int run_from(int* arr, int n) {
-    if (n <= 1) {
-        return n;
-    }
-    if (arr[0] < arr[1]) {
-        return 1 + run_from(arr + 1, n - 1);
-    }
-    return 1;
-}
-
-int examT_q4(int* arr, int n) {
-    if (n <= 0) {
+    code: `int count_char(char* s, char c) {
+    if (*s == '\\0') {
         return 0;
     }
-    int here = run_from(arr, n);
-    int rest = examT_q4(arr + 1, n - 1);
-    return (here > rest) ? here : rest;
+    return ((*s == c) ? 1 : 0) + count_char(s + 1, c);
+}
+
+int examT_q4(char* a, char* b) {
+    if (*a == '\\0') {
+        return 1;
+    }
+    if (count_char(a, *a) > count_char(b, *a)) {
+        return 0;
+    }
+    return examT_q4(a + 1, b);
 }`
   }
 };

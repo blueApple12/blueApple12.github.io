@@ -426,27 +426,38 @@ textarea.paste{width:100%;height:130px;font-family:"JetBrains Mono",monospace;fo
         וכי סיבוכיות הזמן של <code>malloc(n)</code> היא Θ(1) וסיבוכיות המקום שלה היא Θ(n).
       </p>
 
-      <p><strong>א.</strong></p>
-<pre class="snip">int f1(int n) {
-    if (n &lt;= 0) return 0;
-    return n + f1(n - 2);
-}</pre>
+      <p class="lead"><strong>שימו לב:</strong> אין הבטחה ששלושת הסעיפים מקבלים תשובות שונות.
+      חשבו כל סעיף מחדש, ובפרט שימו לב <em>מתי</em> משוחרר הזיכרון ביחס לקריאה הרקורסיבית.</p>
 
-      <p><strong>ב.</strong></p>
-<pre class="snip">void f2(int n) {
-    for (int i = 0; i &lt; n; i++) {
-        int j = n;
-        while (j &gt; 1) {
-            j = j / 2;
+      <p><strong>א.</strong></p>
+<pre class="snip">void f1(int n) {
+    for (int i = n; i &gt; 1; i /= 2) {
+        for (int j = 0; j &lt; i; j++) {
             printf("*");
         }
     }
 }</pre>
 
+      <p><strong>ב.</strong></p>
+<pre class="snip">int f2(int n) {
+    if (n &lt;= 1) return 1;
+    int* arr = (int*) malloc(n * sizeof(int));
+    if (arr == NULL) return 0;
+    for (int i = 0; i &lt; n; i++) {
+        arr[i] = i;
+    }
+    int res = f2(n / 2);
+    free(arr);
+    return res;
+}</pre>
+
       <p><strong>ג.</strong></p>
 <pre class="snip">int f3(int n) {
     if (n &lt;= 1) return 1;
-    return f3(n / 2) + 1;
+    for (int i = 0; i &lt; n; i++) {
+        printf("*");
+    }
+    return f3(n / 2);
 }</pre>
 
       <div class="q1grid" id="q1grid"></div>
@@ -1179,7 +1190,7 @@ const ExamDrivers = (() => {
   return {normalizeManifest, validateArgs, validateCases, cString, cChar, formatArgs, driverFor, driverStdin};
 })();
 
-const Q1_KEY = JSON.parse(decodeURIComponent(atob("JTdCJTIyYSUyMiUzQSU3QiUyMnRpbWUlMjIlM0ElMjIlQ0UlOTgobiklMjIlMkMlMjJzcGFjZSUyMiUzQSUyMiVDRSU5OChuKSUyMiU3RCUyQyUyMmIlMjIlM0ElN0IlMjJ0aW1lJTIyJTNBJTIyJUNFJTk4KG4lMjBsb2clMjBuKSUyMiUyQyUyMnNwYWNlJTIyJTNBJTIyJUNFJTk4KDEpJTIyJTdEJTJDJTIyYyUyMiUzQSU3QiUyMnRpbWUlMjIlM0ElMjIlQ0UlOTgobG9nJTIwbiklMjIlMkMlMjJzcGFjZSUyMiUzQSUyMiVDRSU5OChsb2clMjBuKSUyMiU3RCU3RA==")));
+const Q1_KEY = JSON.parse(decodeURIComponent(atob("JTdCJTIyYSUyMiUzQSU3QiUyMnRpbWUlMjIlM0ElMjIlQ0UlOTgobiklMjIlMkMlMjJzcGFjZSUyMiUzQSUyMiVDRSU5OCgxKSUyMiU3RCUyQyUyMmIlMjIlM0ElN0IlMjJ0aW1lJTIyJTNBJTIyJUNFJTk4KG4pJTIyJTJDJTIyc3BhY2UlMjIlM0ElMjIlQ0UlOTgobiklMjIlN0QlMkMlMjJjJTIyJTNBJTdCJTIydGltZSUyMiUzQSUyMiVDRSU5OChuKSUyMiUyQyUyMnNwYWNlJTIyJTNBJTIyJUNFJTk4KGxvZyUyMG4pJTIyJTdEJTdE")));
 /* Every exam page shares this ONE origin (blueapple12.github.io), so
    localStorage is shared across /exam/<n>/ paths too. Key everything to
    the page's own path, or exam 2's save would clobber exam 1's. */
@@ -1394,7 +1405,7 @@ int examT_q4(char* a, char* b) {
 };
 
 /* ==== /END SOLUTIONS ==== */
-const COMPLEXITY_OPTS = ["— בחר —","Θ(1)","Θ(log log n)","Θ(log n)","Θ(log n · log log n)","Θ(√n)","Θ(n)","Θ(n log n)","Θ(n log log n)","Θ(n²)","Θ(n² log n)","Θ(n³)","Θ(2ⁿ)"];
+const COMPLEXITY_OPTS = ["— בחר —","Θ(1)","Θ(log log n)","Θ(log n)","Θ(log n · log log n)","Θ(log² n)","Θ(√n)","Θ(√n · log n)","Θ(n)","Θ(n log n)","Θ(n log log n)","Θ(n²)","Θ(n² log n)","Θ(n³)","Θ(2ⁿ)"];
 const Q1_PARTS = [{id:"a",label:"סעיף א'"},{id:"b",label:"סעיף ב'"},{id:"c",label:"סעיף ג'"}];
 const KEYWORDS = new Set(["if","else","for","while","do","return","break","continue","switch","case","default","sizeof","struct","typedef","const","static","goto","union","enum","extern","register","volatile"]);
 const TYPES = new Set(["int","char","long","short","unsigned","signed","float","double","bool","size_t","void","FILE"]);
