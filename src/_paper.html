@@ -9,7 +9,7 @@
       </div>
     </div>
 
-    <div class="note">תרגול מדומה — תחזית 5 מתוך 12 למועד ב׳ אביב 2026. אינו מבחן אמיתי של הטכניון.</div>
+    <div class="note">תרגול מדומה — תחזית 2 מתוך 12 למועד ב׳ אביב 2026. אינו מבחן אמיתי של הטכניון.</div>
 
     <!-- Q1 -->
     <section class="q">
@@ -20,38 +20,24 @@
         וכי סיבוכיות הזמן של <code>malloc(n)</code> היא Θ(1) וסיבוכיות המקום שלה היא Θ(n).
       </p>
 
-      <p class="lead"><strong>שימו לב:</strong> אין הבטחה ששלושת הסעיפים מקבלים תשובות שונות.
-      חשבו כל סעיף מחדש, ובפרט שימו לב <em>מתי</em> משוחרר הזיכרון ביחס לקריאה הרקורסיבית.</p>
-
       <p><strong>א.</strong></p>
 <pre class="snip">void f1(int n) {
-    for (int i = n; i &gt; 1; i /= 2) {
-        for (int j = 0; j &lt; i; j++) {
-            printf("*");
-        }
+    for (int i = 1; i * i &lt; n; i++) {
+        printf("*");
     }
 }</pre>
 
       <p><strong>ב.</strong></p>
 <pre class="snip">int f2(int n) {
     if (n &lt;= 1) return 1;
-    int* arr = (int*) malloc(n * sizeof(int));
-    if (arr == NULL) return 0;
-    for (int i = 0; i &lt; n; i++) {
-        arr[i] = i;
-    }
-    int res = f2(n / 2);
-    free(arr);
-    return res;
+    return f2(n / 2) + f2(n / 2);
 }</pre>
 
       <p><strong>ג.</strong></p>
-<pre class="snip">int f3(int n) {
-    if (n &lt;= 1) return 1;
-    for (int i = 0; i &lt; n; i++) {
+<pre class="snip">void f3(int n) {
+    for (int i = 2; i &lt; n; i = i * i) {
         printf("*");
     }
-    return f3(n / 2);
 }</pre>
 
       <div class="q1grid" id="q1grid"></div>
@@ -60,47 +46,51 @@
     <!-- Q2 -->
     <section class="q">
       <h2>שאלה 2 <span class="pts">25 נק'</span></h2>
-      <p>נתון מערך <code>arr</code> של מספרים שלמים, ממוין ב<strong>סדר לא-יורד</strong>,
-      ש<strong>אורכו אינו נתון לכם</strong>. סוף הנתונים מסומן על ידי הערך המיוחד
-      <code>EMPTY</code> (המוגדר בשלד כ-<code>INT_MIN</code>): כל תא מהאינדקס
-      <code>n</code> והלאה מכיל <code>EMPTY</code>, ואף איבר אמיתי אינו שווה ל-<code>EMPTY</code>.</p>
-      <p>ניתן לקרוא בבטחה מכל אינדקס שהוא חזקה של 2, וכן מכל אינדקס קטן ממנו.</p>
-      <div class="sig">int examT_q2(int* arr, int x);</div>
-      <p><strong>על הפונקציה להחזיר את האינדקס שבו מופיע <code>x</code>, או <code>-1</code> אם <code>x</code> אינו במערך.</strong>
-      אם <code>x</code> מופיע יותר מפעם אחת, ניתן להחזיר כל אחד מהאינדקסים שלו.</p>
+      <p>נתון מערך <code>arr</code> באורך <code>n</code> של מספרים שלמים <strong>אי-שליליים</strong>,
+      ומספר שלם <code>D</code> המקיים <code>1 &le; D &le; n</code>.</p>
+      <p>יש לחלק את המערך, <strong>לפי הסדר</strong>, ל-<code>D</code> קבוצות רציפות ולא ריקות <strong>בדיוק</strong>.
+      עלות החלוקה היא סכום האיברים של הקבוצה שסכומה הגדול ביותר.</p>
+      <div class="sig">int examT_q2(int arr[], int n, int D);</div>
+      <p><strong>על הפונקציה להחזיר את העלות המינימלית האפשרית</strong> על פני כל החלוקות החוקיות.</p>
       <table class="ex">
         <tr><th>קלט</th><th>פלט</th><th>הסבר</th></tr>
-        <tr><td>arr = {1,3,5,7,9,11,13,EMPTY,...}, x = 7</td><td>3</td><td>arr[3] = 7</td></tr>
-        <tr><td>arr = {1,3,5,7,9,11,13,EMPTY,...}, x = 8</td><td>-1</td><td>8 אינו במערך</td></tr>
-        <tr><td>arr = {5,EMPTY,...}, x = 5</td><td>0</td><td>מערך באורך 1</td></tr>
-        <tr><td>arr = {EMPTY,...}, x = 1</td><td>-1</td><td>מערך ריק</td></tr>
+        <tr><td>arr = {7,2,5,10,8}, n = 5, D = 2</td><td>18</td><td>{7,2,5} ו-{10,8}</td></tr>
+        <tr><td>arr = {1,2,3,4,5}, n = 5, D = 2</td><td>9</td><td>{1,2,3} ו-{4,5}</td></tr>
+        <tr><td>arr = {1,...,10}, n = 10, D = 5</td><td>15</td><td>—</td></tr>
+        <tr><td>arr = {3,3,3,3,3}, n = 5, D = 1</td><td>15</td><td>קבוצה אחת בלבד</td></tr>
       </table>
       <ul class="rules">
-        <li>סמנו ב-<code>n</code> את מספר האיברים האמיתיים במערך. הסיבוכיות נמדדת כפונקציה של <code>n</code>.</li>
+        <li>ניתן להניח כי הקלט תקין, כי <code>n &ge; 1</code> וכי כל האיברים אי-שליליים.</li>
         <li><strong>אין לשנות את תוכן המערך</strong> ואין להקצות זיכרון דינמי.</li>
-        <li>שימו לב: סריקה לינארית כדי למצוא את אורך המערך <strong>אינה עומדת</strong> בדרישת הסיבוכיות.</li>
+        <li>סמנו ב-<code>S</code> את סכום כל איברי המערך.</li>
       </ul>
-      <div class="req"><b>דרישות סיבוכיות</b><span class="val">זמן Θ(log n)</span><span class="val">מקום נוסף Θ(1)</span></div>
+      <div class="req"><b>דרישות סיבוכיות</b><span class="val">זמן Θ(n · log S)</span><span class="val">מקום נוסף Θ(1)</span></div>
     </section>
 
     <!-- Q3 -->
     <section class="q">
       <h2>שאלה 3 <span class="pts">25 נק'</span></h2>
-      <p>נתונה מחרוזת <code>s</code> באורך <code>n</code> המכילה אותיות אנגליות קטנות בלבד.</p>
+      <p>נתונה מחרוזת <code>s</code> באורך <code>n</code> המכילה אותיות אנגליות קטנות ותווי <code>'$'</code> בלבד.</p>
+      <p><strong>מילה</strong> היא רצף רציף ומקסימלי של אותיות. <strong>רווח</strong> הוא רצף רציף ומקסימלי
+      של תווי <code>'$'</code>.</p>
+      <p>יש להחליף <strong>כל רווח</strong> בתו בודד, לפי הכלל הבא: אם אורך הרווח <strong>גדול ממש</strong>
+      מאורך המילה שמופיעה <em>מיד לפניו</em> — יש להחליפו ב-<code>'+'</code>; אחרת — ב-<code>'*'</code>.
+      רווח שמופיע בתחילת המחרוזת נחשב כאילו אורך המילה שלפניו הוא 0.</p>
       <div class="sig">int examT_q3(char* s);</div>
-      <p><strong>על הפונקציה להחזיר את האינדקס של התו הראשון ב-<code>s</code> שאינו חוזר על עצמו
-      באף מקום אחר במחרוזת</strong>, או <code>-1</code> אם כל תו מופיע יותר מפעם אחת.</p>
+      <p><strong>על הפונקציה לבצע את ההחלפות במקום, בתוך <code>s</code> עצמה</strong> (תוך הזזת שאר התווים שמאלה
+      וסיום המחרוזת ב-<code>'\0'</code>), <strong>ולהחזיר את מספר הרווחים שהוחלפו ב-<code>'+'</code>.</strong></p>
       <table class="ex">
-        <tr><th>קלט</th><th>פלט</th><th>הסבר</th></tr>
-        <tr><td>s = "leetcode"</td><td>0</td><td>'l' מופיע פעם אחת</td></tr>
-        <tr><td>s = "loveleetcode"</td><td>2</td><td>'v' — 'l','o' חוזרים</td></tr>
-        <tr><td>s = "aabb"</td><td>-1</td><td>כל תו חוזר</td></tr>
-        <tr><td>s = "swiss"</td><td>1</td><td>'w'</td></tr>
+        <tr><th>קלט</th><th>פלט</th><th>s לאחר הקריאה</th></tr>
+        <tr><td>s = "ab$$$cd"</td><td>1</td><td>"ab+cd" &nbsp;(3 &gt; 2)</td></tr>
+        <tr><td>s = "ab$cd"</td><td>0</td><td>"ab*cd" &nbsp;(1 &le; 2)</td></tr>
+        <tr><td>s = "a$$b$c"</td><td>1</td><td>"a+b*c"</td></tr>
+        <tr><td>s = "$a$$b$$$"</td><td>3</td><td>"+a+b+"</td></tr>
       </table>
       <ul class="rules">
-        <li><strong>אין לשנות את תוכן המחרוזת <code>s</code>, אפילו לא באופן זמני.</strong></li>
-        <li><strong>מותר מעבר יחיד בלבד על <code>s</code>.</strong> עבודה על מערך בגודל קבוע (26 תאים) אינה נחשבת מעבר על המחרוזת.</li>
         <li>ניתן להניח כי הקלט תקין וכי <code>s</code> אינה ריקה.</li>
+        <li><strong>אין להקצות זיכרון דינמי</strong> ואין להשתמש במערך עזר.</li>
+        <li>אין להשתמש בפונקציות ספריה לטיפול במחרוזות.</li>
+        <li>שימו לב: אורך המילה הרלוונטי הוא של המילה <em>שלפני</em> הרווח, ולא שאחריו.</li>
       </ul>
       <div class="req"><b>דרישות סיבוכיות</b><span class="val">זמן Θ(n)</span><span class="val">מקום נוסף Θ(1)</span></div>
     </section>
@@ -108,23 +98,23 @@
     <!-- Q4 -->
     <section class="q">
       <h2>שאלה 4 <span class="pts">25 נק'</span> — רקורסיה</h2>
-      <p>נתונות שתי מחרוזות <code>a</code> ו-<code>b</code> המכילות אותיות אנגליות קטנות בלבד.</p>
-      <p>נאמר ש-<code>b</code> <strong>מכילה</strong> את <code>a</code> אם כל תו מופיע ב-<code>b</code>
-      לפחות כמספר הפעמים שהוא מופיע ב-<code>a</code>. הסדר אינו משנה.</p>
-      <div class="sig">int examT_q4(char* a, char* b);</div>
-      <p><strong>על הפונקציה להחזיר <code>1</code> אם <code>b</code> מכילה את <code>a</code>, ו-<code>0</code> אחרת.</strong></p>
+      <p>נתונים שני מספרים שלמים וחיוביים <code>n</code> ו-<code>k</code>.</p>
+      <p>נאמר ש-<code>n</code> הוא <strong><code>k</code>-חלק</strong> אם <strong>כל</strong> הגורמים הראשוניים של <code>n</code>
+      קטנים או שווים ל-<code>k</code>. המספר <code>1</code> הוא <code>k</code>-חלק עבור כל <code>k</code> (אין לו גורמים ראשוניים).</p>
+      <div class="sig">int examT_q4(int n, int k);</div>
+      <p><strong>על הפונקציה להחזיר <code>1</code> אם <code>n</code> הוא <code>k</code>-חלק, ו-<code>0</code> אחרת.</strong></p>
       <table class="ex">
         <tr><th>קלט</th><th>פלט</th><th>הסבר</th></tr>
-        <tr><td>a = "abc", b = "cba"</td><td>1</td><td>אותם תווים</td></tr>
-        <tr><td>a = "aab", b = "ab"</td><td>0</td><td>ב-b יש רק 'a' אחד</td></tr>
-        <tr><td>a = "ab", b = "aab"</td><td>1</td><td>יש מספיק מכל תו</td></tr>
-        <tr><td>a = "zzz", b = "zz"</td><td>0</td><td>חסר 'z' אחד</td></tr>
+        <tr><td>n = 12, k = 3</td><td>1</td><td>12 = 2·2·3</td></tr>
+        <tr><td>n = 14, k = 3</td><td>0</td><td>14 = 2·7 והגורם 7 גדול מ-3</td></tr>
+        <tr><td>n = 100, k = 5</td><td>1</td><td>100 = 2·2·5·5</td></tr>
+        <tr><td>n = 1, k = 1</td><td>1</td><td>אין גורמים ראשוניים</td></tr>
       </table>
       <ul class="rules">
-        <li><strong>על הפונקציה להיות רקורסיבית בלבד, ללא שימוש בלולאות</strong> — בכל הפונקציות שתכתבו.</li>
-        <li><strong>אסור להשתמש בפונקציית מעטפת</strong> — <code>examT_q4</code> עצמה חייבת לקרוא לעצמה.</li>
+        <li><strong>על הפונקציה להיות רקורסיבית בלבד, ללא שימוש בלולאות.</strong></li>
+        <li><strong>אסור להשתמש בפונקציית מעטפת</strong> — <code>examT_q4</code> חייבת בעצמה להיות רקורסיבית.</li>
         <li>ניתן להשתמש בפונקציות עזר, יש לממש את כולן, וגם הן חייבות להיות רקורסיביות בלבד.</li>
-        <li>אין להקצות זיכרון דינמי, אין להשתמש במערכים ואין לשנות את המחרוזות.</li>
+        <li>אין להקצות זיכרון דינמי ואין להשתמש בפונקציות ספריה מתמטיות.</li>
         <li><strong>אין דרישות סיבוכיות בשאלה זו.</strong></li>
       </ul>
     </section>

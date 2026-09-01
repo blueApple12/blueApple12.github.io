@@ -482,11 +482,13 @@ textarea.paste{width:100%;height:130px;font-family:"JetBrains Mono",monospace;fo
         <tr><td>arr = {EMPTY,...}, x = 1</td><td>-1</td><td>מערך ריק</td></tr>
       </table>
       <ul class="rules">
-        <li>סמנו ב-<code>n</code> את מספר האיברים האמיתיים במערך. הסיבוכיות נמדדת כפונקציה של <code>n</code>.</li>
+        <li>סמנו ב-<code>p</code> את האינדקס שבו נמצא <code>x</code> (או את מספר האיברים האמיתיים, אם <code>x</code> אינו במערך).
+        <strong>הסיבוכיות נמדדת כפונקציה של <code>p</code>, לא של אורך המערך</strong> — זהו כל היתרון של החיפוש הדוהר:
+        הכפלת הגבול מגיעה ל-<code>p</code> ב-<code>log p</code> צעדים, ולכן איבר שנמצא בתחילת המערך נמצא מהר יותר.</li>
         <li><strong>אין לשנות את תוכן המערך</strong> ואין להקצות זיכרון דינמי.</li>
         <li>שימו לב: סריקה לינארית כדי למצוא את אורך המערך <strong>אינה עומדת</strong> בדרישת הסיבוכיות.</li>
       </ul>
-      <div class="req"><b>דרישות סיבוכיות</b><span class="val">זמן Θ(log n)</span><span class="val">מקום נוסף Θ(1)</span></div>
+      <div class="req"><b>דרישות סיבוכיות</b><span class="val">זמן O(log p)</span><span class="val">מקום נוסף Θ(1)</span></div>
     </section>
 
     <!-- Q3 -->
@@ -1334,7 +1336,7 @@ int examT_q4(char* a, char* b) {
 const SOLUTIONS = {
   q2: {
     archetype: "חיפוש דוהר (galloping) למציאת חסם, ואז חיפוש בינארי",
-    complexity: "זמן Θ(log n) · מקום Θ(1)",
+    complexity: "זמן O(log p) · מקום Θ(1) — p הוא האינדקס שנמצא, לא אורך המערך",
     code: `int examT_q2(int* arr, int x) {
     if (arr[0] == EMPTY) {
         return -1;

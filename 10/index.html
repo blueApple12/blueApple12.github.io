@@ -476,22 +476,27 @@ textarea.paste{width:100%;height:130px;font-family:"JetBrains Mono",monospace;fo
     <!-- Q3 -->
     <section class="q">
       <h2>שאלה 3 <span class="pts">25 נק'</span></h2>
-      <p>נתונה מחרוזת <code>s</code> באורך <code>n</code> המכילה אותיות אנגליות קטנות בלבד, ומספר שלם וחיובי <code>k</code>.</p>
-      <p>תת-מחרוזת של <code>s</code> היא רצף רציף ולא ריק של תווים ב-<code>s</code>.</p>
-      <div class="sig">int examT_q3(char* s, int k);</div>
-      <p><strong>על הפונקציה להחזיר את האורך של תת-המחרוזת הארוכה ביותר של <code>s</code>
-      שמספר התווים <em>השונים</em> המופיעים בה הוא לכל היותר <code>k</code>.</strong></p>
+      <p>נתונה מחרוזת <code>s</code> באורך <code>n</code> המכילה אותיות אנגליות קטנות ותווי <code>'$'</code> בלבד.</p>
+      <p><strong>מילה</strong> היא רצף רציף ומקסימלי של אותיות. <strong>רווח</strong> הוא רצף רציף ומקסימלי
+      של תווי <code>'$'</code>.</p>
+      <p>יש להחליף <strong>כל רווח</strong> בתו בודד, לפי הכלל הבא: אם אורך הרווח <strong>גדול ממש</strong>
+      מאורך המילה שמופיעה <em>מיד לפניו</em> — יש להחליפו ב-<code>'+'</code>; אחרת — ב-<code>'*'</code>.
+      רווח שמופיע בתחילת המחרוזת נחשב כאילו אורך המילה שלפניו הוא 0.</p>
+      <div class="sig">int examT_q3(char* s);</div>
+      <p><strong>על הפונקציה לבצע את ההחלפות במקום, בתוך <code>s</code> עצמה</strong> (תוך הזזת שאר התווים שמאלה
+      וסיום המחרוזת ב-<code>'\0'</code>), <strong>ולהחזיר את מספר הרווחים שהוחלפו ב-<code>'+'</code>.</strong></p>
       <table class="ex">
-        <tr><th>קלט</th><th>פלט</th><th>הסבר</th></tr>
-        <tr><td>s = "eceba", k = 2</td><td>3</td><td>"ece"</td></tr>
-        <tr><td>s = "aabbcc", k = 2</td><td>4</td><td>"aabb" (או "bbcc")</td></tr>
-        <tr><td>s = "abaccc", k = 1</td><td>3</td><td>"ccc"</td></tr>
-        <tr><td>s = "abcdef", k = 2</td><td>2</td><td>כל שני תווים סמוכים</td></tr>
+        <tr><th>קלט</th><th>פלט</th><th>s לאחר הקריאה</th></tr>
+        <tr><td>s = "ab$$$cd"</td><td>1</td><td>"ab+cd" &nbsp;(3 &gt; 2)</td></tr>
+        <tr><td>s = "ab$cd"</td><td>0</td><td>"ab*cd" &nbsp;(1 &le; 2)</td></tr>
+        <tr><td>s = "a$$b$c"</td><td>1</td><td>"a+b*c"</td></tr>
+        <tr><td>s = "$a$$b$$$"</td><td>3</td><td>"+a+b+"</td></tr>
       </table>
       <ul class="rules">
-        <li><strong>אין לשנות את תוכן המחרוזת <code>s</code>, אפילו לא באופן זמני.</strong></li>
-        <li>ניתן להניח כי הקלט תקין, כי <code>k &ge; 1</code> וכי <code>s</code> אינה ריקה.</li>
-        <li>מערך בגודל קבוע (שאינו תלוי ב-<code>n</code>) נחשב מקום Θ(1).</li>
+        <li>ניתן להניח כי הקלט תקין וכי <code>s</code> אינה ריקה.</li>
+        <li><strong>אין להקצות זיכרון דינמי</strong> ואין להשתמש במערך עזר.</li>
+        <li>אין להשתמש בפונקציות ספריה לטיפול במחרוזות.</li>
+        <li>שימו לב: אורך המילה הרלוונטי הוא של המילה <em>שלפני</em> הרווח, ולא שאחריו.</li>
       </ul>
       <div class="req"><b>דרישות סיבוכיות</b><span class="val">זמן Θ(n)</span><span class="val">מקום נוסף Θ(1)</span></div>
     </section>
@@ -550,63 +555,494 @@ textarea.paste{width:100%;height:130px;font-family:"JetBrains Mono",monospace;fo
       "driver": "int_array_n_int",
       "mutation": "forbidden",
       "cases": [
-        {"name": "t01", "args": {"arr": [1,2,3,4,5,6,7,8,9,10], "n": 10, "value": 5}, "expect": "15"},
-        {"name": "t02", "args": {"arr": [1,2,3,4,5,6,7,8,9,10], "n": 10, "value": 1}, "expect": "55"},
-        {"name": "t03", "args": {"arr": [1,2,3,4,5,6,7,8,9,10], "n": 10, "value": 10}, "expect": "10"},
-        {"name": "t04", "args": {"arr": [1,2,3,4,5,6,7,8,9,10], "n": 10, "value": 2}, "expect": "28"},
-        {"name": "t05", "args": {"arr": [1,2,3,4,5,6,7,8,9,10], "n": 10, "value": 3}, "expect": "21"},
-        {"name": "t06", "args": {"arr": [7,2,5,10,8], "n": 5, "value": 2}, "expect": "18"},
-        {"name": "t07", "args": {"arr": [1,2,3,4,5], "n": 5, "value": 2}, "expect": "9"},
-        {"name": "t08", "args": {"arr": [1,4,4], "n": 3, "value": 3}, "expect": "4"},
-        {"name": "t09", "args": {"arr": [5], "n": 1, "value": 1}, "expect": "5"},
-        {"name": "t10", "args": {"arr": [2,3,1], "n": 3, "value": 3}, "expect": "3"},
-        {"name": "t11", "args": {"arr": [10,5,2,7], "n": 4, "value": 2}, "expect": "14"},
-        {"name": "t12", "args": {"arr": [1,1,1,1], "n": 4, "value": 2}, "expect": "2"},
-        {"name": "t13", "args": {"arr": [100], "n": 1, "value": 1}, "expect": "100"},
-        {"name": "t14", "args": {"arr": [3,3,3,3,3], "n": 5, "value": 5}, "expect": "3"},
-        {"name": "t15", "args": {"arr": [3,3,3,3,3], "n": 5, "value": 1}, "expect": "15"}
+        {
+          "name": "t01",
+          "args": {
+            "arr": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10
+            ],
+            "n": 10,
+            "value": 5
+          },
+          "expect": "15"
+        },
+        {
+          "name": "t02",
+          "args": {
+            "arr": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10
+            ],
+            "n": 10,
+            "value": 1
+          },
+          "expect": "55"
+        },
+        {
+          "name": "t03",
+          "args": {
+            "arr": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10
+            ],
+            "n": 10,
+            "value": 10
+          },
+          "expect": "10"
+        },
+        {
+          "name": "t04",
+          "args": {
+            "arr": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10
+            ],
+            "n": 10,
+            "value": 2
+          },
+          "expect": "28"
+        },
+        {
+          "name": "t05",
+          "args": {
+            "arr": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10
+            ],
+            "n": 10,
+            "value": 3
+          },
+          "expect": "21"
+        },
+        {
+          "name": "t06",
+          "args": {
+            "arr": [
+              7,
+              2,
+              5,
+              10,
+              8
+            ],
+            "n": 5,
+            "value": 2
+          },
+          "expect": "18"
+        },
+        {
+          "name": "t07",
+          "args": {
+            "arr": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "n": 5,
+            "value": 2
+          },
+          "expect": "9"
+        },
+        {
+          "name": "t08",
+          "args": {
+            "arr": [
+              1,
+              4,
+              4
+            ],
+            "n": 3,
+            "value": 3
+          },
+          "expect": "4"
+        },
+        {
+          "name": "t09",
+          "args": {
+            "arr": [
+              5
+            ],
+            "n": 1,
+            "value": 1
+          },
+          "expect": "5"
+        },
+        {
+          "name": "t10",
+          "args": {
+            "arr": [
+              2,
+              3,
+              1
+            ],
+            "n": 3,
+            "value": 3
+          },
+          "expect": "3"
+        },
+        {
+          "name": "t11",
+          "args": {
+            "arr": [
+              10,
+              5,
+              2,
+              7
+            ],
+            "n": 4,
+            "value": 2
+          },
+          "expect": "14"
+        },
+        {
+          "name": "t12",
+          "args": {
+            "arr": [
+              1,
+              1,
+              1,
+              1
+            ],
+            "n": 4,
+            "value": 2
+          },
+          "expect": "2"
+        },
+        {
+          "name": "t13",
+          "args": {
+            "arr": [
+              100
+            ],
+            "n": 1,
+            "value": 1
+          },
+          "expect": "100"
+        },
+        {
+          "name": "t14",
+          "args": {
+            "arr": [
+              3,
+              3,
+              3,
+              3,
+              3
+            ],
+            "n": 5,
+            "value": 5
+          },
+          "expect": "3"
+        },
+        {
+          "name": "t15",
+          "args": {
+            "arr": [
+              3,
+              3,
+              3,
+              3,
+              3
+            ],
+            "n": 5,
+            "value": 1
+          },
+          "expect": "15"
+        }
       ]
     },
     "q3": {
-      "driver": "string_int",
-      "mutation": "forbidden",
+      "driver": "string_only",
+      "mutation": "allowed",
       "cases": [
-        {"name": "t01", "args": {"s": "eceba", "value": 2}, "expect": "3"},
-        {"name": "t02", "args": {"s": "aa", "value": 1}, "expect": "2"},
-        {"name": "t03", "args": {"s": "abc", "value": 1}, "expect": "1"},
-        {"name": "t04", "args": {"s": "abc", "value": 3}, "expect": "3"},
-        {"name": "t05", "args": {"s": "abc", "value": 5}, "expect": "3"},
-        {"name": "t06", "args": {"s": "aabbcc", "value": 1}, "expect": "2"},
-        {"name": "t07", "args": {"s": "aabbcc", "value": 2}, "expect": "4"},
-        {"name": "t08", "args": {"s": "aabbcc", "value": 3}, "expect": "6"},
-        {"name": "t09", "args": {"s": "abaccc", "value": 2}, "expect": "4"},
-        {"name": "t10", "args": {"s": "abaccc", "value": 1}, "expect": "3"},
-        {"name": "t11", "args": {"s": "a", "value": 1}, "expect": "1"},
-        {"name": "t12", "args": {"s": "abcdef", "value": 2}, "expect": "2"},
-        {"name": "t13", "args": {"s": "zzzzz", "value": 1}, "expect": "5"},
-        {"name": "t14", "args": {"s": "aabacbebebe", "value": 3}, "expect": "7"}
+        {
+          "name": "t01",
+          "args": {
+            "s": "ab$$$cd"
+          },
+          "expect": "1"
+        },
+        {
+          "name": "t02",
+          "args": {
+            "s": "ab$cd"
+          },
+          "expect": "0"
+        },
+        {
+          "name": "t03",
+          "args": {
+            "s": "$$ab"
+          },
+          "expect": "1"
+        },
+        {
+          "name": "t04",
+          "args": {
+            "s": "abc"
+          },
+          "expect": "0"
+        },
+        {
+          "name": "t05",
+          "args": {
+            "s": "a$$b$c"
+          },
+          "expect": "1"
+        },
+        {
+          "name": "t06",
+          "args": {
+            "s": "$"
+          },
+          "expect": "1"
+        },
+        {
+          "name": "t07",
+          "args": {
+            "s": "ab$$"
+          },
+          "expect": "0"
+        },
+        {
+          "name": "t08",
+          "args": {
+            "s": "ab$$$"
+          },
+          "expect": "1"
+        },
+        {
+          "name": "t09",
+          "args": {
+            "s": "aaa$b"
+          },
+          "expect": "0"
+        },
+        {
+          "name": "t10",
+          "args": {
+            "s": "a$$$$$b"
+          },
+          "expect": "1"
+        },
+        {
+          "name": "t11",
+          "args": {
+            "s": "$$$"
+          },
+          "expect": "1"
+        },
+        {
+          "name": "t12",
+          "args": {
+            "s": "ab$cd$$ef"
+          },
+          "expect": "0"
+        },
+        {
+          "name": "t13",
+          "args": {
+            "s": "x$$$$y$z"
+          },
+          "expect": "1"
+        },
+        {
+          "name": "t14",
+          "args": {
+            "s": "hello$$$$$$world"
+          },
+          "expect": "1"
+        },
+        {
+          "name": "t15",
+          "args": {
+            "s": "a$$b$$$c$d"
+          },
+          "expect": "2"
+        },
+        {
+          "name": "t16",
+          "args": {
+            "s": "$a$$b$$$"
+          },
+          "expect": "3"
+        }
       ]
     },
     "q4": {
       "driver": "two_ints",
       "mutation": "forbidden",
       "cases": [
-        {"name": "t01", "args": {"first": 12, "second": 3}, "expect": "1"},
-        {"name": "t02", "args": {"first": 14, "second": 3}, "expect": "0"},
-        {"name": "t03", "args": {"first": 1, "second": 1}, "expect": "1"},
-        {"name": "t04", "args": {"first": 7, "second": 7}, "expect": "1"},
-        {"name": "t05", "args": {"first": 7, "second": 5}, "expect": "0"},
-        {"name": "t06", "args": {"first": 100, "second": 5}, "expect": "1"},
-        {"name": "t07", "args": {"first": 100, "second": 3}, "expect": "0"},
-        {"name": "t08", "args": {"first": 2, "second": 2}, "expect": "1"},
-        {"name": "t09", "args": {"first": 2, "second": 1}, "expect": "0"},
-        {"name": "t10", "args": {"first": 60, "second": 5}, "expect": "1"},
-        {"name": "t11", "args": {"first": 60, "second": 4}, "expect": "0"},
-        {"name": "t12", "args": {"first": 1024, "second": 2}, "expect": "1"},
-        {"name": "t13", "args": {"first": 1023, "second": 3}, "expect": "0"},
-        {"name": "t14", "args": {"first": 81, "second": 3}, "expect": "1"},
-        {"name": "t15", "args": {"first": 97, "second": 96}, "expect": "0"},
-        {"name": "t16", "args": {"first": 97, "second": 97}, "expect": "1"}
+        {
+          "name": "t01",
+          "args": {
+            "first": 12,
+            "second": 3
+          },
+          "expect": "1"
+        },
+        {
+          "name": "t02",
+          "args": {
+            "first": 14,
+            "second": 3
+          },
+          "expect": "0"
+        },
+        {
+          "name": "t03",
+          "args": {
+            "first": 1,
+            "second": 1
+          },
+          "expect": "1"
+        },
+        {
+          "name": "t04",
+          "args": {
+            "first": 7,
+            "second": 7
+          },
+          "expect": "1"
+        },
+        {
+          "name": "t05",
+          "args": {
+            "first": 7,
+            "second": 5
+          },
+          "expect": "0"
+        },
+        {
+          "name": "t06",
+          "args": {
+            "first": 100,
+            "second": 5
+          },
+          "expect": "1"
+        },
+        {
+          "name": "t07",
+          "args": {
+            "first": 100,
+            "second": 3
+          },
+          "expect": "0"
+        },
+        {
+          "name": "t08",
+          "args": {
+            "first": 2,
+            "second": 2
+          },
+          "expect": "1"
+        },
+        {
+          "name": "t09",
+          "args": {
+            "first": 2,
+            "second": 1
+          },
+          "expect": "0"
+        },
+        {
+          "name": "t10",
+          "args": {
+            "first": 60,
+            "second": 5
+          },
+          "expect": "1"
+        },
+        {
+          "name": "t11",
+          "args": {
+            "first": 60,
+            "second": 4
+          },
+          "expect": "0"
+        },
+        {
+          "name": "t12",
+          "args": {
+            "first": 1024,
+            "second": 2
+          },
+          "expect": "1"
+        },
+        {
+          "name": "t13",
+          "args": {
+            "first": 1023,
+            "second": 3
+          },
+          "expect": "0"
+        },
+        {
+          "name": "t14",
+          "args": {
+            "first": 81,
+            "second": 3
+          },
+          "expect": "1"
+        },
+        {
+          "name": "t15",
+          "args": {
+            "first": 97,
+            "second": 96
+          },
+          "expect": "0"
+        },
+        {
+          "name": "t16",
+          "args": {
+            "first": 97,
+            "second": 97
+          },
+          "expect": "1"
+        }
       ]
     }
   }
@@ -1233,7 +1669,7 @@ void printIDontKnow() {
     exit(0);
 }
 
-int examT_q3(char* s, int k);
+int examT_q3(char* s);
 
 int main(void) {
     // uncomment next line if you don't know the answer
@@ -1247,17 +1683,13 @@ int main(void) {
         free(s);
         return 1;
     }
-    int k;
-    if (scanf("%d", &k) != 1) {
-        free(s);
-        return 1;
-    }
-    printf("%d\\n", examT_q3(s, k));
+    printf("%d\\n", examT_q3(s));
+    printf("%s\\n", s);
     free(s);
     return 0;
 }
 
-int examT_q3(char* s, int k) {
+int examT_q3(char* s) {
     // write your code here
     return 0;
 }`,
@@ -1325,28 +1757,34 @@ const SOLUTIONS = {
 }`
   },
   q3: {
-    archetype: "חלון מחליק עם היסטוגרמה בת 26 תאים",
+    archetype: "זיהוי רצפים במקום עם שני סמנים — השוואת אורך הרצף לאורך המילה שלפניו",
     complexity: "זמן Θ(n) · מקום נוסף Θ(1)",
-    code: `int examT_q3(char* s, int k) {
-    int count[26] = {0};
-    int distinct = 0, best = 0, left = 0;
-    for (int right = 0; s[right] != '\\0'; right++) {
-        if (count[s[right] - 'a'] == 0) {
-            distinct++;
-        }
-        count[s[right] - 'a']++;
-        while (distinct > k) {
-            count[s[left] - 'a']--;
-            if (count[s[left] - 'a'] == 0) {
-                distinct--;
+    code: `int examT_q3(char* s) {
+    int write = 0, read = 0, wordLen = 0, plusCount = 0;
+    while (s[read] != '\\0') {
+        if (s[read] != '$') {
+            s[write] = s[read];
+            write++;
+            read++;
+            wordLen++;
+        } else {
+            int runLen = 0;
+            while (s[read] == '$') {
+                runLen++;
+                read++;
             }
-            left++;
-        }
-        if (right - left + 1 > best) {
-            best = right - left + 1;
+            if (runLen > wordLen) {
+                s[write] = '+';
+                plusCount++;
+            } else {
+                s[write] = '*';
+            }
+            write++;
+            wordLen = 0;
         }
     }
-    return best;
+    s[write] = '\\0';
+    return plusCount;
 }`
   },
   q4: {
