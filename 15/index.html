@@ -424,37 +424,29 @@ textarea.paste{width:100%;height:130px;font-family:"JetBrains Mono",monospace;fo
         לכל סעיף ציינו <strong>סיבוכיות זמן</strong> ו<strong>סיבוכיות מקום נוסף</strong>, בסימון Θ, כפונקציה של <code>n</code>.
         חובה לפשט את הביטוי ככל שניתן. הניחו כי סיבוכיות הזמן והמקום של <code>printf</code> ו-<code>free</code> היא Θ(1),
         וכי סיבוכיות הזמן של <code>malloc(n)</code> היא Θ(1) וסיבוכיות המקום שלה היא Θ(n).
+        הניחו כי <code>sqrt</code> פועלת בזמן Θ(1).
       </p>
+      <p class="lead"><strong>שימו לב:</strong> אין הבטחה ששלושת הסעיפים מקבלים תשובות שונות.
+      חשבו כל סעיף מחדש — ובפרט שימו לב לערכי חזרה של פונקציות עזר, למשתנים שמשתנים בין איטרציות,
+      ולמיקום של <code>free</code> ביחס לקריאה הרקורסיבית.</p>
 
       <p><strong>א.</strong></p>
 <pre class="snip">void f1(int n) {
-    for (int i = 0; i * i &lt; n; i++) {
-        for (int j = 0; j &lt; 10; j++) {
+    for (int i = 1; i &lt; n; i++)
+        for (int j = i; j &lt; n; j += i)
             printf("*");
-        }
-    }
 }</pre>
 
       <p><strong>ב.</strong></p>
 <pre class="snip">int f2(int n) {
     if (n &lt;= 1) return 1;
-    int* arr = (int*) malloc(n * sizeof(int));
-    if (arr == NULL) return 0;
-    for (int i = 0; i &lt; n; i++) {
-        arr[i] = i;
-    }
-    int res = f2(n / 2) + f2(n / 2);
-    free(arr);
-    return res;
+    return f2(n - 1) + f2(n - 2);
 }</pre>
 
       <p><strong>ג.</strong></p>
 <pre class="snip">void f3(int n) {
-    for (int i = n; i &gt; 0; i--) {
-        for (int j = 0; j &lt; i; j++) {
-            printf("*");
-        }
-    }
+    for (int i = n; i &gt; 2; i = (int) sqrt(i))
+        printf("*");
 }</pre>
 
       <div class="q1grid" id="q1grid"></div>
@@ -1187,7 +1179,7 @@ const ExamDrivers = (() => {
   return {normalizeManifest, validateArgs, validateCases, cString, cChar, formatArgs, driverFor, driverStdin};
 })();
 
-const Q1_KEY = JSON.parse(decodeURIComponent(atob("JTdCJTIyYSUyMiUzQSU3QiUyMnRpbWUlMjIlM0ElMjIlQ0UlOTgoJUUyJTg4JTlBbiklMjIlMkMlMjJzcGFjZSUyMiUzQSUyMiVDRSU5OCgxKSUyMiU3RCUyQyUyMmIlMjIlM0ElN0IlMjJ0aW1lJTIyJTNBJTIyJUNFJTk4KG4lMjBsb2clMjBuKSUyMiUyQyUyMnNwYWNlJTIyJTNBJTIyJUNFJTk4KG4pJTIyJTdEJTJDJTIyYyUyMiUzQSU3QiUyMnRpbWUlMjIlM0ElMjIlQ0UlOTgobiVDMiVCMiklMjIlMkMlMjJzcGFjZSUyMiUzQSUyMiVDRSU5OCgxKSUyMiU3RCU3RA==")));
+const Q1_KEY = JSON.parse(decodeURIComponent(atob("JTdCJTIyYSUyMiUzQSUyMCU3QiUyMnRpbWUlMjIlM0ElMjAlMjIlQ0UlOTglMjhuJTIwbG9nJTIwbiUyOSUyMiUyQyUyMCUyMnNwYWNlJTIyJTNBJTIwJTIyJUNFJTk4JTI4MSUyOSUyMiU3RCUyQyUyMCUyMmIlMjIlM0ElMjAlN0IlMjJ0aW1lJTIyJTNBJTIwJTIyJUNFJTk4JTI4MiVFMiU4MSVCRiUyOSUyMiUyQyUyMCUyMnNwYWNlJTIyJTNBJTIwJTIyJUNFJTk4JTI4biUyOSUyMiU3RCUyQyUyMCUyMmMlMjIlM0ElMjAlN0IlMjJ0aW1lJTIyJTNBJTIwJTIyJUNFJTk4JTI4bG9nJTIwbG9nJTIwbiUyOSUyMiUyQyUyMCUyMnNwYWNlJTIyJTNBJTIwJTIyJUNFJTk4JTI4MSUyOSUyMiU3RCU3RA==")));
 /* Every exam page shares this ONE origin (blueapple12.github.io), so
    localStorage is shared across /exam/<n>/ paths too. Key everything to
    the page's own path, or exam 2's save would clobber exam 1's. */

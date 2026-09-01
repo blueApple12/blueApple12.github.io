@@ -9,7 +9,7 @@ void printIDontKnow() {
     exit(0);
 }
 
-int examT_q2(int arr[], int n, int D);
+int examT_q2(int arr[], int n);
 
 int main(void) {
     // uncomment next line if you don't know the answer
@@ -25,17 +25,12 @@ int main(void) {
             return 1;
         }
     }
-    int D;
-    if (scanf("%d", &D) != 1) {
-        free(arr);
-        return 1;
-    }
-    printf("%d", examT_q2(arr, n, D));
+    printf("%d", examT_q2(arr, n));
     free(arr);
     return 0;
 }
 
-int examT_q2(int arr[], int n, int D) {
+int examT_q2(int arr[], int n) {
     // write your code here
     return 0;
 }`,
@@ -51,6 +46,12 @@ void printIDontKnow() {
 
 int examT_q3(char* s);
 
+//This is a helper function made for you.
+//You are not obligated to use it, and are allowed to change it.
+int is_vowel(char c) {
+    return c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u';
+}
+
 int main(void) {
     // uncomment next line if you don't know the answer
     // printIDontKnow();
@@ -64,7 +65,6 @@ int main(void) {
         return 1;
     }
     printf("%d\\n", examT_q3(s));
-    printf("%s\\n", s);
     free(s);
     return 0;
 }
@@ -83,20 +83,31 @@ void printIDontKnow() {
     exit(0);
 }
 
-int examT_q4(int n, int k);
+int examT_q4(int* arr, int n);
 
 int main(void) {
     // uncomment next line if you don't know the answer
     // printIDontKnow();
 
-    int n, k;
-    if (scanf("%d %d", &n, &k) != 2) return 1;
-
-    printf("%d", examT_q4(n, k));
+    int n;
+    if (scanf("%d", &n) != 1) return 1;
+    int* arr = NULL;
+    if (n > 0) {
+        arr = malloc(n * sizeof(int));
+        if (!arr) return 1;
+        for (int i = 0; i < n; i++) {
+            if (scanf("%d", &arr[i]) != 1) {
+                free(arr);
+                return 1;
+            }
+        }
+    }
+    printf("%d\\n", examT_q4(arr, n));
+    free(arr);
     return 0;
 }
 
-int examT_q4(int n, int k) {
+int examT_q4(int* arr, int n) {
     // write your code here
     return 0;
 }`
