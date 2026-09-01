@@ -62,19 +62,22 @@
         <li><code>arr[0] &lt; arr[1] &lt; ... &lt; arr[p]</code> &nbsp;(עולה ממש עד <code>p</code>), וגם</li>
         <li><code>arr[p] &gt; arr[p+1] &gt; ... &gt; arr[n-1]</code> &nbsp;(יורד ממש מ-<code>p</code> והלאה)</li>
       </ul>
-      <div class="sig">int examT_q2(int arr[], int n);</div>
-      <p><strong>על הפונקציה להחזיר את האינדקס <code>p</code> של השיא</strong> — האיבר המקסימלי היחיד במערך.</p>
+      <p>האינדקס <code>p</code> <strong>אינו נתון</strong>.</p>
+      <div class="sig">int examT_q2(int arr[], int n, int x);</div>
+      <p><strong>על הפונקציה להחזיר את האינדקס שבו מופיע <code>x</code> במערך, או <code>-1</code>
+      אם <code>x</code> אינו מופיע.</strong> אם <code>x</code> מופיע בשתי הצלעות, ניתן להחזיר כל אחד מהאינדקסים.</p>
       <table class="ex">
         <tr><th>קלט</th><th>פלט</th><th>הסבר</th></tr>
-        <tr><td>arr = {1,3,7,9,6,2}, n = 6</td><td>3</td><td>arr[3] = 9</td></tr>
-        <tr><td>arr = {2,8,5}, n = 3</td><td>1</td><td>arr[1] = 8</td></tr>
-        <tr><td>arr = {3,4,5,6,7,2}, n = 6</td><td>4</td><td>השיא כמעט בסוף</td></tr>
-        <tr><td>arr = {1,5,4,3,2}, n = 5</td><td>1</td><td>השיא כמעט בהתחלה</td></tr>
+        <tr><td>arr = {1,3,7,9,6,2}, n = 6, x = 7</td><td>2</td><td>בצלע העולה</td></tr>
+        <tr><td>arr = {1,3,7,9,6,2}, n = 6, x = 6</td><td>4</td><td>בצלע היורדת</td></tr>
+        <tr><td>arr = {1,3,7,9,6,2}, n = 6, x = 9</td><td>3</td><td>השיא עצמו</td></tr>
+        <tr><td>arr = {1,3,7,9,6,2}, n = 6, x = 4</td><td>-1</td><td>אינו במערך</td></tr>
       </table>
       <ul class="rules">
-        <li>ניתן להניח כי הקלט תקין, כי <code>n &ge; 3</code>, וכי המערך אכן הררי.</li>
+        <li>ניתן להניח כי הקלט תקין, כי <code>n &ge; 3</code> וכי המערך אכן הררי.</li>
         <li><strong>אין לשנות את תוכן המערך</strong> ואין להקצות זיכרון דינמי.</li>
-        <li>פתרון בזמן Θ(n) אינו עומד בדרישה.</li>
+        <li>שימו לב: נדרשים כאן <strong>שלושה</strong> חיפושים בינאריים &mdash; אחד לאיתור השיא
+        ואחד בכל צלע. הצלע היורדת דורשת השוואה הפוכה.</li>
       </ul>
       <div class="req"><b>דרישות סיבוכיות</b><span class="val">זמן Θ(log n)</span><span class="val">מקום נוסף Θ(1)</span></div>
     </section>

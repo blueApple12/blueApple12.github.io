@@ -1,18 +1,32 @@
 const SOLUTIONS = {
   q2: {
-    archetype: "חיפוש בינארי על השיפוע — arr[mid] < arr[mid+1] מעיד שהשיא מימין",
+    archetype: "איתור השיא, ואז חיפוש בינארי נפרד בכל צלע — עולה מול יורדת",
     complexity: "זמן Θ(log n) · מקום Θ(1)",
-    code: `int examT_q2(int arr[], int n) {
-    int low = 0, high = n - 1;
-    while (low < high) {
-        int mid = low + (high - low) / 2;
+    code: `int examT_q2(int arr[], int n, int x) {
+    int lo = 0, hi = n - 1;
+    while (lo < hi) {
+        int mid = lo + (hi - lo) / 2;
         if (arr[mid] < arr[mid + 1]) {
-            low = mid + 1;
+            lo = mid + 1;
         } else {
-            high = mid;
+            hi = mid;
         }
     }
-    return low;
+    int p = lo;
+    int a = 0, b = p;
+    while (a <= b) {
+        int m = a + (b - a) / 2;
+        if (arr[m] == x) return m;
+        if (arr[m] < x) a = m + 1; else b = m - 1;
+    }
+    a = p + 1;
+    b = n - 1;
+    while (a <= b) {
+        int m = a + (b - a) / 2;
+        if (arr[m] == x) return m;
+        if (arr[m] > x) a = m + 1; else b = m - 1;
+    }
+    return -1;
 }`
   },
   q3: {

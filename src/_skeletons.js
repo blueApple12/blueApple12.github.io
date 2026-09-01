@@ -9,7 +9,7 @@ void printIDontKnow() {
     exit(0);
 }
 
-int examT_q2(int arr[], int n);
+int examT_q2(int arr[], int n, int x);
 
 int main(void) {
     // uncomment next line if you don't know the answer
@@ -25,12 +25,17 @@ int main(void) {
             return 1;
         }
     }
-    printf("%d", examT_q2(arr, n));
+    int x;
+    if (scanf("%d", &x) != 1) {
+        free(arr);
+        return 1;
+    }
+    printf("%d", examT_q2(arr, n, x));
     free(arr);
     return 0;
 }
 
-int examT_q2(int arr[], int n) {
+int examT_q2(int arr[], int n, int x) {
     // write your code here
     return 0;
 }`,
