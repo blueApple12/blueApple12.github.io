@@ -508,25 +508,28 @@ textarea.paste{width:100%;height:130px;font-family:"JetBrains Mono",monospace;fo
 
     <!-- Q4 -->
     <section class="q">
-      <h2>שאלה 4 <span class="pts">25 נק'</span> — רקורסיה</h2>
-      <p>נתון מספר שלם ואי-שלילי <code>n</code>, המייצג מדרגות.</p>
-      <p>בכל צעד ניתן לעלות <strong>מדרגה אחת או שתי מדרגות</strong>. שתי דרכים נחשבות שונות
-      אם סדר הצעדים בהן שונה.</p>
-      <div class="sig">int examT_q4(int n);</div>
-      <p><strong>על הפונקציה להחזיר את מספר הדרכים השונות לעלות בדיוק <code>n</code> מדרגות.</strong>
-      עבור <code>n = 0</code> יש דרך אחת (לא לעשות דבר).</p>
+      <h2>שאלה 4 <span class="pts">25 נק'</span> &mdash; רקורסיה</h2>
+      <p>נתונים שני מספרים שלמים: <code>n</code> אי-שלילי, ו-<code>k</code> חיובי.</p>
+      <p><strong>הרכבה מסודרת</strong> של <code>n</code> היא סדרה של מספרים שלמים חיוביים שסכומם
+      <code>n</code>. שתי הרכבות נחשבות שונות אם <strong>סדר</strong> האיברים בהן שונה &mdash;
+      כך <code>1+2</code> ו-<code>2+1</code> הן שתי הרכבות שונות של 3.</p>
+      <div class="sig">int examT_q4(int n, int k);</div>
+      <p><strong>על הפונקציה להחזיר את מספר ההרכבות המסודרות של <code>n</code> שבהן כל איבר
+      הוא לכל היותר <code>k</code>.</strong> עבור <code>n = 0</code> יש הרכבה אחת (הריקה).</p>
       <table class="ex">
         <tr><th>קלט</th><th>פלט</th><th>הסבר</th></tr>
-        <tr><td>n = 2</td><td>2</td><td>1+1 · 2</td></tr>
-        <tr><td>n = 3</td><td>3</td><td>1+1+1 · 1+2 · 2+1</td></tr>
-        <tr><td>n = 4</td><td>5</td><td>—</td></tr>
-        <tr><td>n = 0</td><td>1</td><td>הדרך הריקה</td></tr>
+        <tr><td>n = 4, k = 2</td><td>5</td><td>איברים מתוך {1,2}</td></tr>
+        <tr><td>n = 4, k = 3</td><td>7</td><td>איברים מתוך {1,2,3}</td></tr>
+        <tr><td>n = 5, k = 5</td><td>16</td><td>ללא הגבלה אפקטיבית</td></tr>
+        <tr><td>n = 3, k = 1</td><td>1</td><td>רק <code>1+1+1</code></td></tr>
       </table>
+      <p><strong>רמז:</strong> סכמו על גודל האיבר <strong>הראשון</strong>. הסכימה עצמה היא לולאה
+      &mdash; ולכן גם היא חייבת להפוך לרקורסיה, בפונקציית עזר נפרדת.</p>
       <ul class="rules">
-        <li><strong>על הפונקציה להיות רקורסיבית בלבד, ללא שימוש בלולאות</strong> — בכל הפונקציות שתכתבו.</li>
-        <li><strong>אסור להשתמש בפונקציית מעטפת</strong> — <code>examT_q4</code> עצמה חייבת לקרוא לעצמה.</li>
-        <li>אין להקצות זיכרון דינמי ואין להשתמש במערכים (גם לא לצורך שמירת תוצאות ביניים).</li>
-        <li>ניתן להניח <code>0 &le; n &le; 25</code>.</li>
+        <li><strong>על הפונקציה להיות רקורסיבית בלבד, ללא שימוש בלולאות</strong> &mdash; בכל הפונקציות שתכתבו.</li>
+        <li><strong>מותרת פונקציית מעטפת</strong> &mdash; <code>examT_q4</code> רשאית לקרוא לפונקציית עזר רקורסיבית שמבצעת את עיקר העבודה.</li>
+        <li>ניתן להשתמש בפונקציות עזר, יש לממש את כולן, וגם הן חייבות להיות רקורסיביות בלבד.</li>
+        <li>אין להקצות זיכרון דינמי ואין להשתמש במשתנים סטטיים או גלובליים.</li>
         <li><strong>אין דרישות סיבוכיות בשאלה זו.</strong></li>
       </ul>
     </section>
@@ -850,120 +853,120 @@ textarea.paste{width:100%;height:130px;font-family:"JetBrains Mono",monospace;fo
       ]
     },
     "q4": {
-      "driver": "int_only",
+      "driver": "two_ints",
       "mutation": "forbidden",
       "cases": [
         {
           "name": "t01",
           "args": {
-            "value": 0
-          },
-          "expect": "1"
-        },
-        {
-          "name": "t02",
-          "args": {
-            "value": 1
-          },
-          "expect": "1"
-        },
-        {
-          "name": "t03",
-          "args": {
-            "value": 2
-          },
-          "expect": "2"
-        },
-        {
-          "name": "t04",
-          "args": {
-            "value": 3
-          },
-          "expect": "3"
-        },
-        {
-          "name": "t05",
-          "args": {
-            "value": 4
+            "first": 4,
+            "second": 2
           },
           "expect": "5"
         },
         {
-          "name": "t06",
+          "name": "t02",
           "args": {
-            "value": 5
+            "first": 4,
+            "second": 3
+          },
+          "expect": "7"
+        },
+        {
+          "name": "t03",
+          "args": {
+            "first": 5,
+            "second": 2
           },
           "expect": "8"
         },
         {
+          "name": "t04",
+          "args": {
+            "first": 5,
+            "second": 5
+          },
+          "expect": "16"
+        },
+        {
+          "name": "t05",
+          "args": {
+            "first": 1,
+            "second": 1
+          },
+          "expect": "1"
+        },
+        {
+          "name": "t06",
+          "args": {
+            "first": 0,
+            "second": 3
+          },
+          "expect": "1"
+        },
+        {
           "name": "t07",
           "args": {
-            "value": 6
+            "first": 6,
+            "second": 3
           },
-          "expect": "13"
+          "expect": "24"
         },
         {
           "name": "t08",
           "args": {
-            "value": 7
+            "first": 7,
+            "second": 2
           },
           "expect": "21"
         },
         {
           "name": "t09",
           "args": {
-            "value": 8
+            "first": 3,
+            "second": 1
           },
-          "expect": "34"
+          "expect": "1"
         },
         {
           "name": "t10",
           "args": {
-            "value": 10
+            "first": 8,
+            "second": 4
           },
-          "expect": "89"
+          "expect": "108"
         },
         {
           "name": "t11",
           "args": {
-            "value": 12
+            "first": 10,
+            "second": 2
           },
-          "expect": "233"
+          "expect": "89"
         },
         {
           "name": "t12",
           "args": {
-            "value": 15
+            "first": 6,
+            "second": 6
           },
-          "expect": "987"
+          "expect": "32"
         },
         {
           "name": "t13",
           "args": {
-            "value": 18
+            "first": 9,
+            "second": 3
           },
-          "expect": "4181"
+          "expect": "149"
         },
         {
           "name": "t14",
           "args": {
-            "value": 20
+            "first": 2,
+            "second": 5
           },
-          "expect": "10946"
-        },
-        {
-          "name": "t15",
-          "args": {
-            "value": 22
-          },
-          "expect": "28657"
-        },
-        {
-          "name": "t16",
-          "args": {
-            "value": 25
-          },
-          "expect": "121393"
+          "expect": "2"
         }
       ]
     }
@@ -1619,20 +1622,20 @@ void printIDontKnow() {
     exit(0);
 }
 
-int examT_q4(int n);
+int examT_q4(int n, int k);
 
 int main(void) {
     // uncomment next line if you don't know the answer
     // printIDontKnow();
 
-    int n;
-    if (scanf("%d", &n) != 1) return 1;
+    int n, k;
+    if (scanf("%d %d", &n, &k) != 2) return 1;
 
-    printf("%d", examT_q4(n));
+    printf("%d", examT_q4(n, k));
     return 0;
 }
 
-int examT_q4(int n) {
+int examT_q4(int n, int k) {
     // write your code here
     return 0;
 }`
@@ -1713,16 +1716,23 @@ const SOLUTIONS = {
 }`
   },
   q4: {
-    archetype: "רקורסיה כפולה — כל דרך מתחילה בצעד של 1 או של 2",
+    archetype: "סכימה רקורסיבית על גודל החלק הראשון — הלולאה עצמה הפכה לרקורסיה",
     complexity: "אין דרישת סיבוכיות",
-    code: `int examT_q4(int n) {
-    if (n < 0) {
+    code: `int sumParts(int n, int k, int j) {
+    if (j > k || j > n) {
         return 0;
     }
-    if (n <= 1) {
+    return examT_q4(n - j, k) + sumParts(n, k, j + 1);
+}
+
+int examT_q4(int n, int k) {
+    if (n == 0) {
         return 1;
     }
-    return examT_q4(n - 1) + examT_q4(n - 2);
+    if (n < 0 || k <= 0) {
+        return 0;
+    }
+    return sumParts(n, k, 1);
 }`
   }
 };

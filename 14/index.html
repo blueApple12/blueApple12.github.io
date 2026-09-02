@@ -519,24 +519,32 @@ void f1(int n) {
 
     <!-- Q4 -->
     <section class="q">
-      <h2>שאלה 4 <span class="pts">25 נק'</span> — רקורסיה</h2>
-      <p>נתון מספר שלם ואי-שלילי <code>n</code>.</p>
+      <h2>שאלה 4 <span class="pts">25 נק'</span> &mdash; רקורסיה</h2>
+      <p>נתון מספר שלם ואי-שלילי <code>n</code>. יש לרצף לוח בגודל <code>2 &times; n</code> באמצעות
+      שני סוגי אריחים:</p>
+      <ul class="rules">
+        <li><strong>דומינו</strong> בגודל <code>1 &times; 2</code>, שניתן להניח אנכית או אופקית;</li>
+        <li><strong>ריבוע</strong> בגודל <code>2 &times; 2</code>.</li>
+      </ul>
+      <p>האריחים אינם חופפים ואינם חורגים מהלוח, ויש לכסות אותו במלואו.</p>
       <div class="sig">int examT_q4(int n);</div>
-      <p><strong>על הפונקציה להחזיר את מספר האפסים שבסוף הייצוג העשרוני של <code>n!</code></strong>
-      (עצרת של <code>n</code>), כלומר את החזקה הגבוהה ביותר של 10 שמחלקת את <code>n!</code>.</p>
-      <p><strong>הערה חשובה:</strong> אסור לחשב את <code>n!</code> עצמו — הוא גדול בהרבה מטווח <code>int</code>.
-      מספר האפסים נקבע על ידי כמה פעמים הגורם 5 מופיע במכפלה <code>1·2·⋯·n</code>.</p>
+      <p><strong>על הפונקציה להחזיר את מספר הריצופים השונים של הלוח.</strong>
+      עבור <code>n = 0</code> יש ריצוף אחד (הריק).</p>
       <table class="ex">
         <tr><th>קלט</th><th>פלט</th><th>הסבר</th></tr>
-        <tr><td>n = 10</td><td>2</td><td>‎10! = 3628800</td></tr>
-        <tr><td>n = 25</td><td>6</td><td>‎25/5 = 5, ועוד 5/5 = 1</td></tr>
-        <tr><td>n = 4</td><td>0</td><td>‎4! = 24</td></tr>
-        <tr><td>n = 100</td><td>24</td><td>‎20 + 4</td></tr>
+        <tr><td>n = 1</td><td>1</td><td>דומינו אנכי יחיד</td></tr>
+        <tr><td>n = 2</td><td>3</td><td>שני אנכיים · שני אופקיים · ריבוע</td></tr>
+        <tr><td>n = 3</td><td>5</td><td>&mdash;</td></tr>
+        <tr><td>n = 5</td><td>21</td><td>&mdash;</td></tr>
       </table>
+      <p><strong>רמז:</strong> חשבו על העמודה השמאלית ביותר. כמה דרכים יש לכסות אותה, וכמה
+      עמודות כל אחת מהן &quot;צורכת&quot;? מכאן נובעת נוסחת נסיגה עם <strong>שני</strong> איברים
+      קודמים ומקדם שאינו 1.</p>
       <ul class="rules">
-        <li><strong>על הפונקציה להיות רקורסיבית בלבד, ללא שימוש בלולאות</strong> — בכל הפונקציות שתכתבו.</li>
-        <li><strong>אסור להשתמש בפונקציית מעטפת</strong> — <code>examT_q4</code> עצמה חייבת לקרוא לעצמה.</li>
-        <li>אין להקצות זיכרון דינמי ואין להשתמש בפונקציות ספריה מתמטיות.</li>
+        <li><strong>על הפונקציה להיות רקורסיבית בלבד, ללא שימוש בלולאות</strong> &mdash; בכל הפונקציות שתכתבו.</li>
+        <li><strong>אסור להשתמש בפונקציית מעטפת</strong> &mdash; <code>examT_q4</code> עצמה חייבת לקרוא לעצמה.</li>
+        <li>ניתן להשתמש בפונקציות עזר, יש לממש את כולן, וגם הן חייבות להיות רקורסיביות בלבד.</li>
+        <li>אין להקצות זיכרון דינמי ואין להשתמש במשתנים סטטיים או גלובליים.</li>
         <li><strong>אין דרישות סיבוכיות בשאלה זו.</strong></li>
       </ul>
     </section>
@@ -1026,112 +1034,98 @@ void f1(int n) {
           "args": {
             "value": 0
           },
-          "expect": "0"
+          "expect": "1"
         },
         {
           "name": "t02",
           "args": {
             "value": 1
           },
-          "expect": "0"
+          "expect": "1"
         },
         {
           "name": "t03",
           "args": {
-            "value": 4
+            "value": 2
           },
-          "expect": "0"
+          "expect": "3"
         },
         {
           "name": "t04",
           "args": {
-            "value": 5
+            "value": 3
           },
-          "expect": "1"
+          "expect": "5"
         },
         {
           "name": "t05",
           "args": {
-            "value": 6
+            "value": 4
           },
-          "expect": "1"
+          "expect": "11"
         },
         {
           "name": "t06",
           "args": {
-            "value": 10
+            "value": 5
           },
-          "expect": "2"
+          "expect": "21"
         },
         {
           "name": "t07",
           "args": {
-            "value": 24
+            "value": 6
           },
-          "expect": "4"
+          "expect": "43"
         },
         {
           "name": "t08",
           "args": {
-            "value": 25
+            "value": 7
           },
-          "expect": "6"
+          "expect": "85"
         },
         {
           "name": "t09",
           "args": {
-            "value": 26
+            "value": 8
           },
-          "expect": "6"
+          "expect": "171"
         },
         {
           "name": "t10",
           "args": {
-            "value": 49
+            "value": 10
           },
-          "expect": "10"
+          "expect": "683"
         },
         {
           "name": "t11",
           "args": {
-            "value": 50
+            "value": 12
           },
-          "expect": "12"
+          "expect": "2731"
         },
         {
           "name": "t12",
           "args": {
-            "value": 100
+            "value": 15
           },
-          "expect": "24"
+          "expect": "21845"
         },
         {
           "name": "t13",
           "args": {
-            "value": 125
+            "value": 18
           },
-          "expect": "31"
+          "expect": "174763"
         },
         {
           "name": "t14",
           "args": {
-            "value": 624
+            "value": 20
           },
-          "expect": "152"
-        },
-        {
-          "name": "t15",
-          "args": {
-            "value": 625
-          },
-          "expect": "156"
-        },
-        {
-          "name": "t16",
-          "args": {
-            "value": 1000
-          },
-          "expect": "249"
+          "expect": "699051"
         }
       ]
     }
@@ -1860,13 +1854,16 @@ const SOLUTIONS = {
 }`
   },
   q4: {
-    archetype: "רקורסיה על חלוקות חוזרות ב-5 (מספר האפסים בסוף n!)",
+    archetype: "נוסחת נסיגה f(n) = f(n-1) + 2f(n-2) — דומינו אנכי, זוג אופקי, או ריבוע",
     complexity: "אין דרישת סיבוכיות",
     code: `int examT_q4(int n) {
-    if (n < 5) {
-        return 0;
+    if (n == 0) {
+        return 1;
     }
-    return n / 5 + examT_q4(n / 5);
+    if (n == 1) {
+        return 1;
+    }
+    return examT_q4(n - 1) + 2 * examT_q4(n - 2);
 }`
   }
 };

@@ -510,21 +510,27 @@ textarea.paste{width:100%;height:130px;font-family:"JetBrains Mono",monospace;fo
 
     <!-- Q4 -->
     <section class="q">
-      <h2>שאלה 4 <span class="pts">25 נק'</span> — רקורסיה</h2>
+      <h2>שאלה 4 <span class="pts">25 נק'</span> &mdash; רקורסיה</h2>
       <p>נתונים שני מספרים שלמים וחיוביים <code>n</code> ו-<code>k</code>.</p>
       <div class="sig">int examT_q4(int n, int k);</div>
-      <p><strong>על הפונקציה להחזיר את מספר המחלקים החיוביים של <code>n</code> שאינם גדולים מ-<code>k</code>.</strong></p>
+      <p><strong>על הפונקציה להחזיר את מספר הגורמים הראשוניים <em>השונים</em> של <code>n</code>
+      שאינם גדולים מ-<code>k</code>.</strong> (גורם ראשוני נספר פעם אחת בלבד, גם אם הוא מחלק את
+      <code>n</code> יותר מפעם אחת.)</p>
       <table class="ex">
         <tr><th>קלט</th><th>פלט</th><th>הסבר</th></tr>
-        <tr><td>n = 12, k = 12</td><td>6</td><td>‎1,2,3,4,6,12</td></tr>
-        <tr><td>n = 12, k = 6</td><td>5</td><td>‎1,2,3,4,6</td></tr>
-        <tr><td>n = 7, k = 6</td><td>1</td><td>רק 1</td></tr>
-        <tr><td>n = 100, k = 10</td><td>5</td><td>‎1,2,4,5,10</td></tr>
+        <tr><td>n = 12, k = 3</td><td>2</td><td>‎12 = 2²·3 &mdash; הראשוניים 2 ו-3</td></tr>
+        <tr><td>n = 12, k = 2</td><td>1</td><td>רק 2</td></tr>
+        <tr><td>n = 30, k = 5</td><td>3</td><td>‎2, 3, 5</td></tr>
+        <tr><td>n = 7, k = 6</td><td>0</td><td>‎7 ראשוני אך גדול מ-6</td></tr>
       </table>
+      <p><strong>רמז:</strong> דרושות כאן <strong>שתי</strong> רקורסיות נפרדות &mdash; אחת שיורדת על
+      המועמד מ-<code>k</code> כלפי מטה, ואחת שבודקת ראשוניות. גם בדיקת הראשוניות היא לולאה
+      במקורה, ולכן גם היא חייבת להיכתב רקורסיבית.</p>
       <ul class="rules">
-        <li><strong>על הפונקציה להיות רקורסיבית בלבד, ללא שימוש בלולאות</strong> — בכל הפונקציות שתכתבו.</li>
-        <li><strong>אסור להשתמש בפונקציית מעטפת</strong> — <code>examT_q4</code> עצמה חייבת לקרוא לעצמה.</li>
-        <li>אין להקצות זיכרון דינמי ואין להשתמש בפונקציות ספריה מתמטיות.</li>
+        <li><strong>על הפונקציה להיות רקורסיבית בלבד, ללא שימוש בלולאות</strong> &mdash; בכל הפונקציות שתכתבו.</li>
+        <li><strong>אסור להשתמש בפונקציית מעטפת</strong> &mdash; <code>examT_q4</code> עצמה חייבת לקרוא לעצמה.</li>
+        <li>ניתן להשתמש בפונקציות עזר, יש לממש את כולן, וגם הן חייבות להיות רקורסיביות בלבד.</li>
+        <li>אין להקצות זיכרון דינמי ואין להשתמש במשתנים סטטיים או גלובליים.</li>
         <li><strong>אין דרישות סיבוכיות בשאלה זו.</strong></li>
       </ul>
     </section>
@@ -559,63 +565,432 @@ textarea.paste{width:100%;height:130px;font-family:"JetBrains Mono",monospace;fo
       "driver": "int_array_n_int",
       "mutation": "forbidden",
       "cases": [
-        {"name": "t01", "args": {"arr": [1,3,5,7,9], "n": 5, "value": 6}, "expect": "1"},
-        {"name": "t02", "args": {"arr": [1,3,5,7,9], "n": 5, "value": 5}, "expect": "0"},
-        {"name": "t03", "args": {"arr": [1,3,5,7,9], "n": 5, "value": 0}, "expect": "1"},
-        {"name": "t04", "args": {"arr": [1,3,5,7,9], "n": 5, "value": 100}, "expect": "91"},
-        {"name": "t05", "args": {"arr": [1,3,5,7,9], "n": 5, "value": 4}, "expect": "1"},
-        {"name": "t06", "args": {"arr": [10], "n": 1, "value": 3}, "expect": "7"},
-        {"name": "t07", "args": {"arr": [10], "n": 1, "value": 10}, "expect": "0"},
-        {"name": "t08", "args": {"arr": [-5,-1,4,8], "n": 4, "value": 0}, "expect": "1"},
-        {"name": "t09", "args": {"arr": [-5,-1,4,8], "n": 4, "value": -10}, "expect": "5"},
-        {"name": "t10", "args": {"arr": [-5,-1,4,8], "n": 4, "value": 6}, "expect": "2"},
-        {"name": "t11", "args": {"arr": [2,2,2], "n": 3, "value": 5}, "expect": "3"},
-        {"name": "t12", "args": {"arr": [2,2,2], "n": 3, "value": 2}, "expect": "0"},
-        {"name": "t13", "args": {"arr": [1,2,3,4,5], "n": 5, "value": 3}, "expect": "0"},
-        {"name": "t14", "args": {"arr": [0,100], "n": 2, "value": 49}, "expect": "49"},
-        {"name": "t15", "args": {"arr": [0,100], "n": 2, "value": 51}, "expect": "49"}
+        {
+          "name": "t01",
+          "args": {
+            "arr": [
+              1,
+              3,
+              5,
+              7,
+              9
+            ],
+            "n": 5,
+            "value": 6
+          },
+          "expect": "1"
+        },
+        {
+          "name": "t02",
+          "args": {
+            "arr": [
+              1,
+              3,
+              5,
+              7,
+              9
+            ],
+            "n": 5,
+            "value": 5
+          },
+          "expect": "0"
+        },
+        {
+          "name": "t03",
+          "args": {
+            "arr": [
+              1,
+              3,
+              5,
+              7,
+              9
+            ],
+            "n": 5,
+            "value": 0
+          },
+          "expect": "1"
+        },
+        {
+          "name": "t04",
+          "args": {
+            "arr": [
+              1,
+              3,
+              5,
+              7,
+              9
+            ],
+            "n": 5,
+            "value": 100
+          },
+          "expect": "91"
+        },
+        {
+          "name": "t05",
+          "args": {
+            "arr": [
+              1,
+              3,
+              5,
+              7,
+              9
+            ],
+            "n": 5,
+            "value": 4
+          },
+          "expect": "1"
+        },
+        {
+          "name": "t06",
+          "args": {
+            "arr": [
+              10
+            ],
+            "n": 1,
+            "value": 3
+          },
+          "expect": "7"
+        },
+        {
+          "name": "t07",
+          "args": {
+            "arr": [
+              10
+            ],
+            "n": 1,
+            "value": 10
+          },
+          "expect": "0"
+        },
+        {
+          "name": "t08",
+          "args": {
+            "arr": [
+              -5,
+              -1,
+              4,
+              8
+            ],
+            "n": 4,
+            "value": 0
+          },
+          "expect": "1"
+        },
+        {
+          "name": "t09",
+          "args": {
+            "arr": [
+              -5,
+              -1,
+              4,
+              8
+            ],
+            "n": 4,
+            "value": -10
+          },
+          "expect": "5"
+        },
+        {
+          "name": "t10",
+          "args": {
+            "arr": [
+              -5,
+              -1,
+              4,
+              8
+            ],
+            "n": 4,
+            "value": 6
+          },
+          "expect": "2"
+        },
+        {
+          "name": "t11",
+          "args": {
+            "arr": [
+              2,
+              2,
+              2
+            ],
+            "n": 3,
+            "value": 5
+          },
+          "expect": "3"
+        },
+        {
+          "name": "t12",
+          "args": {
+            "arr": [
+              2,
+              2,
+              2
+            ],
+            "n": 3,
+            "value": 2
+          },
+          "expect": "0"
+        },
+        {
+          "name": "t13",
+          "args": {
+            "arr": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "n": 5,
+            "value": 3
+          },
+          "expect": "0"
+        },
+        {
+          "name": "t14",
+          "args": {
+            "arr": [
+              0,
+              100
+            ],
+            "n": 2,
+            "value": 49
+          },
+          "expect": "49"
+        },
+        {
+          "name": "t15",
+          "args": {
+            "arr": [
+              0,
+              100
+            ],
+            "n": 2,
+            "value": 51
+          },
+          "expect": "49"
+        }
       ]
     },
     "q3": {
       "driver": "string_only",
       "mutation": "forbidden",
       "cases": [
-        {"name": "t01", "args": {"s": "abc"}, "expect": "3"},
-        {"name": "t02", "args": {"s": "aaa"}, "expect": "6"},
-        {"name": "t03", "args": {"s": "aba"}, "expect": "4"},
-        {"name": "t04", "args": {"s": "a"}, "expect": "1"},
-        {"name": "t05", "args": {"s": "aa"}, "expect": "3"},
-        {"name": "t06", "args": {"s": "abba"}, "expect": "6"},
-        {"name": "t07", "args": {"s": "racecar"}, "expect": "10"},
-        {"name": "t08", "args": {"s": "abcba"}, "expect": "7"},
-        {"name": "t09", "args": {"s": "aaaa"}, "expect": "10"},
-        {"name": "t10", "args": {"s": "abab"}, "expect": "6"},
-        {"name": "t11", "args": {"s": "banana"}, "expect": "10"},
-        {"name": "t12", "args": {"s": "zzz"}, "expect": "6"},
-        {"name": "t13", "args": {"s": "ab"}, "expect": "2"},
-        {"name": "t14", "args": {"s": "abcdedcba"}, "expect": "13"}
+        {
+          "name": "t01",
+          "args": {
+            "s": "abc"
+          },
+          "expect": "3"
+        },
+        {
+          "name": "t02",
+          "args": {
+            "s": "aaa"
+          },
+          "expect": "6"
+        },
+        {
+          "name": "t03",
+          "args": {
+            "s": "aba"
+          },
+          "expect": "4"
+        },
+        {
+          "name": "t04",
+          "args": {
+            "s": "a"
+          },
+          "expect": "1"
+        },
+        {
+          "name": "t05",
+          "args": {
+            "s": "aa"
+          },
+          "expect": "3"
+        },
+        {
+          "name": "t06",
+          "args": {
+            "s": "abba"
+          },
+          "expect": "6"
+        },
+        {
+          "name": "t07",
+          "args": {
+            "s": "racecar"
+          },
+          "expect": "10"
+        },
+        {
+          "name": "t08",
+          "args": {
+            "s": "abcba"
+          },
+          "expect": "7"
+        },
+        {
+          "name": "t09",
+          "args": {
+            "s": "aaaa"
+          },
+          "expect": "10"
+        },
+        {
+          "name": "t10",
+          "args": {
+            "s": "abab"
+          },
+          "expect": "6"
+        },
+        {
+          "name": "t11",
+          "args": {
+            "s": "banana"
+          },
+          "expect": "10"
+        },
+        {
+          "name": "t12",
+          "args": {
+            "s": "zzz"
+          },
+          "expect": "6"
+        },
+        {
+          "name": "t13",
+          "args": {
+            "s": "ab"
+          },
+          "expect": "2"
+        },
+        {
+          "name": "t14",
+          "args": {
+            "s": "abcdedcba"
+          },
+          "expect": "13"
+        }
       ]
     },
     "q4": {
       "driver": "two_ints",
       "mutation": "forbidden",
       "cases": [
-        {"name": "t01", "args": {"first": 12, "second": 12}, "expect": "6"},
-        {"name": "t02", "args": {"first": 12, "second": 6}, "expect": "5"},
-        {"name": "t03", "args": {"first": 12, "second": 3}, "expect": "3"},
-        {"name": "t04", "args": {"first": 1, "second": 1}, "expect": "1"},
-        {"name": "t05", "args": {"first": 7, "second": 7}, "expect": "2"},
-        {"name": "t06", "args": {"first": 7, "second": 6}, "expect": "1"},
-        {"name": "t07", "args": {"first": 100, "second": 10}, "expect": "5"},
-        {"name": "t08", "args": {"first": 100, "second": 100}, "expect": "9"},
-        {"name": "t09", "args": {"first": 36, "second": 36}, "expect": "9"},
-        {"name": "t10", "args": {"first": 36, "second": 6}, "expect": "5"},
-        {"name": "t11", "args": {"first": 17, "second": 17}, "expect": "2"},
-        {"name": "t12", "args": {"first": 17, "second": 16}, "expect": "1"},
-        {"name": "t13", "args": {"first": 24, "second": 24}, "expect": "8"},
-        {"name": "t14", "args": {"first": 24, "second": 4}, "expect": "4"},
-        {"name": "t15", "args": {"first": 60, "second": 10}, "expect": "7"},
-        {"name": "t16", "args": {"first": 2, "second": 1}, "expect": "1"}
+        {
+          "name": "t01",
+          "args": {
+            "first": 12,
+            "second": 3
+          },
+          "expect": "2"
+        },
+        {
+          "name": "t02",
+          "args": {
+            "first": 12,
+            "second": 2
+          },
+          "expect": "1"
+        },
+        {
+          "name": "t03",
+          "args": {
+            "first": 30,
+            "second": 5
+          },
+          "expect": "3"
+        },
+        {
+          "name": "t04",
+          "args": {
+            "first": 30,
+            "second": 3
+          },
+          "expect": "2"
+        },
+        {
+          "name": "t05",
+          "args": {
+            "first": 7,
+            "second": 7
+          },
+          "expect": "1"
+        },
+        {
+          "name": "t06",
+          "args": {
+            "first": 7,
+            "second": 6
+          },
+          "expect": "0"
+        },
+        {
+          "name": "t07",
+          "args": {
+            "first": 1,
+            "second": 10
+          },
+          "expect": "0"
+        },
+        {
+          "name": "t08",
+          "args": {
+            "first": 100,
+            "second": 5
+          },
+          "expect": "2"
+        },
+        {
+          "name": "t09",
+          "args": {
+            "first": 100,
+            "second": 2
+          },
+          "expect": "1"
+        },
+        {
+          "name": "t10",
+          "args": {
+            "first": 2310,
+            "second": 11
+          },
+          "expect": "5"
+        },
+        {
+          "name": "t11",
+          "args": {
+            "first": 2310,
+            "second": 7
+          },
+          "expect": "4"
+        },
+        {
+          "name": "t12",
+          "args": {
+            "first": 97,
+            "second": 97
+          },
+          "expect": "1"
+        },
+        {
+          "name": "t13",
+          "args": {
+            "first": 97,
+            "second": 96
+          },
+          "expect": "0"
+        },
+        {
+          "name": "t14",
+          "args": {
+            "first": 64,
+            "second": 2
+          },
+          "expect": "1"
+        }
       ]
     }
   }
@@ -1351,13 +1726,27 @@ const SOLUTIONS = {
 }`
   },
   q4: {
-    archetype: "רקורסיה יורדת על המחלק המועמד",
+    archetype: "שתי רקורסיות משולבות: ירידה על המועמד, ובדיקת ראשוניות רקורסיבית",
     complexity: "אין דרישת סיבוכיות",
-    code: `int examT_q4(int n, int k) {
-    if (k <= 0) {
+    code: `int isPrimeFrom(int m, int d) {
+    if (m < 2) {
         return 0;
     }
-    return ((n % k == 0) ? 1 : 0) + examT_q4(n, k - 1);
+    if (d * d > m) {
+        return 1;
+    }
+    if (m % d == 0) {
+        return 0;
+    }
+    return isPrimeFrom(m, d + 1);
+}
+
+int examT_q4(int n, int k) {
+    if (k < 2) {
+        return 0;
+    }
+    int here = (n % k == 0 && isPrimeFrom(k, 2)) ? 1 : 0;
+    return here + examT_q4(n, k - 1);
 }`
   }
 };

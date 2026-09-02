@@ -526,22 +526,27 @@ void f1(int n) {
 
     <!-- Q4 -->
     <section class="q">
-      <h2>שאלה 4 <span class="pts">25 נק'</span> — רקורסיה</h2>
+      <h2>שאלה 4 <span class="pts">25 נק'</span> &mdash; רקורסיה</h2>
       <p>נתון מספר שלם ואי-שלילי <code>n</code>.</p>
+      <p>נסתכל על הייצוג הבינארי של <code>n</code>. <strong>רצף אחדות</strong> הוא קטע רציף ומקסימלי
+      של ביטים שערכם 1.</p>
       <div class="sig">int examT_q4(int n);</div>
-      <p><strong>על הפונקציה להחזיר את מספר הביטים שערכם 1 בייצוג הבינארי של <code>n</code>.</strong></p>
+      <p><strong>על הפונקציה להחזיר את אורכו של רצף האחדות הארוך ביותר בייצוג הבינארי של
+      <code>n</code></strong> (0 אם <code>n</code> הוא 0).</p>
       <table class="ex">
         <tr><th>קלט</th><th>פלט</th><th>הסבר</th></tr>
-        <tr><td>n = 13</td><td>3</td><td>1101</td></tr>
-        <tr><td>n = 16</td><td>1</td><td>10000</td></tr>
-        <tr><td>n = 255</td><td>8</td><td>11111111</td></tr>
-        <tr><td>n = 0</td><td>0</td><td>אין ביטים דלוקים</td></tr>
+        <tr><td>n = 13</td><td>2</td><td>‎1101 &mdash; הרצף הארוך הוא "11"</td></tr>
+        <tr><td>n = 15</td><td>4</td><td>‎1111</td></tr>
+        <tr><td>n = 21</td><td>1</td><td>‎10101 &mdash; אין שני אחדות סמוכים</td></tr>
+        <tr><td>n = 29</td><td>3</td><td>‎11101</td></tr>
       </table>
+      <p><strong>רמז:</strong> אורך הרצף <em>שמתחיל בביט הנוכחי</em> ואורך הרצף הארוך ב<em>המשך</em>
+      המספר הם שני חישובים נפרדים &mdash; ושניהם רקורסיביים.</p>
       <ul class="rules">
-        <li><strong>על הפונקציה להיות רקורסיבית בלבד, ללא שימוש בלולאות.</strong></li>
-        <li><strong>אסור להשתמש בפונקציית מעטפת</strong> — <code>examT_q4</code> חייבת בעצמה להיות רקורסיבית.</li>
+        <li><strong>על הפונקציה להיות רקורסיבית בלבד, ללא שימוש בלולאות</strong> &mdash; בכל הפונקציות שתכתבו.</li>
+        <li><strong>אסור להשתמש בפונקציית מעטפת</strong> &mdash; <code>examT_q4</code> עצמה חייבת לקרוא לעצמה.</li>
         <li>ניתן להשתמש בפונקציות עזר, יש לממש את כולן, וגם הן חייבות להיות רקורסיביות בלבד.</li>
-        <li>אין להקצות זיכרון דינמי ואין להשתמש בפונקציות ספריה.</li>
+        <li>אין להקצות זיכרון דינמי ואין להשתמש במשתנים סטטיים או גלובליים.</li>
         <li><strong>אין דרישות סיבוכיות בשאלה זו.</strong></li>
       </ul>
     </section>
@@ -979,44 +984,44 @@ void f1(int n) {
         {
           "name": "t05",
           "args": {
-            "value": 4
-          },
-          "expect": "1"
-        },
-        {
-          "name": "t06",
-          "args": {
             "value": 7
           },
           "expect": "3"
         },
         {
-          "name": "t07",
+          "name": "t06",
           "args": {
             "value": 8
           },
           "expect": "1"
         },
         {
-          "name": "t08",
+          "name": "t07",
           "args": {
             "value": 13
           },
-          "expect": "3"
+          "expect": "2"
         },
         {
-          "name": "t09",
+          "name": "t08",
           "args": {
             "value": 15
           },
           "expect": "4"
         },
         {
-          "name": "t10",
+          "name": "t09",
           "args": {
-            "value": 16
+            "value": 21
           },
           "expect": "1"
+        },
+        {
+          "name": "t10",
+          "args": {
+            "value": 29
+          },
+          "expect": "3"
         },
         {
           "name": "t11",
@@ -1042,23 +1047,23 @@ void f1(int n) {
         {
           "name": "t14",
           "args": {
-            "value": 1024
+            "value": 12345
           },
-          "expect": "1"
+          "expect": "3"
         },
         {
           "name": "t15",
           "args": {
-            "value": 12345
+            "value": 2147483647
           },
-          "expect": "6"
+          "expect": "31"
         },
         {
           "name": "t16",
           "args": {
-            "value": 2147483647
+            "value": 5
           },
-          "expect": "31"
+          "expect": "1"
         }
       ]
     }
@@ -1805,13 +1810,22 @@ const SOLUTIONS = {
 }`
   },
   q4: {
-    archetype: "רקורסיה על הייצוג הבינארי: ביט אחרון ועוד המשך",
+    archetype: "רקורסיה כפולה על הייצוג הבינארי — אורך הרצף שמתחיל כאן מול המיטב בהמשך",
     complexity: "אין דרישת סיבוכיות",
-    code: `int examT_q4(int n) {
+    code: `int trailingOnes(int n) {
+    if (n == 0 || n % 2 == 0) {
+        return 0;
+    }
+    return 1 + trailingOnes(n / 2);
+}
+
+int examT_q4(int n) {
     if (n == 0) {
         return 0;
     }
-    return (n % 2) + examT_q4(n / 2);
+    int here = trailingOnes(n);
+    int rest = examT_q4(n / 2);
+    return here > rest ? here : rest;
 }`
   }
 };

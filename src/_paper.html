@@ -9,7 +9,7 @@
       </div>
     </div>
 
-    <div class="note">תרגול מדומה — תחזית 7 מתוך 12 למועד ב׳ אביב 2026. אינו מבחן אמיתי של הטכניון.</div>
+    <div class="note">תרגול מדומה — תחזית 12 מתוך 12 למועד ב׳ אביב 2026. אינו מבחן אמיתי של הטכניון.</div>
 
     <!-- Q1 -->
     <section class="q">
@@ -26,21 +26,28 @@
 
       <p><strong>א.</strong></p>
 <pre class="snip">void f1(int n) {
-    for (int i = 1; i &lt; n; i++)
-        for (int j = i; j &lt; n; j += i)
+    for (int i = n; i &gt; 0; i /= 2) {
+        int* p = (int*) malloc(i * sizeof(int));
+        if (p == NULL) return;
+        for (int j = 0; j &lt; i; j++)
             printf("*");
+        free(p);
+    }
 }</pre>
 
       <p><strong>ב.</strong></p>
-<pre class="snip">int f2(int n) {
-    if (n &lt;= 1) return 1;
-    return f2(n - 1) + f2(n - 2);
+<pre class="snip">void f2(int n) {
+    for (int i = 1; i * i &lt; n; i++)
+        for (int j = 1; j &lt; n; j *= 2)
+            printf("*");
 }</pre>
 
       <p><strong>ג.</strong></p>
-<pre class="snip">void f3(int n) {
-    for (int i = n; i &gt; 2; i = (int) sqrt(i))
+<pre class="snip">int f3(int n) {
+    if (n &lt;= 1) return 1;
+    for (int i = 0; i &lt; n; i++)
         printf("*");
+    return f3(n / 2) + f3(n / 2);
 }</pre>
 
       <div class="q1grid" id="q1grid"></div>
@@ -49,24 +56,28 @@
     <!-- Q2 -->
     <section class="q">
       <h2>שאלה 2 <span class="pts">25 נק'</span></h2>
-      <p>נתון מערך <code>arr</code> באורך <code>n</code> של מספרים שלמים <strong>שונים זה מזה</strong>,
-      הממוין ב<strong>סדר עולה ממש</strong>. ייתכנו במערך מספרים שליליים ואפס.</p>
-      <div class="sig">int examT_q2(int arr[], int n);</div>
-      <p><strong>על הפונקציה להחזיר את המספר השלם החיובי הקטן ביותר שאינו מופיע במערך</strong>
-      (המספרים החיוביים מתחילים מ-1).</p>
+      <p><strong>הגדרה:</strong> מערך <code>arr</code> באורך <code>n</code> ייקרא <strong>מערך הררי</strong>
+      אם קיים אינדקס <code>p</code>, כאשר <code>0 &lt; p &lt; n-1</code>, כך ש-</p>
+      <ul class="rules">
+        <li><code>arr[0] &lt; arr[1] &lt; ... &lt; arr[p]</code> &nbsp;(עולה ממש עד <code>p</code>), וגם</li>
+        <li><code>arr[p] &gt; arr[p+1] &gt; ... &gt; arr[n-1]</code> &nbsp;(יורד ממש מ-<code>p</code> והלאה)</li>
+      </ul>
+      <p>האינדקס <code>p</code> <strong>אינו נתון</strong>.</p>
+      <div class="sig">int examT_q2(int arr[], int n, int x);</div>
+      <p><strong>על הפונקציה להחזיר את האינדקס שבו מופיע <code>x</code> במערך, או <code>-1</code>
+      אם <code>x</code> אינו מופיע.</strong> אם <code>x</code> מופיע בשתי הצלעות, ניתן להחזיר כל אחד מהאינדקסים.</p>
       <table class="ex">
         <tr><th>קלט</th><th>פלט</th><th>הסבר</th></tr>
-        <tr><td>arr = {1,2,3,5,6}, n = 5</td><td>4</td><td>‎1,2,3 קיימים, 4 חסר</td></tr>
-        <tr><td>arr = {-3,-1,1,2,4}, n = 5</td><td>3</td><td>השליליים אינם רלוונטיים</td></tr>
-        <tr><td>arr = {2,3,4}, n = 3</td><td>1</td><td>‎1 עצמו חסר</td></tr>
-        <tr><td>arr = {1,2,3}, n = 3</td><td>4</td><td>אין חסר בתוך המערך</td></tr>
+        <tr><td>arr = {1,3,7,9,6,2}, n = 6, x = 7</td><td>2</td><td>בצלע העולה</td></tr>
+        <tr><td>arr = {1,3,7,9,6,2}, n = 6, x = 6</td><td>4</td><td>בצלע היורדת</td></tr>
+        <tr><td>arr = {1,3,7,9,6,2}, n = 6, x = 9</td><td>3</td><td>השיא עצמו</td></tr>
+        <tr><td>arr = {1,3,7,9,6,2}, n = 6, x = 4</td><td>-1</td><td>אינו במערך</td></tr>
       </table>
       <ul class="rules">
-        <li>ניתן להניח כי הקלט תקין, כי <code>n &ge; 1</code> וכי המערך עולה ממש.</li>
+        <li>ניתן להניח כי הקלט תקין, כי <code>n &ge; 3</code> וכי המערך אכן הררי.</li>
         <li><strong>אין לשנות את תוכן המערך</strong> ואין להקצות זיכרון דינמי.</li>
-        <li><strong>רמז:</strong> תחילה יש לאתר היכן מתחילים המספרים החיוביים. משם, אם <code>j</code>
-        הוא האינדקס היחסי בתוך החלק החיובי, הערך הצפוי הוא <code>j+1</code> &mdash; והתנאי
-        &quot;הערך גדול מהצפוי&quot; הוא <strong>מונוטוני</strong>. שני חיפושים בינאריים משורשרים.</li>
+        <li>שימו לב: נדרשים כאן <strong>שלושה</strong> חיפושים בינאריים &mdash; אחד לאיתור השיא
+        ואחד בכל צלע. הצלע היורדת דורשת השוואה הפוכה.</li>
       </ul>
       <div class="req"><b>דרישות סיבוכיות</b><span class="val">זמן Θ(log n)</span><span class="val">מקום נוסף Θ(1)</span></div>
     </section>
@@ -75,52 +86,59 @@
     <section class="q">
       <h2>שאלה 3 <span class="pts">25 נק'</span></h2>
       <p>נתונה מחרוזת <code>s</code> באורך <code>n</code> המכילה אותיות אנגליות קטנות בלבד.</p>
-      <p>לכל אינדקס <code>i</code> המקיים <code>1 &le; i &lt; n</code>, נסמן ב-<code>L</code> את קבוצת
-      התווים השונים המופיעים ב-<code>s[0..i-1]</code>, וב-<code>R</code> את קבוצת התווים השונים
-      המופיעים ב-<code>s[i..n-1]</code>.</p>
-      <p>נאמר ש-<code>i</code> הוא <strong>אינדקס מכיל</strong> אם <code>L</code> מוכלת ממש
-      ב-<code>R</code> &mdash; כלומר כל תו של <code>L</code> מופיע גם ב-<code>R</code>, <strong>וגם</strong>
-      קיים לפחות תו אחד ב-<code>R</code> שאינו ב-<code>L</code>.</p>
+      <p>תת-מחרוזת של <code>s</code> תיקרא <strong>סיסמה חזקה</strong> אם מתקיימים <strong>כל</strong> התנאים הבאים:</p>
+      <ul class="rules">
+        <li>אורכה <strong>לפחות 3</strong>;</li>
+        <li>היא מכילה <strong>לפחות תנועה אחת</strong> (<code>a</code>, <code>e</code>, <code>i</code>, <code>o</code>, <code>u</code>);</li>
+        <li>היא מכילה <strong>לפחות עיצור אחד</strong> (כל אות שאינה תנועה);</li>
+        <li><strong>אף אות אינה מופיעה בה יותר מפעמיים.</strong></li>
+      </ul>
       <div class="sig">int examT_q3(char* s);</div>
-      <p><strong>על הפונקציה להחזיר את מספר האינדקסים המכילים.</strong></p>
+      <p><strong>על הפונקציה להחזיר את מספר תתי-המחרוזות של <code>s</code> שהן סיסמאות חזקות.</strong>
+      תתי-מחרוזות במקומות שונים נספרות בנפרד, גם אם תוכנן זהה.</p>
       <table class="ex">
         <tr><th>קלט</th><th>פלט</th><th>הסבר</th></tr>
-        <tr><td>s = "abab"</td><td>1</td><td>רק <code>i=1</code>: <code>{a}</code> מוכלת ממש ב-<code>{a,b}</code></td></tr>
-        <tr><td>s = "abcabc"</td><td>2</td><td>&mdash;</td></tr>
-        <tr><td>s = "aaa"</td><td>0</td><td>הקבוצות תמיד שוות, ולכן ההכלה אינה ממש</td></tr>
-        <tr><td>s = "abcd"</td><td>0</td><td>&mdash;</td></tr>
+        <tr><td>s = "abcde"</td><td>5</td><td>—</td></tr>
+        <tr><td>s = "banana"</td><td>8</td><td>—</td></tr>
+        <tr><td>s = "aeiou"</td><td>0</td><td>אין אף עיצור</td></tr>
+        <tr><td>s = "aaa"</td><td>0</td><td>‎'a' מופיע שלוש פעמים</td></tr>
       </table>
       <ul class="rules">
         <li><strong>אין לשנות את תוכן המחרוזת <code>s</code>, אפילו לא באופן זמני.</strong></li>
-        <li>מערך בגודל קבוע (26 תאים) נחשב מקום Θ(1). מערך שגודלו תלוי ב-<code>n</code> אינו מותר.</li>
-        <li><strong>רמז:</strong> תו נמצא ב-<code>L</code> אם ורק אם <em>ההופעה הראשונה</em> שלו לפני
-        <code>i</code>, ונמצא ב-<code>R</code> אם ורק אם <em>ההופעה האחרונה</em> שלו היא <code>i</code> או אחריה.
-        שימו לב שהכלה <em>ממש</em> דורשת שתי בדיקות נפרדות, לא אחת.</li>
+        <li>ניתן להניח כי הקלט תקין וכי <code>s</code> אינה ריקה.</li>
+        <li>מערך בגודל קבוע (26 תאים) נחשב מקום Θ(1). אין להקצות זיכרון דינמי.</li>
+        <li>בשלד נתונה לכם פונקציית העזר <code>is_vowel</code>. אינכם חייבים להשתמש בה.</li>
+        <li><strong>שימו לב לדרישת הזמן — כאן היא ריבועית, לא לינארית.</strong> התנאי "אף אות לא יותר
+        מפעמיים" נשבר לתמיד ברגע שנשבר, וזה מאפשר עצירה מוקדמת.</li>
       </ul>
-      <div class="req"><b>דרישות סיבוכיות</b><span class="val">זמן Θ(n)</span><span class="val">מקום נוסף Θ(1)</span></div>
+      <div class="req"><b>דרישות סיבוכיות</b><span class="val">זמן O(n²)</span><span class="val">מקום נוסף O(1)</span></div>
     </section>
 
     <!-- Q4 -->
     <section class="q">
-      <h2>שאלה 4 <span class="pts">25 נק'</span> — רקורסיה</h2>
-      <p>נתון מספר שלם ואי-שלילי <code>n</code>, המייצג מדרגות.</p>
-      <p>בכל צעד ניתן לעלות <strong>מדרגה אחת או שתי מדרגות</strong>. שתי דרכים נחשבות שונות
-      אם סדר הצעדים בהן שונה.</p>
-      <div class="sig">int examT_q4(int n);</div>
-      <p><strong>על הפונקציה להחזיר את מספר הדרכים השונות לעלות בדיוק <code>n</code> מדרגות.</strong>
-      עבור <code>n = 0</code> יש דרך אחת (לא לעשות דבר).</p>
+      <h2>שאלה 4 <span class="pts">25 נק'</span> &mdash; רקורסיה</h2>
+      <p>נתון מערך <code>arr</code> של מספרים שלמים באורך <code>n &ge; 1</code>. ייתכנו איברים
+      שליליים, חיוביים ואפסים.</p>
+      <p>תת-מערך רציף הוא קטע רציף ולא ריק של המערך.</p>
+      <div class="sig">int examT_q4(int* arr, int n);</div>
+      <p><strong>על הפונקציה להחזיר את הסכום המרבי של תת-מערך רציף.</strong>
+      שימו לב שתת-המערך חייב להכיל לפחות איבר אחד &mdash; ולכן אם כל האיברים שליליים,
+      התשובה היא האיבר הגדול ביותר (והיא שלילית).</p>
       <table class="ex">
         <tr><th>קלט</th><th>פלט</th><th>הסבר</th></tr>
-        <tr><td>n = 2</td><td>2</td><td>1+1 · 2</td></tr>
-        <tr><td>n = 3</td><td>3</td><td>1+1+1 · 1+2 · 2+1</td></tr>
-        <tr><td>n = 4</td><td>5</td><td>—</td></tr>
-        <tr><td>n = 0</td><td>1</td><td>הדרך הריקה</td></tr>
+        <tr><td>arr = {-2,1,-3,4,-1,2,1,-5,4}, n = 9</td><td>6</td><td>‎{4,-1,2,1}</td></tr>
+        <tr><td>arr = {-1,-2,-3}, n = 3</td><td>-1</td><td>כל האיברים שליליים</td></tr>
+        <tr><td>arr = {1,2,3}, n = 3</td><td>6</td><td>כל המערך</td></tr>
+        <tr><td>arr = {3,-2,5,-1}, n = 4</td><td>6</td><td>‎{3,-2,5}</td></tr>
       </table>
+      <p><strong>רמז:</strong> הפרידו בין שני גדלים: הסכום המרבי של תת-מערך <em>המסתיים בדיוק
+      באיבר האחרון</em>, והסכום המרבי בקידומת הקצרה יותר. הראשון מתקבל מהראשון של הקידומת,
+      והתשובה היא המקסימום בין השניים.</p>
       <ul class="rules">
-        <li><strong>על הפונקציה להיות רקורסיבית בלבד, ללא שימוש בלולאות</strong> — בכל הפונקציות שתכתבו.</li>
-        <li><strong>אסור להשתמש בפונקציית מעטפת</strong> — <code>examT_q4</code> עצמה חייבת לקרוא לעצמה.</li>
-        <li>אין להקצות זיכרון דינמי ואין להשתמש במערכים (גם לא לצורך שמירת תוצאות ביניים).</li>
-        <li>ניתן להניח <code>0 &le; n &le; 25</code>.</li>
+        <li><strong>על הפונקציה להיות רקורסיבית בלבד, ללא שימוש בלולאות</strong> &mdash; בכל הפונקציות שתכתבו.</li>
+        <li><strong>אסור להשתמש בפונקציית מעטפת</strong> &mdash; <code>examT_q4</code> עצמה חייבת לקרוא לעצמה.</li>
+        <li>ניתן להשתמש בפונקציות עזר, יש לממש את כולן, וגם הן חייבות להיות רקורסיביות בלבד.</li>
+        <li>אין להקצות זיכרון דינמי ואין להשתמש במשתנים סטטיים או גלובליים.</li>
         <li><strong>אין דרישות סיבוכיות בשאלה זו.</strong></li>
       </ul>
     </section>
