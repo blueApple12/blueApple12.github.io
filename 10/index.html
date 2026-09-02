@@ -488,25 +488,29 @@ textarea.paste{width:100%;height:130px;font-family:"JetBrains Mono",monospace;fo
       <h2>שאלה 3 <span class="pts">25 נק'</span></h2>
       <p>נתונה מחרוזת <code>s</code> באורך <code>n</code> המכילה אותיות אנגליות קטנות ותווי <code>'$'</code> בלבד.</p>
       <p><strong>מילה</strong> היא רצף רציף ומקסימלי של אותיות. <strong>רווח</strong> הוא רצף רציף ומקסימלי
-      של תווי <code>'$'</code>.</p>
-      <p>יש להחליף <strong>כל רווח</strong> בתו בודד, לפי הכלל הבא: אם אורך הרווח <strong>גדול ממש</strong>
-      מאורך המילה שמופיעה <em>מיד לפניו</em> — יש להחליפו ב-<code>'+'</code>; אחרת — ב-<code>'*'</code>.
-      רווח שמופיע בתחילת המחרוזת נחשב כאילו אורך המילה שלפניו הוא 0.</p>
+      של תווי <code>'$'</code>. לכל רווח יש <em>מילה שמאלית</em> ו<em>מילה ימנית</em> — ואם הרווח נמצא
+      בתחילת המחרוזת או בסופה, אורך המילה החסרה נחשב 0.</p>
+      <p>יש להחליף <strong>כל רווח</strong> בתו בודד, לפי הכלל:</p>
+      <ul class="rules">
+        <li><code>'+'</code> &mdash; אם אורך הרווח גדול ממש <strong>משתי</strong> המילים השכנות;</li>
+        <li><code>'*'</code> &mdash; אם אורך הרווח קטן ממש <strong>משתי</strong> המילים השכנות;</li>
+        <li><code>'='</code> &mdash; בכל מקרה אחר.</li>
+      </ul>
       <div class="sig">int examT_q3(char* s);</div>
-      <p><strong>על הפונקציה לבצע את ההחלפות במקום, בתוך <code>s</code> עצמה</strong> (תוך הזזת שאר התווים שמאלה
-      וסיום המחרוזת ב-<code>'\0'</code>), <strong>ולהחזיר את מספר הרווחים שהוחלפו ב-<code>'+'</code>.</strong></p>
+      <p><strong>על הפונקציה לבצע את ההחלפות במקום, בתוך <code>s</code> עצמה</strong> (תוך הזזת שאר
+      התווים שמאלה וסיום ב-<code>'\0'</code>), <strong>ולהחזיר את מספר הרווחים שהוחלפו ב-<code>'='</code>.</strong></p>
       <table class="ex">
         <tr><th>קלט</th><th>פלט</th><th>s לאחר הקריאה</th></tr>
-        <tr><td>s = "ab$$$cd"</td><td>1</td><td>"ab+cd" &nbsp;(3 &gt; 2)</td></tr>
-        <tr><td>s = "ab$cd"</td><td>0</td><td>"ab*cd" &nbsp;(1 &le; 2)</td></tr>
-        <tr><td>s = "a$$b$c"</td><td>1</td><td>"a+b*c"</td></tr>
-        <tr><td>s = "$a$$b$$$"</td><td>3</td><td>"+a+b+"</td></tr>
+        <tr><td>s = "ab$$$cd"</td><td>0</td><td>"ab+cd" &nbsp;(3 &gt; 2 וגם 3 &gt; 2)</td></tr>
+        <tr><td>s = "qq$$ww$e"</td><td>2</td><td>"qq=ww=e"</td></tr>
+        <tr><td>s = "a$$$b$c"</td><td>1</td><td>"a+b=c"</td></tr>
+        <tr><td>s = "$$ab"</td><td>1</td><td>"=ab" &nbsp;(שמאלה אין מילה, אורך 0)</td></tr>
       </table>
       <ul class="rules">
         <li>ניתן להניח כי הקלט תקין וכי <code>s</code> אינה ריקה.</li>
         <li><strong>אין להקצות זיכרון דינמי</strong> ואין להשתמש במערך עזר.</li>
-        <li>אין להשתמש בפונקציות ספריה לטיפול במחרוזות.</li>
-        <li>שימו לב: אורך המילה הרלוונטי הוא של המילה <em>שלפני</em> הרווח, ולא שאחריו.</li>
+        <li>שימו לב: כדי לסווג רווח דרושה <strong>הצצה קדימה</strong> אל המילה הבאה, לפני שכותבים
+        את התו המחליף. עדיין ניתן לסיים במעבר לינארי אחד &mdash; כל תו נקרא לכל היותר פעמיים.</li>
       </ul>
       <div class="req"><b>דרישות סיבוכיות</b><span class="val">זמן Θ(n)</span><span class="val">מקום נוסף Θ(1)</span></div>
     </section>
@@ -812,7 +816,7 @@ textarea.paste{width:100%;height:130px;font-family:"JetBrains Mono",monospace;fo
           "args": {
             "s": "ab$$$cd"
           },
-          "expect": "1"
+          "expect": "0"
         },
         {
           "name": "t02",
@@ -824,9 +828,9 @@ textarea.paste{width:100%;height:130px;font-family:"JetBrains Mono",monospace;fo
         {
           "name": "t03",
           "args": {
-            "s": "$$ab"
+            "s": "a$$b"
           },
-          "expect": "1"
+          "expect": "0"
         },
         {
           "name": "t04",
@@ -838,14 +842,14 @@ textarea.paste{width:100%;height:130px;font-family:"JetBrains Mono",monospace;fo
         {
           "name": "t05",
           "args": {
-            "s": "a$$b$c"
+            "s": "a$$$b$c"
           },
           "expect": "1"
         },
         {
           "name": "t06",
           "args": {
-            "s": "$"
+            "s": "$$ab"
           },
           "expect": "1"
         },
@@ -854,70 +858,56 @@ textarea.paste{width:100%;height:130px;font-family:"JetBrains Mono",monospace;fo
           "args": {
             "s": "ab$$"
           },
-          "expect": "0"
+          "expect": "1"
         },
         {
           "name": "t08",
-          "args": {
-            "s": "ab$$$"
-          },
-          "expect": "1"
-        },
-        {
-          "name": "t09",
-          "args": {
-            "s": "aaa$b"
-          },
-          "expect": "0"
-        },
-        {
-          "name": "t10",
-          "args": {
-            "s": "a$$$$$b"
-          },
-          "expect": "1"
-        },
-        {
-          "name": "t11",
-          "args": {
-            "s": "$$$"
-          },
-          "expect": "1"
-        },
-        {
-          "name": "t12",
-          "args": {
-            "s": "ab$cd$$ef"
-          },
-          "expect": "0"
-        },
-        {
-          "name": "t13",
           "args": {
             "s": "x$$$$y$z"
           },
           "expect": "1"
         },
         {
-          "name": "t14",
+          "name": "t09",
           "args": {
-            "s": "hello$$$$$$world"
+            "s": "a$b$$c$$$d"
           },
           "expect": "1"
         },
         {
-          "name": "t15",
+          "name": "t10",
           "args": {
-            "s": "a$$b$$$c$d"
+            "s": "hello$$$world"
           },
-          "expect": "2"
+          "expect": "0"
         },
         {
-          "name": "t16",
+          "name": "t11",
           "args": {
-            "s": "$a$$b$$$"
+            "s": "$$$"
           },
-          "expect": "3"
+          "expect": "0"
+        },
+        {
+          "name": "t12",
+          "args": {
+            "s": "a$a"
+          },
+          "expect": "1"
+        },
+        {
+          "name": "t13",
+          "args": {
+            "s": "ab$$$$$$cd"
+          },
+          "expect": "0"
+        },
+        {
+          "name": "t14",
+          "args": {
+            "s": "qq$$ww$e"
+          },
+          "expect": "2"
         }
       ]
     },
@@ -1767,34 +1757,50 @@ const SOLUTIONS = {
 }`
   },
   q3: {
-    archetype: "זיהוי רצפים במקום עם שני סמנים — השוואת אורך הרצף לאורך המילה שלפניו",
+    archetype: "זיהוי רצפים עם הצצה קדימה — השוואת אורך הרצף לשתי המילים השכנות",
     complexity: "זמן Θ(n) · מקום נוסף Θ(1)",
     code: `int examT_q3(char* s) {
-    int write = 0, read = 0, wordLen = 0, plusCount = 0;
-    while (s[read] != '\\0') {
+    int n = 0;
+    while (s[n] != '\\0') {
+        n++;
+    }
+    int write = 0, read = 0, eq = 0, prevWord = 0;
+    while (read < n) {
         if (s[read] != '$') {
-            s[write] = s[read];
-            write++;
-            read++;
-            wordLen++;
+            int start = read;
+            while (read < n && s[read] != '$') {
+                s[write] = s[read];
+                write++;
+                read++;
+            }
+            prevWord = read - start;
         } else {
             int runLen = 0;
-            while (s[read] == '$') {
+            while (read < n && s[read] == '$') {
                 runLen++;
                 read++;
             }
-            if (runLen > wordLen) {
-                s[write] = '+';
-                plusCount++;
-            } else {
-                s[write] = '*';
+            int nextWord = 0, p = read;
+            while (p < n && s[p] != '$') {
+                nextWord++;
+                p++;
             }
+            char c;
+            if (runLen > prevWord && runLen > nextWord) {
+                c = '+';
+            } else if (runLen < prevWord && runLen < nextWord) {
+                c = '*';
+            } else {
+                c = '=';
+                eq++;
+            }
+            s[write] = c;
             write++;
-            wordLen = 0;
+            prevWord = 0;
         }
     }
     s[write] = '\\0';
-    return plusCount;
+    return eq;
 }`
   },
   q4: {

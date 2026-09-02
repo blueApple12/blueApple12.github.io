@@ -2,7 +2,7 @@
   "version": 2,
   "questions": {
     "q2": {
-      "driver": "int_array_n_int",
+      "driver": "int_array_n",
       "mutation": "forbidden",
       "cases": [
         {
@@ -10,178 +10,150 @@
           "args": {
             "arr": [
               1,
+              2,
               3,
-              7,
-              9,
-              6,
-              2
+              5,
+              6
             ],
-            "n": 6,
-            "value": 9
+            "n": 5
           },
-          "expect": "3"
+          "expect": "4"
         },
         {
           "name": "t02",
           "args": {
             "arr": [
+              -3,
+              -1,
               1,
-              3,
-              7,
-              9,
-              6,
-              2
+              2,
+              4
             ],
-            "n": 6,
-            "value": 1
+            "n": 5
           },
-          "expect": "0"
+          "expect": "3"
         },
         {
           "name": "t03",
           "args": {
             "arr": [
-              1,
+              2,
               3,
-              7,
-              9,
-              6,
-              2
+              4
             ],
-            "n": 6,
-            "value": 2
+            "n": 3
           },
-          "expect": "5"
+          "expect": "1"
         },
         {
           "name": "t04",
           "args": {
             "arr": [
               1,
-              3,
-              7,
-              9,
-              6,
-              2
+              2,
+              3
             ],
-            "n": 6,
-            "value": 7
+            "n": 3
           },
-          "expect": "2"
+          "expect": "4"
         },
         {
           "name": "t05",
           "args": {
             "arr": [
-              1,
-              3,
-              7,
-              9,
-              6,
-              2
+              -5,
+              -2
             ],
-            "n": 6,
-            "value": 6
+            "n": 2
           },
-          "expect": "4"
+          "expect": "1"
         },
         {
           "name": "t06",
           "args": {
             "arr": [
-              1,
-              3,
-              7,
-              9,
-              6,
-              2
+              1
             ],
-            "n": 6,
-            "value": 4
+            "n": 1
           },
-          "expect": "-1"
+          "expect": "2"
         },
         {
           "name": "t07",
           "args": {
             "arr": [
-              1,
-              3,
-              7,
-              9,
-              6,
               2
             ],
-            "n": 6,
-            "value": 100
+            "n": 1
           },
-          "expect": "-1"
+          "expect": "1"
         },
         {
           "name": "t08",
           "args": {
             "arr": [
+              -1,
+              0,
+              1,
               2,
-              8,
-              5
+              3,
+              4
             ],
-            "n": 3,
-            "value": 8
+            "n": 6
           },
-          "expect": "1"
+          "expect": "5"
         },
         {
           "name": "t09",
           "args": {
             "arr": [
-              2,
-              8,
+              1,
+              3,
+              4,
               5
             ],
-            "n": 3,
-            "value": 2
+            "n": 4
           },
-          "expect": "0"
+          "expect": "2"
         },
         {
           "name": "t10",
           "args": {
             "arr": [
-              2,
-              8,
-              5
+              -10,
+              -4,
+              0,
+              5,
+              9
             ],
-            "n": 3,
-            "value": 5
+            "n": 5
           },
-          "expect": "2"
+          "expect": "1"
         },
         {
           "name": "t11",
           "args": {
             "arr": [
+              1,
               2,
+              4,
               8,
-              5
+              16
             ],
-            "n": 3,
-            "value": 3
+            "n": 5
           },
-          "expect": "-1"
+          "expect": "3"
         },
         {
           "name": "t12",
           "args": {
             "arr": [
-              3,
-              4,
-              5,
-              6,
-              7,
-              2
+              0,
+              1,
+              2,
+              3
             ],
-            "n": 6,
-            "value": 7
+            "n": 4
           },
           "expect": "4"
         },
@@ -189,93 +161,31 @@
           "name": "t13",
           "args": {
             "arr": [
+              -2,
+              -1,
+              0,
+              2,
               3,
-              4,
-              5,
-              6,
-              7,
-              2
+              4
             ],
-            "n": 6,
-            "value": 3
+            "n": 6
           },
-          "expect": "0"
+          "expect": "1"
         },
         {
           "name": "t14",
           "args": {
             "arr": [
-              3,
-              4,
-              5,
-              6,
-              7,
-              2
-            ],
-            "n": 6,
-            "value": 2
-          },
-          "expect": "5"
-        },
-        {
-          "name": "t15",
-          "args": {
-            "arr": [
               1,
-              5,
-              4,
+              2,
               3,
-              2
-            ],
-            "n": 5,
-            "value": 5
-          },
-          "expect": "1"
-        },
-        {
-          "name": "t16",
-          "args": {
-            "arr": [
-              1,
-              5,
               4,
-              3,
-              2
-            ],
-            "n": 5,
-            "value": 2
-          },
-          "expect": "4"
-        },
-        {
-          "name": "t17",
-          "args": {
-            "arr": [
-              1,
               5,
-              4,
-              3,
-              2
+              7
             ],
-            "n": 5,
-            "value": 1
+            "n": 6
           },
-          "expect": "0"
-        },
-        {
-          "name": "t18",
-          "args": {
-            "arr": [
-              1,
-              5,
-              4,
-              3,
-              2
-            ],
-            "n": 5,
-            "value": 10
-          },
-          "expect": "-1"
+          "expect": "6"
         }
       ]
     },
@@ -286,292 +196,218 @@
         {
           "name": "t01",
           "args": {
-            "s": "banana"
+            "s": "abab"
           },
-          "expect": "8"
+          "expect": "1"
         },
         {
           "name": "t02",
           "args": {
-            "s": "abcde"
+            "s": "aabb"
           },
-          "expect": "5"
+          "expect": "1"
         },
         {
           "name": "t03",
           "args": {
-            "s": "aeiou"
+            "s": "abcabc"
           },
-          "expect": "0"
+          "expect": "2"
         },
         {
           "name": "t04",
-          "args": {
-            "s": "abcabc"
-          },
-          "expect": "10"
-        },
-        {
-          "name": "t05",
-          "args": {
-            "s": "hello"
-          },
-          "expect": "6"
-        },
-        {
-          "name": "t06",
           "args": {
             "s": "aaa"
           },
           "expect": "0"
         },
         {
-          "name": "t07",
+          "name": "t05",
           "args": {
-            "s": "xyz"
+            "s": "ab"
           },
           "expect": "0"
+        },
+        {
+          "name": "t06",
+          "args": {
+            "s": "abcd"
+          },
+          "expect": "0"
+        },
+        {
+          "name": "t07",
+          "args": {
+            "s": "aabbcc"
+          },
+          "expect": "1"
         },
         {
           "name": "t08",
           "args": {
-            "s": "programming"
+            "s": "xyzxyz"
           },
-          "expect": "45"
+          "expect": "2"
         },
         {
           "name": "t09",
           "args": {
-            "s": "aabbcc"
-          },
-          "expect": "7"
-        },
-        {
-          "name": "t10",
-          "args": {
-            "s": "education"
-          },
-          "expect": "28"
-        },
-        {
-          "name": "t11",
-          "args": {
-            "s": "abab"
-          },
-          "expect": "3"
-        },
-        {
-          "name": "t12",
-          "args": {
-            "s": "zzz"
+            "s": "a"
           },
           "expect": "0"
         },
         {
+          "name": "t10",
+          "args": {
+            "s": "abba"
+          },
+          "expect": "1"
+        },
+        {
+          "name": "t11",
+          "args": {
+            "s": "abcbcd"
+          },
+          "expect": "0"
+        },
+        {
+          "name": "t12",
+          "args": {
+            "s": "zzab"
+          },
+          "expect": "1"
+        },
+        {
           "name": "t13",
           "args": {
-            "s": "queue"
+            "s": "abcdab"
           },
-          "expect": "3"
+          "expect": "2"
         },
         {
           "name": "t14",
           "args": {
-            "s": "strong"
+            "s": "aabcbc"
           },
-          "expect": "9"
+          "expect": "1"
         }
       ]
     },
     "q4": {
-      "driver": "int_array_n",
+      "driver": "int_only",
       "mutation": "forbidden",
       "cases": [
         {
           "name": "t01",
           "args": {
-            "arr": [
-              1,
-              2,
-              3
-            ],
-            "n": 3
+            "value": 0
           },
-          "expect": "3"
+          "expect": "1"
         },
         {
           "name": "t02",
           "args": {
-            "arr": [
-              3,
-              2,
-              1
-            ],
-            "n": 3
+            "value": 1
           },
           "expect": "1"
         },
         {
           "name": "t03",
           "args": {
-            "arr": [
-              1,
-              3,
-              2,
-              4,
-              5,
-              6
-            ],
-            "n": 6
-          },
-          "expect": "4"
-        },
-        {
-          "name": "t04",
-          "args": {
-            "arr": [
-              5
-            ],
-            "n": 1
-          },
-          "expect": "1"
-        },
-        {
-          "name": "t05",
-          "args": {
-            "arr": [
-              1,
-              1,
-              1
-            ],
-            "n": 3
-          },
-          "expect": "1"
-        },
-        {
-          "name": "t06",
-          "args": {
-            "arr": [
-              1,
-              2,
-              1,
-              2,
-              1
-            ],
-            "n": 5
+            "value": 2
           },
           "expect": "2"
         },
         {
-          "name": "t07",
+          "name": "t04",
           "args": {
-            "arr": [
-              10,
-              20,
-              30,
-              5,
-              6
-            ],
-            "n": 5
+            "value": 3
           },
           "expect": "3"
         },
         {
-          "name": "t08",
+          "name": "t05",
           "args": {
-            "arr": [
-              -3,
-              -2,
-              -1,
-              0
-            ],
-            "n": 4
-          },
-          "expect": "4"
-        },
-        {
-          "name": "t09",
-          "args": {
-            "arr": [
-              4,
-              3,
-              2,
-              1,
-              2,
-              3,
-              4,
-              5
-            ],
-            "n": 8
+            "value": 4
           },
           "expect": "5"
         },
         {
+          "name": "t06",
+          "args": {
+            "value": 5
+          },
+          "expect": "8"
+        },
+        {
+          "name": "t07",
+          "args": {
+            "value": 6
+          },
+          "expect": "13"
+        },
+        {
+          "name": "t08",
+          "args": {
+            "value": 7
+          },
+          "expect": "21"
+        },
+        {
+          "name": "t09",
+          "args": {
+            "value": 8
+          },
+          "expect": "34"
+        },
+        {
           "name": "t10",
           "args": {
-            "arr": [
-              2,
-              2,
-              3,
-              4
-            ],
-            "n": 4
+            "value": 10
           },
-          "expect": "3"
+          "expect": "89"
         },
         {
           "name": "t11",
           "args": {
-            "arr": [
-              1
-            ],
-            "n": 1
+            "value": 12
           },
-          "expect": "1"
+          "expect": "233"
         },
         {
           "name": "t12",
           "args": {
-            "arr": [
-              9,
-              8,
-              7,
-              6,
-              5
-            ],
-            "n": 5
+            "value": 15
           },
-          "expect": "1"
+          "expect": "987"
         },
         {
           "name": "t13",
           "args": {
-            "arr": [
-              1,
-              2,
-              3,
-              1,
-              2,
-              3,
-              4,
-              5,
-              6,
-              7
-            ],
-            "n": 10
+            "value": 18
           },
-          "expect": "7"
+          "expect": "4181"
         },
         {
           "name": "t14",
           "args": {
-            "arr": [
-              0,
-              0
-            ],
-            "n": 2
+            "value": 20
           },
-          "expect": "1"
+          "expect": "10946"
+        },
+        {
+          "name": "t15",
+          "args": {
+            "value": 22
+          },
+          "expect": "28657"
+        },
+        {
+          "name": "t16",
+          "args": {
+            "value": 25
+          },
+          "expect": "121393"
         }
       ]
     }

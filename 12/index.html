@@ -486,24 +486,27 @@ textarea.paste{width:100%;height:130px;font-family:"JetBrains Mono",monospace;fo
     <!-- Q3 -->
     <section class="q">
       <h2>שאלה 3 <span class="pts">25 נק'</span></h2>
-      <p>נתונות שתי מחרוזות <code>s</code> ו-<code>t</code>, המכילות אותיות אנגליות קטנות בלבד.
-      נסמן <code>n = |s|</code> ו-<code>m = |t|</code>.</p>
-      <p>שתי מחרוזות הן <strong>אנגרמות</strong> זו של זו אם אחת היא שיכול (פרמוטציה) של השנייה —
-      כלומר כל תו מופיע בשתיהן אותו מספר פעמים.</p>
+      <p>נתונות שתי מחרוזות <code>s</code> ו-<code>t</code> המכילות אותיות אנגליות קטנות בלבד.
+      נסמן <code>n = |s|</code> ו-<code>m = |t|</code>, וניתן להניח <code>m &le; n</code>.</p>
+      <p>נאמר שתת-מחרוזת של <code>s</code> באורך <code>m</code> היא <strong>כמעט-אנגרמה</strong> של
+      <code>t</code> אם ניתן להפוך אותה לאנגרמה של <code>t</code> על ידי שינוי <strong>תו אחד בדיוק</strong>
+      (לא פחות ולא יותר).</p>
       <div class="sig">int examT_q3(char* s, char* t);</div>
-      <p><strong>על הפונקציה להחזיר את מספר תתי-המחרוזות של <code>s</code>, באורך <code>m</code> בדיוק,
-      שהן אנגרמות של <code>t</code>.</strong> תתי-מחרוזות במקומות שונים נספרות בנפרד, גם אם תוכנן זהה.</p>
+      <p><strong>על הפונקציה להחזיר את מספר תתי-המחרוזות של <code>s</code> באורך <code>m</code>
+      שהן כמעט-אנגרמות של <code>t</code>.</strong></p>
       <table class="ex">
         <tr><th>קלט</th><th>פלט</th><th>הסבר</th></tr>
-        <tr><td>s = "cbaebabacd", t = "abc"</td><td>2</td><td>"cba" באינדקס 0, "bac" באינדקס 6</td></tr>
-        <tr><td>s = "abab", t = "ab"</td><td>3</td><td>"ab", "ba", "ab"</td></tr>
-        <tr><td>s = "abcabc", t = "cab"</td><td>4</td><td>כל חלון באורך 3</td></tr>
-        <tr><td>s = "aabbcc", t = "abc"</td><td>0</td><td>אף חלון אינו אנגרמה</td></tr>
+        <tr><td>s = "abcdef", t = "fed"</td><td>1</td><td>"def" &mdash; שינוי אחד מספיק</td></tr>
+        <tr><td>s = "hello", t = "ll"</td><td>2</td><td>"el" ו-"lo" &mdash; בכל אחד שינוי אחד</td></tr>
+        <tr><td>s = "aabbcc", t = "abc"</td><td>4</td><td>&mdash;</td></tr>
+        <tr><td>s = "abab", t = "ab"</td><td>0</td><td>כל חלון כבר אנגרמה &mdash; אפס שינויים, לא אחד</td></tr>
       </table>
       <ul class="rules">
-        <li><strong>אין לשנות את תוכן <code>s</code> או <code>t</code>, אפילו לא באופן זמני.</strong></li>
-        <li>ניתן להניח כי הקלט תקין ושתי המחרוזות אינן ריקות. אם <code>m &gt; n</code> יש להחזיר 0.</li>
-        <li>מערך בגודל קבוע (שאינו תלוי ב-<code>n</code> או ב-<code>m</code>) נחשב מקום Θ(1).</li>
+        <li><strong>אין לשנות את <code>s</code> או <code>t</code>, אפילו לא באופן זמני.</strong></li>
+        <li>מערך בגודל קבוע (26 תאים) נחשב מקום Θ(1).</li>
+        <li><strong>רמז:</strong> חלון הוא אנגרמה בדיוק כאשר סכום ההפרשים המוחלטים בין שתי
+        ההיסטוגרמות הוא 0. מהו הסכום כאשר דרוש בדיוק שינוי אחד? שימו לב ששינוי תו
+        <em>מוריד</em> מונה אחד <em>ומעלה</em> אחר.</li>
       </ul>
       <div class="req"><b>דרישות סיבוכיות</b><span class="val">זמן Θ(n + m)</span><span class="val">מקום נוסף Θ(1)</span></div>
     </section>
@@ -803,7 +806,7 @@ textarea.paste{width:100%;height:130px;font-family:"JetBrains Mono",monospace;fo
             "a": "cbaebabacd",
             "b": "abc"
           },
-          "expect": "2"
+          "expect": "6"
         },
         {
           "name": "t02",
@@ -811,7 +814,7 @@ textarea.paste{width:100%;height:130px;font-family:"JetBrains Mono",monospace;fo
             "a": "abab",
             "b": "ab"
           },
-          "expect": "3"
+          "expect": "0"
         },
         {
           "name": "t03",
@@ -819,42 +822,10 @@ textarea.paste{width:100%;height:130px;font-family:"JetBrains Mono",monospace;fo
             "a": "aaaa",
             "b": "aa"
           },
-          "expect": "3"
+          "expect": "0"
         },
         {
           "name": "t04",
-          "args": {
-            "a": "abc",
-            "b": "abcd"
-          },
-          "expect": "0"
-        },
-        {
-          "name": "t05",
-          "args": {
-            "a": "a",
-            "b": "a"
-          },
-          "expect": "1"
-        },
-        {
-          "name": "t06",
-          "args": {
-            "a": "a",
-            "b": "b"
-          },
-          "expect": "0"
-        },
-        {
-          "name": "t07",
-          "args": {
-            "a": "aaaaa",
-            "b": "a"
-          },
-          "expect": "5"
-        },
-        {
-          "name": "t08",
           "args": {
             "a": "abcdef",
             "b": "fed"
@@ -862,50 +833,82 @@ textarea.paste{width:100%;height:130px;font-family:"JetBrains Mono",monospace;fo
           "expect": "1"
         },
         {
-          "name": "t09",
+          "name": "t05",
           "args": {
             "a": "xyz",
             "b": "zyx"
           },
-          "expect": "1"
+          "expect": "0"
         },
         {
-          "name": "t10",
+          "name": "t06",
           "args": {
             "a": "aabbcc",
             "b": "abc"
           },
-          "expect": "0"
+          "expect": "4"
         },
         {
-          "name": "t11",
+          "name": "t07",
           "args": {
             "a": "abcabc",
             "b": "cab"
           },
-          "expect": "4"
+          "expect": "0"
         },
         {
-          "name": "t12",
+          "name": "t08",
           "args": {
             "a": "zzzz",
             "b": "zz"
           },
-          "expect": "3"
+          "expect": "0"
         },
         {
-          "name": "t13",
+          "name": "t09",
           "args": {
             "a": "hello",
             "b": "ll"
           },
-          "expect": "1"
+          "expect": "2"
+        },
+        {
+          "name": "t10",
+          "args": {
+            "a": "banana",
+            "b": "ana"
+          },
+          "expect": "2"
+        },
+        {
+          "name": "t11",
+          "args": {
+            "a": "abcde",
+            "b": "abd"
+          },
+          "expect": "2"
+        },
+        {
+          "name": "t12",
+          "args": {
+            "a": "aaa",
+            "b": "ab"
+          },
+          "expect": "2"
+        },
+        {
+          "name": "t13",
+          "args": {
+            "a": "abab",
+            "b": "ba"
+          },
+          "expect": "0"
         },
         {
           "name": "t14",
           "args": {
-            "a": "banana",
-            "b": "ana"
+            "a": "mississippi",
+            "b": "sis"
           },
           "expect": "2"
         }
@@ -1859,7 +1862,7 @@ const SOLUTIONS = {
 }`
   },
   q3: {
-    archetype: "חלון מחליק ברוחב קבוע עם היסטוגרמת 26 תאים",
+    archetype: "חלון מחליק ברוחב קבוע — מרחק L1 בין ההיסטוגרמות שווה בדיוק 2",
     complexity: "זמן Θ(n + m) · מקום נוסף Θ(1)",
     code: `int examT_q3(char* s, char* t) {
     int need[26] = {0}, have[26] = {0};
@@ -1875,35 +1878,24 @@ const SOLUTIONS = {
     if (m == 0 || m > n) {
         return 0;
     }
-    int matches = 0;
-    for (int i = 0; i < 26; i++) {
-        if (need[i] == 0) {
-            matches++;
-        }
-    }
-    int count = 0;
+    int cnt = 0;
     for (int i = 0; i < n; i++) {
-        int c = s[i] - 'a';
-        have[c]++;
-        if (have[c] == need[c]) {
-            matches++;
-        } else if (have[c] == need[c] + 1) {
-            matches--;
-        }
+        have[s[i] - 'a']++;
         if (i >= m) {
-            int d = s[i - m] - 'a';
-            have[d]--;
-            if (have[d] == need[d]) {
-                matches++;
-            } else if (have[d] == need[d] - 1) {
-                matches--;
+            have[s[i - m] - 'a']--;
+        }
+        if (i >= m - 1) {
+            int diff = 0;
+            for (int k = 0; k < 26; k++) {
+                int d = have[k] - need[k];
+                diff += (d < 0) ? -d : d;
+            }
+            if (diff == 2) {
+                cnt++;
             }
         }
-        if (i >= m - 1 && matches == 26) {
-            count++;
-        }
     }
-    return count;
+    return cnt;
 }`
   },
   q4: {

@@ -481,22 +481,27 @@ textarea.paste{width:100%;height:130px;font-family:"JetBrains Mono",monospace;fo
     <section class="q">
       <h2>שאלה 3 <span class="pts">25 נק'</span></h2>
       <p>נתונה מחרוזת <code>s</code> באורך <code>n</code> המכילה אותיות אנגליות קטנות בלבד.</p>
-      <p><strong>הגדרה:</strong> אינדקס <code>i</code> המקיים <code>1 &le; i &le; n-1</code> נקרא
-      <strong>נקודת איזון</strong> אם <strong>קבוצת התווים השונים</strong> המופיעים ב-<code>s[0..i-1]</code>
-      זהה לקבוצת התווים השונים המופיעים ב-<code>s[i..n-1]</code>. מספר ההופעות אינו משנה — רק אילו תווים מופיעים.</p>
+      <p>לכל אינדקס <code>i</code> המקיים <code>1 &le; i &lt; n</code>, נסמן ב-<code>L</code> את קבוצת
+      התווים השונים המופיעים ב-<code>s[0..i-1]</code>, וב-<code>R</code> את קבוצת התווים השונים
+      המופיעים ב-<code>s[i..n-1]</code>.</p>
+      <p>נאמר ש-<code>i</code> הוא <strong>אינדקס מכיל</strong> אם <code>L</code> מוכלת ממש
+      ב-<code>R</code> &mdash; כלומר כל תו של <code>L</code> מופיע גם ב-<code>R</code>, <strong>וגם</strong>
+      קיים לפחות תו אחד ב-<code>R</code> שאינו ב-<code>L</code>.</p>
       <div class="sig">int examT_q3(char* s);</div>
-      <p><strong>על הפונקציה להחזיר את מספר נקודות האיזון של <code>s</code>.</strong></p>
+      <p><strong>על הפונקציה להחזיר את מספר האינדקסים המכילים.</strong></p>
       <table class="ex">
         <tr><th>קלט</th><th>פלט</th><th>הסבר</th></tr>
-        <tr><td>s = "abab"</td><td>1</td><td>רק i = 2: "ab" מול "ab"</td></tr>
-        <tr><td>s = "aaa"</td><td>2</td><td>i = 1 ו-i = 2</td></tr>
-        <tr><td>s = "aabb"</td><td>0</td><td>אין חלוקה מאוזנת</td></tr>
-        <tr><td>s = "ababab"</td><td>3</td><td>i = 2, 3, 4</td></tr>
+        <tr><td>s = "abab"</td><td>1</td><td>רק <code>i=1</code>: <code>{a}</code> מוכלת ממש ב-<code>{a,b}</code></td></tr>
+        <tr><td>s = "abcabc"</td><td>2</td><td>&mdash;</td></tr>
+        <tr><td>s = "aaa"</td><td>0</td><td>הקבוצות תמיד שוות, ולכן ההכלה אינה ממש</td></tr>
+        <tr><td>s = "abcd"</td><td>0</td><td>&mdash;</td></tr>
       </table>
       <ul class="rules">
         <li><strong>אין לשנות את תוכן המחרוזת <code>s</code>, אפילו לא באופן זמני.</strong></li>
-        <li>ניתן להניח כי הקלט תקין וכי <code>s</code> אינה ריקה.</li>
-        <li>מערך בגודל קבוע (26 תאים) נחשב מקום Θ(1). מערך שגודלו תלוי ב-<code>n</code> — אינו מותר.</li>
+        <li>מערך בגודל קבוע (26 תאים) נחשב מקום Θ(1). מערך שגודלו תלוי ב-<code>n</code> אינו מותר.</li>
+        <li><strong>רמז:</strong> תו נמצא ב-<code>L</code> אם ורק אם <em>ההופעה הראשונה</em> שלו לפני
+        <code>i</code>, ונמצא ב-<code>R</code> אם ורק אם <em>ההופעה האחרונה</em> שלו היא <code>i</code> או אחריה.
+        שימו לב שהכלה <em>ממש</em> דורשת שתי בדיקות נפרדות, לא אחת.</li>
       </ul>
       <div class="req"><b>דרישות סיבוכיות</b><span class="val">זמן Θ(n)</span><span class="val">מקום נוסף Θ(1)</span></div>
     </section>
@@ -747,100 +752,100 @@ textarea.paste{width:100%;height:130px;font-family:"JetBrains Mono",monospace;fo
         {
           "name": "t01",
           "args": {
-            "s": "aa"
+            "s": "abab"
           },
           "expect": "1"
         },
         {
           "name": "t02",
           "args": {
-            "s": "ab"
-          },
-          "expect": "0"
-        },
-        {
-          "name": "t03",
-          "args": {
-            "s": "abab"
+            "s": "aabb"
           },
           "expect": "1"
         },
         {
+          "name": "t03",
+          "args": {
+            "s": "abcabc"
+          },
+          "expect": "2"
+        },
+        {
           "name": "t04",
           "args": {
-            "s": "aabb"
+            "s": "aaa"
           },
           "expect": "0"
         },
         {
           "name": "t05",
           "args": {
-            "s": "abba"
+            "s": "ab"
           },
-          "expect": "1"
+          "expect": "0"
         },
         {
           "name": "t06",
           "args": {
-            "s": "aaa"
+            "s": "abcd"
+          },
+          "expect": "0"
+        },
+        {
+          "name": "t07",
+          "args": {
+            "s": "aabbcc"
+          },
+          "expect": "1"
+        },
+        {
+          "name": "t08",
+          "args": {
+            "s": "xyzxyz"
           },
           "expect": "2"
         },
         {
-          "name": "t07",
+          "name": "t09",
           "args": {
             "s": "a"
           },
           "expect": "0"
         },
         {
-          "name": "t08",
+          "name": "t10",
           "args": {
-            "s": "abcabc"
+            "s": "abba"
           },
           "expect": "1"
         },
         {
-          "name": "t09",
-          "args": {
-            "s": "abcba"
-          },
-          "expect": "0"
-        },
-        {
-          "name": "t10",
-          "args": {
-            "s": "aabaa"
-          },
-          "expect": "0"
-        },
-        {
           "name": "t11",
           "args": {
-            "s": "abcabcabc"
+            "s": "abcbcd"
           },
-          "expect": "4"
+          "expect": "0"
         },
         {
           "name": "t12",
           "args": {
-            "s": "zz"
+            "s": "zzab"
           },
           "expect": "1"
         },
         {
           "name": "t13",
           "args": {
-            "s": "xyzzyx"
+            "s": "abcdab"
           },
-          "expect": "1"
+          "expect": "2"
         },
         {
           "name": "t14",
           "args": {
-            "s": "ababab"
+            "s": "aabcbc"
           },
-          "expect": "3"
+          "expect": "1"
         }
       ]
     },
@@ -1667,13 +1672,13 @@ const SOLUTIONS = {
 }`
   },
   q3: {
-    archetype: "אינדקס הופעה ראשונה ואחרונה לכל אות — 26 תאים, Θ(1) מקום",
+    archetype: "אינדקסי הופעה ראשונה ואחרונה — בדיקת הכלה ממש בין שתי קבוצות התווים",
     complexity: "זמן Θ(n) · מקום נוסף Θ(1)",
     code: `int examT_q3(char* s) {
     int first[26], last[26];
-    for (int c = 0; c < 26; c++) {
-        first[c] = -1;
-        last[c] = -1;
+    for (int k = 0; k < 26; k++) {
+        first[k] = -1;
+        last[k] = -1;
     }
     int n = 0;
     while (s[n] != '\\0') {
@@ -1686,18 +1691,23 @@ const SOLUTIONS = {
     }
     int count = 0;
     for (int i = 1; i < n; i++) {
-        int ok = 1;
-        for (int c = 0; c < 26 && ok; c++) {
-            if (last[c] == -1) {
+        int subset = 1, strict = 0;
+        for (int k = 0; k < 26; k++) {
+            if (last[k] == -1) {
                 continue;
             }
-            int inLeft = (first[c] <= i - 1);
-            int inRight = (last[c] >= i);
-            if (inLeft != inRight) {
-                ok = 0;
+            int inL = (first[k] != -1 && first[k] <= i - 1);
+            int inR = (last[k] >= i);
+            if (inL && !inR) {
+                subset = 0;
+            }
+            if (!inL && inR) {
+                strict = 1;
             }
         }
-        count += ok;
+        if (subset && strict) {
+            count++;
+        }
     }
     return count;
 }`

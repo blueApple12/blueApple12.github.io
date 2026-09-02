@@ -494,22 +494,25 @@ void f1(int n) {
     <section class="q">
       <h2>שאלה 3 <span class="pts">25 נק'</span></h2>
       <p>נתונה מחרוזת <code>s</code> באורך <code>n</code> המכילה אותיות אנגליות קטנות בלבד.</p>
-      <p>תת-מחרוזת של <code>s</code> היא רצף רציף ולא ריק של תווים ב-<code>s</code>.
-      תת-מחרוזת נקראת <strong>פלינדרום</strong> אם היא נקראת אותו הדבר משני הכיוונים.</p>
+      <p>תת-מחרוזת תיקרא <strong>כמעט-מאוזנת</strong> אם <strong>בדיוק אות אחת</strong> מופיעה בה
+      מספר <em>אי-זוגי</em> של פעמים (וכל יתר האותיות המופיעות בה &mdash; מספר זוגי של פעמים).
+      שקול לכך: ניתן לסדר מחדש את תוויה ולקבל פלינדרום באורך אי-זוגי.</p>
       <div class="sig">int examT_q3(char* s);</div>
-      <p><strong>על הפונקציה להחזיר את האורך של תת-המחרוזת הארוכה ביותר של <code>s</code>
-      שהיא פלינדרום ו<strong>אורכה אי-זוגי</strong>.</strong> תמיד קיים פלינדרום אי-זוגי באורך 1.</p>
+      <p><strong>על הפונקציה להחזיר את מספר תתי-המחרוזות הכמעט-מאוזנות של <code>s</code>.</strong>
+      תתי-מחרוזות במקומות שונים נספרות בנפרד, גם אם תוכנן זהה.</p>
       <table class="ex">
         <tr><th>קלט</th><th>פלט</th><th>הסבר</th></tr>
-        <tr><td>s = "abacaba"</td><td>7</td><td>כל המחרוזת</td></tr>
-        <tr><td>s = "banana"</td><td>5</td><td>"anana"</td></tr>
-        <tr><td>s = "abba"</td><td>1</td><td>"abba" זוגי — לא נספר</td></tr>
-        <tr><td>s = "abc"</td><td>1</td><td>תו בודד</td></tr>
+        <tr><td>s = "aab"</td><td>4</td><td>"a", "a", "b", "aab"</td></tr>
+        <tr><td>s = "abc"</td><td>3</td><td>שלושת התווים הבודדים</td></tr>
+        <tr><td>s = "aaa"</td><td>4</td><td>שלוש באורך 1, ועוד "aaa"</td></tr>
+        <tr><td>s = "abab"</td><td>6</td><td>&mdash;</td></tr>
       </table>
       <ul class="rules">
         <li><strong>אין לשנות את תוכן המחרוזת <code>s</code>, אפילו לא באופן זמני.</strong></li>
-        <li><strong>אין להקצות זיכרון דינמי</strong> ואין להשתמש במערך עזר שגודלו תלוי ב-<code>n</code>.</li>
-        <li>ניתן להניח כי הקלט תקין וכי <code>s</code> אינה ריקה.</li>
+        <li><strong>אין להקצות זיכרון דינמי</strong> ואין להשתמש במערך שגודלו תלוי ב-<code>n</code>.</li>
+        <li><strong>רמז:</strong> מה שקובע הוא רק <em>הזוגיות</em> של 26 המונים. אפשר להחזיק את כולן
+        במשתנה <code>int</code> יחיד, ולעדכן אותו בפעולה אחת לכל תו. כמה ביטים דלוקים בו
+        כאשר תת-המחרוזת כמעט-מאוזנת?</li>
       </ul>
       <div class="req"><b>דרישות סיבוכיות</b><span class="val">זמן O(n²)</span><span class="val">מקום נוסף O(1)</span></div>
     </section>
@@ -568,62 +571,568 @@ void f1(int n) {
       "driver": "matrix_rows_int",
       "mutation": "forbidden",
       "cases": [
-        {"name": "t01", "args": {"mat": [[1,3,5,7],[2,4,6,8],[0,9,10,11]], "m": 3, "cols": 4, "value": 5}, "expect": "5"},
-        {"name": "t02", "args": {"mat": [[1,3,5,7],[2,4,6,8],[0,9,10,11]], "m": 3, "cols": 4, "value": 1}, "expect": "1"},
-        {"name": "t03", "args": {"mat": [[1,3,5,7],[2,4,6,8],[0,9,10,11]], "m": 3, "cols": 4, "value": 100}, "expect": "12"},
-        {"name": "t04", "args": {"mat": [[1,3,5,7],[2,4,6,8],[0,9,10,11]], "m": 3, "cols": 4, "value": 0}, "expect": "0"},
-        {"name": "t05", "args": {"mat": [[1,3,5,7],[2,4,6,8],[0,9,10,11]], "m": 3, "cols": 4, "value": 9}, "expect": "9"},
-        {"name": "t06", "args": {"mat": [[1,3,5,7],[2,4,6,8],[0,9,10,11]], "m": 3, "cols": 4, "value": 10}, "expect": "10"},
-        {"name": "t07", "args": {"mat": [[1,2,3,4]], "m": 1, "cols": 4, "value": 3}, "expect": "2"},
-        {"name": "t08", "args": {"mat": [[1,2,3,4]], "m": 1, "cols": 4, "value": 5}, "expect": "4"},
-        {"name": "t09", "args": {"mat": [[1,2,3,4]], "m": 1, "cols": 4, "value": 1}, "expect": "0"},
-        {"name": "t10", "args": {"mat": [[-5,-3,0,2],[1,1,1,1]], "m": 2, "cols": 4, "value": 1}, "expect": "3"},
-        {"name": "t11", "args": {"mat": [[-5,-3,0,2],[1,1,1,1]], "m": 2, "cols": 4, "value": 2}, "expect": "7"},
-        {"name": "t12", "args": {"mat": [[-5,-3,0,2],[1,1,1,1]], "m": 2, "cols": 4, "value": -3}, "expect": "1"},
-        {"name": "t13", "args": {"mat": [[5,5,5,5],[5,5,5,5]], "m": 2, "cols": 4, "value": 5}, "expect": "0"},
-        {"name": "t14", "args": {"mat": [[5,5,5,5],[5,5,5,5]], "m": 2, "cols": 4, "value": 6}, "expect": "8"}
+        {
+          "name": "t01",
+          "args": {
+            "mat": [
+              [
+                1,
+                3,
+                5,
+                7
+              ],
+              [
+                2,
+                4,
+                6,
+                8
+              ],
+              [
+                0,
+                9,
+                10,
+                11
+              ]
+            ],
+            "m": 3,
+            "cols": 4,
+            "value": 5
+          },
+          "expect": "5"
+        },
+        {
+          "name": "t02",
+          "args": {
+            "mat": [
+              [
+                1,
+                3,
+                5,
+                7
+              ],
+              [
+                2,
+                4,
+                6,
+                8
+              ],
+              [
+                0,
+                9,
+                10,
+                11
+              ]
+            ],
+            "m": 3,
+            "cols": 4,
+            "value": 1
+          },
+          "expect": "1"
+        },
+        {
+          "name": "t03",
+          "args": {
+            "mat": [
+              [
+                1,
+                3,
+                5,
+                7
+              ],
+              [
+                2,
+                4,
+                6,
+                8
+              ],
+              [
+                0,
+                9,
+                10,
+                11
+              ]
+            ],
+            "m": 3,
+            "cols": 4,
+            "value": 100
+          },
+          "expect": "12"
+        },
+        {
+          "name": "t04",
+          "args": {
+            "mat": [
+              [
+                1,
+                3,
+                5,
+                7
+              ],
+              [
+                2,
+                4,
+                6,
+                8
+              ],
+              [
+                0,
+                9,
+                10,
+                11
+              ]
+            ],
+            "m": 3,
+            "cols": 4,
+            "value": 0
+          },
+          "expect": "0"
+        },
+        {
+          "name": "t05",
+          "args": {
+            "mat": [
+              [
+                1,
+                3,
+                5,
+                7
+              ],
+              [
+                2,
+                4,
+                6,
+                8
+              ],
+              [
+                0,
+                9,
+                10,
+                11
+              ]
+            ],
+            "m": 3,
+            "cols": 4,
+            "value": 9
+          },
+          "expect": "9"
+        },
+        {
+          "name": "t06",
+          "args": {
+            "mat": [
+              [
+                1,
+                3,
+                5,
+                7
+              ],
+              [
+                2,
+                4,
+                6,
+                8
+              ],
+              [
+                0,
+                9,
+                10,
+                11
+              ]
+            ],
+            "m": 3,
+            "cols": 4,
+            "value": 10
+          },
+          "expect": "10"
+        },
+        {
+          "name": "t07",
+          "args": {
+            "mat": [
+              [
+                1,
+                2,
+                3,
+                4
+              ]
+            ],
+            "m": 1,
+            "cols": 4,
+            "value": 3
+          },
+          "expect": "2"
+        },
+        {
+          "name": "t08",
+          "args": {
+            "mat": [
+              [
+                1,
+                2,
+                3,
+                4
+              ]
+            ],
+            "m": 1,
+            "cols": 4,
+            "value": 5
+          },
+          "expect": "4"
+        },
+        {
+          "name": "t09",
+          "args": {
+            "mat": [
+              [
+                1,
+                2,
+                3,
+                4
+              ]
+            ],
+            "m": 1,
+            "cols": 4,
+            "value": 1
+          },
+          "expect": "0"
+        },
+        {
+          "name": "t10",
+          "args": {
+            "mat": [
+              [
+                -5,
+                -3,
+                0,
+                2
+              ],
+              [
+                1,
+                1,
+                1,
+                1
+              ]
+            ],
+            "m": 2,
+            "cols": 4,
+            "value": 1
+          },
+          "expect": "3"
+        },
+        {
+          "name": "t11",
+          "args": {
+            "mat": [
+              [
+                -5,
+                -3,
+                0,
+                2
+              ],
+              [
+                1,
+                1,
+                1,
+                1
+              ]
+            ],
+            "m": 2,
+            "cols": 4,
+            "value": 2
+          },
+          "expect": "7"
+        },
+        {
+          "name": "t12",
+          "args": {
+            "mat": [
+              [
+                -5,
+                -3,
+                0,
+                2
+              ],
+              [
+                1,
+                1,
+                1,
+                1
+              ]
+            ],
+            "m": 2,
+            "cols": 4,
+            "value": -3
+          },
+          "expect": "1"
+        },
+        {
+          "name": "t13",
+          "args": {
+            "mat": [
+              [
+                5,
+                5,
+                5,
+                5
+              ],
+              [
+                5,
+                5,
+                5,
+                5
+              ]
+            ],
+            "m": 2,
+            "cols": 4,
+            "value": 5
+          },
+          "expect": "0"
+        },
+        {
+          "name": "t14",
+          "args": {
+            "mat": [
+              [
+                5,
+                5,
+                5,
+                5
+              ],
+              [
+                5,
+                5,
+                5,
+                5
+              ]
+            ],
+            "m": 2,
+            "cols": 4,
+            "value": 6
+          },
+          "expect": "8"
+        }
       ]
     },
     "q3": {
       "driver": "string_only",
       "mutation": "forbidden",
       "cases": [
-        {"name": "t01", "args": {"s": "abacaba"}, "expect": "7"},
-        {"name": "t02", "args": {"s": "abc"}, "expect": "1"},
-        {"name": "t03", "args": {"s": "aaa"}, "expect": "3"},
-        {"name": "t04", "args": {"s": "a"}, "expect": "1"},
-        {"name": "t05", "args": {"s": "abba"}, "expect": "1"},
-        {"name": "t06", "args": {"s": "racecar"}, "expect": "7"},
-        {"name": "t07", "args": {"s": "banana"}, "expect": "5"},
-        {"name": "t08", "args": {"s": "aabaa"}, "expect": "5"},
-        {"name": "t09", "args": {"s": "xyzzyx"}, "expect": "1"},
-        {"name": "t10", "args": {"s": "abcba"}, "expect": "5"},
-        {"name": "t11", "args": {"s": "aaaa"}, "expect": "3"},
-        {"name": "t12", "args": {"s": "zzzzz"}, "expect": "5"},
-        {"name": "t13", "args": {"s": "abcdedcba"}, "expect": "9"},
-        {"name": "t14", "args": {"s": "abaxabaxabb"}, "expect": "9"}
+        {
+          "name": "t01",
+          "args": {
+            "s": "aab"
+          },
+          "expect": "4"
+        },
+        {
+          "name": "t02",
+          "args": {
+            "s": "abc"
+          },
+          "expect": "3"
+        },
+        {
+          "name": "t03",
+          "args": {
+            "s": "aaa"
+          },
+          "expect": "4"
+        },
+        {
+          "name": "t04",
+          "args": {
+            "s": "a"
+          },
+          "expect": "1"
+        },
+        {
+          "name": "t05",
+          "args": {
+            "s": "abab"
+          },
+          "expect": "6"
+        },
+        {
+          "name": "t06",
+          "args": {
+            "s": "racecar"
+          },
+          "expect": "10"
+        },
+        {
+          "name": "t07",
+          "args": {
+            "s": "banana"
+          },
+          "expect": "11"
+        },
+        {
+          "name": "t08",
+          "args": {
+            "s": "aabb"
+          },
+          "expect": "6"
+        },
+        {
+          "name": "t09",
+          "args": {
+            "s": "xyzzyx"
+          },
+          "expect": "10"
+        },
+        {
+          "name": "t10",
+          "args": {
+            "s": "abcba"
+          },
+          "expect": "7"
+        },
+        {
+          "name": "t11",
+          "args": {
+            "s": "zz"
+          },
+          "expect": "2"
+        },
+        {
+          "name": "t12",
+          "args": {
+            "s": "abcabc"
+          },
+          "expect": "8"
+        },
+        {
+          "name": "t13",
+          "args": {
+            "s": "deeee"
+          },
+          "expect": "9"
+        },
+        {
+          "name": "t14",
+          "args": {
+            "s": "mississippi"
+          },
+          "expect": "33"
+        }
       ]
     },
     "q4": {
       "driver": "int_only",
       "mutation": "forbidden",
       "cases": [
-        {"name": "t01", "args": {"value": 0}, "expect": "0"},
-        {"name": "t02", "args": {"value": 1}, "expect": "0"},
-        {"name": "t03", "args": {"value": 4}, "expect": "0"},
-        {"name": "t04", "args": {"value": 5}, "expect": "1"},
-        {"name": "t05", "args": {"value": 6}, "expect": "1"},
-        {"name": "t06", "args": {"value": 10}, "expect": "2"},
-        {"name": "t07", "args": {"value": 24}, "expect": "4"},
-        {"name": "t08", "args": {"value": 25}, "expect": "6"},
-        {"name": "t09", "args": {"value": 26}, "expect": "6"},
-        {"name": "t10", "args": {"value": 49}, "expect": "10"},
-        {"name": "t11", "args": {"value": 50}, "expect": "12"},
-        {"name": "t12", "args": {"value": 100}, "expect": "24"},
-        {"name": "t13", "args": {"value": 125}, "expect": "31"},
-        {"name": "t14", "args": {"value": 624}, "expect": "152"},
-        {"name": "t15", "args": {"value": 625}, "expect": "156"},
-        {"name": "t16", "args": {"value": 1000}, "expect": "249"}
+        {
+          "name": "t01",
+          "args": {
+            "value": 0
+          },
+          "expect": "0"
+        },
+        {
+          "name": "t02",
+          "args": {
+            "value": 1
+          },
+          "expect": "0"
+        },
+        {
+          "name": "t03",
+          "args": {
+            "value": 4
+          },
+          "expect": "0"
+        },
+        {
+          "name": "t04",
+          "args": {
+            "value": 5
+          },
+          "expect": "1"
+        },
+        {
+          "name": "t05",
+          "args": {
+            "value": 6
+          },
+          "expect": "1"
+        },
+        {
+          "name": "t06",
+          "args": {
+            "value": 10
+          },
+          "expect": "2"
+        },
+        {
+          "name": "t07",
+          "args": {
+            "value": 24
+          },
+          "expect": "4"
+        },
+        {
+          "name": "t08",
+          "args": {
+            "value": 25
+          },
+          "expect": "6"
+        },
+        {
+          "name": "t09",
+          "args": {
+            "value": 26
+          },
+          "expect": "6"
+        },
+        {
+          "name": "t10",
+          "args": {
+            "value": 49
+          },
+          "expect": "10"
+        },
+        {
+          "name": "t11",
+          "args": {
+            "value": 50
+          },
+          "expect": "12"
+        },
+        {
+          "name": "t12",
+          "args": {
+            "value": 100
+          },
+          "expect": "24"
+        },
+        {
+          "name": "t13",
+          "args": {
+            "value": 125
+          },
+          "expect": "31"
+        },
+        {
+          "name": "t14",
+          "args": {
+            "value": 624
+          },
+          "expect": "152"
+        },
+        {
+          "name": "t15",
+          "args": {
+            "value": 625
+          },
+          "expect": "156"
+        },
+        {
+          "name": "t16",
+          "args": {
+            "value": 1000
+          },
+          "expect": "249"
+        }
       ]
     }
   }
@@ -1330,25 +1839,24 @@ const SOLUTIONS = {
 }`
   },
   q3: {
-    archetype: "התפשטות סביב מרכז — n מרכזים, כל אחד עד Θ(n) צעדים",
+    archetype: "מסכת זוגיות נצברת מכל התחלה — בדיוק ביט אחד דלוק",
     complexity: "זמן O(n²) · מקום נוסף O(1)",
     code: `int examT_q3(char* s) {
     int n = 0;
     while (s[n] != '\\0') {
         n++;
     }
-    int best = 0;
-    for (int c = 0; c < n; c++) {
-        int r = 0;
-        while (c - r >= 0 && c + r < n && s[c - r] == s[c + r]) {
-            r++;
-        }
-        int len = 2 * r - 1;
-        if (len > best) {
-            best = len;
+    int total = 0;
+    for (int i = 0; i < n; i++) {
+        int mask = 0;
+        for (int j = i; j < n; j++) {
+            mask ^= 1 << (s[j] - 'a');
+            if (mask != 0 && (mask & (mask - 1)) == 0) {
+                total++;
+            }
         }
     }
-    return best;
+    return total;
 }`
   },
   q4: {
