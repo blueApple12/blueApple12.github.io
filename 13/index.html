@@ -518,24 +518,27 @@ textarea.paste{width:100%;height:130px;font-family:"JetBrains Mono",monospace;fo
 
     <!-- Q4 -->
     <section class="q">
-      <h2>שאלה 4 <span class="pts">25 נק'</span> — רקורסיה</h2>
+      <h2>שאלה 4 <span class="pts">25 נק'</span> &mdash; רקורסיה</h2>
       <p>נתונות שתי מחרוזות <code>a</code> ו-<code>b</code> המכילות אותיות אנגליות קטנות בלבד.</p>
-      <p>נאמר ש-<code>b</code> <strong>מכילה</strong> את <code>a</code> אם כל תו מופיע ב-<code>b</code>
-      לפחות כמספר הפעמים שהוא מופיע ב-<code>a</code>. הסדר אינו משנה.</p>
+      <p><strong>הופעה</strong> של <code>a</code> כתת-סדרה של <code>b</code> היא בחירה של אינדקסים
+      עולים ממש ב-<code>b</code> שהתווים בהם, לפי הסדר, מרכיבים בדיוק את <code>a</code>.
+      שתי בחירות אינדקסים שונות נחשבות שתי הופעות שונות, גם אם התווים זהים.</p>
       <div class="sig">int examT_q4(char* a, char* b);</div>
-      <p><strong>על הפונקציה להחזיר <code>1</code> אם <code>b</code> מכילה את <code>a</code>, ו-<code>0</code> אחרת.</strong></p>
+      <p><strong>על הפונקציה להחזיר את מספר ההופעות של <code>a</code> כתת-סדרה של <code>b</code>.</strong></p>
       <table class="ex">
         <tr><th>קלט</th><th>פלט</th><th>הסבר</th></tr>
-        <tr><td>a = "abc", b = "cba"</td><td>1</td><td>אותם תווים</td></tr>
-        <tr><td>a = "aab", b = "ab"</td><td>0</td><td>ב-b יש רק 'a' אחד</td></tr>
-        <tr><td>a = "ab", b = "aab"</td><td>1</td><td>יש מספיק מכל תו</td></tr>
-        <tr><td>a = "zzz", b = "zz"</td><td>0</td><td>חסר 'z' אחד</td></tr>
+        <tr><td>a = "ab", b = "abab"</td><td>3</td><td>אינדקסים (0,1), (0,3), (2,3)</td></tr>
+        <tr><td>a = "a", b = "aaa"</td><td>3</td><td>כל אחת מהאותיות</td></tr>
+        <tr><td>a = "aa", b = "aaaa"</td><td>6</td><td>כל זוג אינדקסים</td></tr>
+        <tr><td>a = "ab", b = "ba"</td><td>0</td><td>הסדר אינו מתאים</td></tr>
       </table>
+      <p><strong>רמז:</strong> הסתכלו על התו הראשון של <code>b</code>. אם הוא מתאים לתו הראשון של
+      <code>a</code>, יש <strong>שתי</strong> אפשרויות נפרדות &mdash; לצרוך אותו, או לדלג עליו &mdash;
+      ויש לסכום את שתיהן. אם אינו מתאים, נותרה אפשרות אחת בלבד.</p>
       <ul class="rules">
-        <li><strong>על הפונקציה להיות רקורסיבית בלבד, ללא שימוש בלולאות</strong> — בכל הפונקציות שתכתבו.</li>
-        <li><strong>אסור להשתמש בפונקציית מעטפת</strong> — <code>examT_q4</code> עצמה חייבת לקרוא לעצמה.</li>
-        <li>ניתן להשתמש בפונקציות עזר, יש לממש את כולן, וגם הן חייבות להיות רקורסיביות בלבד.</li>
-        <li>אין להקצות זיכרון דינמי, אין להשתמש במערכים ואין לשנות את המחרוזות.</li>
+        <li><strong>על הפונקציה להיות רקורסיבית בלבד, ללא שימוש בלולאות</strong> &mdash; בכל הפונקציות שתכתבו.</li>
+        <li><strong>אסור להשתמש בפונקציית מעטפת</strong> &mdash; <code>examT_q4</code> עצמה חייבת לקרוא לעצמה.</li>
+        <li>אין להקצות זיכרון דינמי ואין להשתמש במשתנים סטטיים או גלובליים.</li>
         <li><strong>אין דרישות סיבוכיות בשאלה זו.</strong></li>
       </ul>
     </section>
@@ -939,32 +942,32 @@ textarea.paste{width:100%;height:130px;font-family:"JetBrains Mono",monospace;fo
         {
           "name": "t01",
           "args": {
-            "a": "abc",
-            "b": "cba"
+            "a": "ab",
+            "b": "abab"
           },
-          "expect": "1"
+          "expect": "3"
         },
         {
           "name": "t02",
           "args": {
-            "a": "aab",
-            "b": "ab"
+            "a": "a",
+            "b": "aaa"
           },
-          "expect": "0"
+          "expect": "3"
         },
         {
           "name": "t03",
           "args": {
-            "a": "ab",
-            "b": "aab"
+            "a": "abc",
+            "b": "abcabc"
           },
-          "expect": "1"
+          "expect": "4"
         },
         {
           "name": "t04",
           "args": {
-            "a": "aba",
-            "b": "ab"
+            "a": "ab",
+            "b": "ba"
           },
           "expect": "0"
         },
@@ -972,97 +975,81 @@ textarea.paste{width:100%;height:130px;font-family:"JetBrains Mono",monospace;fo
           "name": "t05",
           "args": {
             "a": "a",
-            "b": "a"
-          },
-          "expect": "1"
-        },
-        {
-          "name": "t06",
-          "args": {
-            "a": "a",
             "b": "b"
           },
           "expect": "0"
         },
         {
+          "name": "t06",
+          "args": {
+            "a": "aa",
+            "b": "aaaa"
+          },
+          "expect": "6"
+        },
+        {
           "name": "t07",
           "args": {
             "a": "abc",
-            "b": "aabbcc"
+            "b": "abc"
           },
           "expect": "1"
         },
         {
           "name": "t08",
           "args": {
-            "a": "aaa",
-            "b": "aa"
+            "a": "b",
+            "b": "abcb"
           },
-          "expect": "0"
+          "expect": "2"
         },
         {
           "name": "t09",
           "args": {
-            "a": "aaa",
-            "b": "aaaa"
+            "a": "ba",
+            "b": "bbaa"
           },
-          "expect": "1"
+          "expect": "4"
         },
         {
           "name": "t10",
           "args": {
-            "a": "hello",
-            "b": "helloworld"
+            "a": "xy",
+            "b": "xxyy"
           },
-          "expect": "1"
+          "expect": "4"
         },
         {
           "name": "t11",
           "args": {
-            "a": "world",
-            "b": "hello"
+            "a": "ab",
+            "b": "aabb"
           },
-          "expect": "0"
+          "expect": "4"
         },
         {
           "name": "t12",
           "args": {
-            "a": "abcd",
-            "b": "dcba"
+            "a": "abc",
+            "b": "aabbcc"
           },
-          "expect": "1"
+          "expect": "8"
         },
         {
           "name": "t13",
           "args": {
-            "a": "zz",
-            "b": "zzz"
+            "a": "cat",
+            "b": "ccaatt"
           },
-          "expect": "1"
+          "expect": "8"
         },
         {
           "name": "t14",
           "args": {
-            "a": "zzz",
-            "b": "zz"
-          },
-          "expect": "0"
-        },
-        {
-          "name": "t15",
-          "args": {
-            "a": "banana",
-            "b": "bananas"
+            "a": "aa",
+            "b": "aa"
           },
           "expect": "1"
-        },
-        {
-          "name": "t16",
-          "args": {
-            "a": "bananas",
-            "b": "banana"
-          },
-          "expect": "0"
         }
       ]
     }
@@ -1826,23 +1813,20 @@ const SOLUTIONS = {
 }`
   },
   q4: {
-    archetype: "הכלה עם ריבוי ברקורסיה: ספירת תו ברקורסיה, ואז צעד קדימה",
+    archetype: "רקורסיה על שני מצביעים: לצרוך את התו או לדלג עליו ב-b",
     complexity: "אין דרישת סיבוכיות",
-    code: `int count_char(char* s, char c) {
-    if (*s == '\\0') {
-        return 0;
-    }
-    return ((*s == c) ? 1 : 0) + count_char(s + 1, c);
-}
-
-int examT_q4(char* a, char* b) {
+    code: `int examT_q4(char* a, char* b) {
     if (*a == '\\0') {
         return 1;
     }
-    if (count_char(a, *a) > count_char(b, *a)) {
+    if (*b == '\\0') {
         return 0;
     }
-    return examT_q4(a + 1, b);
+    int taken = 0;
+    if (*a == *b) {
+        taken = examT_q4(a + 1, b + 1);
+    }
+    return taken + examT_q4(a, b + 1);
 }`
   }
 };

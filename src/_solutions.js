@@ -1,83 +1,85 @@
 const SOLUTIONS = {
   q2: {
-    archetype: "איתור השיא, ואז חיפוש בינארי נפרד בכל צלע — עולה מול יורדת",
-    complexity: "זמן Θ(log n) · מקום Θ(1)",
+    archetype: "חיפוש דוהר לגבול k, ואז חיפוש בינארי יורד על הסף",
+    complexity: "זמן Θ(log k) · מקום Θ(1)",
     code: `int examT_q2(int arr[], int n, int x) {
-    int lo = 0, hi = n - 1;
+    if (n == 0 || arr[0] == 0) {
+        return 0;
+    }
+    int high = 1;
+    while (high < n && arr[high] != 0) {
+        high *= 2;
+    }
+    int lo = high / 2;
+    int hi = (high < n) ? high : n;
     while (lo < hi) {
         int mid = lo + (hi - lo) / 2;
-        if (arr[mid] < arr[mid + 1]) {
-            lo = mid + 1;
-        } else {
+        if (arr[mid] == 0) {
             hi = mid;
+        } else {
+            lo = mid + 1;
         }
     }
-    int p = lo;
-    int a = 0, b = p;
+    int k = lo;
+    int a = 0, b = k - 1, cnt = 0;
     while (a <= b) {
-        int m = a + (b - a) / 2;
-        if (arr[m] == x) return m;
-        if (arr[m] < x) a = m + 1; else b = m - 1;
+        int mid = a + (b - a) / 2;
+        if (arr[mid] > x) {
+            cnt = mid + 1;
+            a = mid + 1;
+        } else {
+            b = mid - 1;
+        }
     }
-    a = p + 1;
-    b = n - 1;
-    while (a <= b) {
-        int m = a + (b - a) / 2;
-        if (arr[m] == x) return m;
-        if (arr[m] > x) a = m + 1; else b = m - 1;
-    }
-    return -1;
+    return cnt;
 }`
   },
   q3: {
-    archetype: "הרחבה מכל התחלה — מונים נצברים ועצירה מוקדמת כשהתנאי נשבר לתמיד",
-    complexity: "זמן O(n²) · מקום נוסף O(1)",
-    code: `int examT_q3(char* s) {
-    int n = 0;
-    while (s[n] != '\\0') {
-        n++;
-    }
-    int total = 0;
-    for (int i = 0; i < n; i++) {
-        int count[26] = {0};
-        int vowels = 0, consonants = 0;
-        for (int j = i; j < n; j++) {
-            int c = s[j] - 'a';
-            count[c]++;
-            if (count[c] > 2) {
-                break;
-            }
-            if (is_vowel(s[j])) {
-                vowels++;
-            } else {
-                consonants++;
-            }
-            if (j - i + 1 >= 3 && vowels > 0 && consonants > 0) {
-                total++;
-            }
+    archetype: "חלוקה יציבה במקום עם סמן כתיבה, ואז מילוי הזנב",
+    complexity: "זמן Θ(n) · מקום נוסף Θ(1)",
+    code: `int examT_q3(char* s, char c) {
+    int write = 0, count = 0;
+    for (int read = 0; s[read] != '\\0'; read++) {
+        if (s[read] != c) {
+            s[write] = s[read];
+            write++;
+        } else {
+            count++;
         }
     }
-    return total;
+    for (int i = 0; i < count; i++) {
+        s[write + i] = c;
+    }
+    return count;
 }`
   },
   q4: {
-    archetype: "רקורסיה כפולה: הסכום המרבי המסתיים כאן, מול המיטב בקידומת הקודמת",
+    archetype: "איתור אי-ההתאמה הראשונה, ואז בדיקת שוויון מלא של השאר",
     complexity: "אין דרישת סיבוכיות",
-    code: `int bestEndingAt(int* arr, int n) {
-    if (n == 1) {
-        return arr[0];
+    code: `int sameRec(char* a, char* b) {
+    if (*a == '\\0' && *b == '\\0') {
+        return 1;
     }
-    int prev = bestEndingAt(arr, n - 1);
-    return arr[n - 1] + (prev > 0 ? prev : 0);
+    if (*a == '\\0' || *b == '\\0') {
+        return 0;
+    }
+    if (*a != *b) {
+        return 0;
+    }
+    return sameRec(a + 1, b + 1);
 }
 
-int examT_q4(int* arr, int n) {
-    if (n == 1) {
-        return arr[0];
+int examT_q4(char* a, char* b) {
+    if (*b == '\\0') {
+        return 0;
     }
-    int rest = examT_q4(arr, n - 1);
-    int here = bestEndingAt(arr, n);
-    return here > rest ? here : rest;
+    if (*a == '\\0') {
+        return (*(b + 1) == '\\0') ? 1 : 0;
+    }
+    if (*a == *b) {
+        return examT_q4(a + 1, b + 1);
+    }
+    return sameRec(a, b + 1);
 }`
   }
 };

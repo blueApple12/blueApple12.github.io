@@ -517,24 +517,28 @@ textarea.paste{width:100%;height:130px;font-family:"JetBrains Mono",monospace;fo
 
     <!-- Q4 -->
     <section class="q">
-      <h2>שאלה 4 <span class="pts">25 נק'</span> — רקורסיה</h2>
-      <p>נתונים שני מספרים שלמים וחיוביים <code>n</code> ו-<code>k</code>.</p>
-      <p>נאמר ש-<code>n</code> הוא <strong><code>k</code>-חלק</strong> אם <strong>כל</strong> הגורמים הראשוניים של <code>n</code>
-      קטנים או שווים ל-<code>k</code>. המספר <code>1</code> הוא <code>k</code>-חלק עבור כל <code>k</code> (אין לו גורמים ראשוניים).</p>
+      <h2>שאלה 4 <span class="pts">25 נק'</span> &mdash; רקורסיה</h2>
+      <p>נתונים שני מספרים שלמים: <code>n</code> חיובי, ו-<code>k</code> אי-שלילי.</p>
+      <p><strong>פירוק מסודר</strong> של <code>n</code> לאורך <code>k</code> הוא סדרה של <code>k</code>
+      מספרים שלמים, כל אחד <strong>גדול או שווה ל-2</strong>, שמכפלתם היא <code>n</code>.
+      שני פירוקים נחשבים שונים אם <strong>סדר</strong> הגורמים בהם שונה &mdash; כך
+      <code>2&times;6</code> ו-<code>6&times;2</code> הם שני פירוקים שונים של 12.</p>
       <div class="sig">int examT_q4(int n, int k);</div>
-      <p><strong>על הפונקציה להחזיר <code>1</code> אם <code>n</code> הוא <code>k</code>-חלק, ו-<code>0</code> אחרת.</strong></p>
+      <p><strong>על הפונקציה להחזיר את מספר הפירוקים המסודרים של <code>n</code> לאורך
+      <code>k</code> בדיוק.</strong> עבור <code>k = 0</code> יש פירוק אחד אם <code>n = 1</code>, ואפס אחרת.</p>
       <table class="ex">
         <tr><th>קלט</th><th>פלט</th><th>הסבר</th></tr>
-        <tr><td>n = 12, k = 3</td><td>1</td><td>12 = 2·2·3</td></tr>
-        <tr><td>n = 14, k = 3</td><td>0</td><td>14 = 2·7 והגורם 7 גדול מ-3</td></tr>
-        <tr><td>n = 100, k = 5</td><td>1</td><td>100 = 2·2·5·5</td></tr>
-        <tr><td>n = 1, k = 1</td><td>1</td><td>אין גורמים ראשוניים</td></tr>
+        <tr><td>n = 12, k = 2</td><td>4</td><td>‎2&times;6, 3&times;4, 4&times;3, 6&times;2</td></tr>
+        <tr><td>n = 12, k = 3</td><td>3</td><td>‎2&times;2&times;3 בשלושת הסדרים</td></tr>
+        <tr><td>n = 7, k = 2</td><td>0</td><td>‎7 ראשוני</td></tr>
+        <tr><td>n = 8, k = 3</td><td>1</td><td>‎2&times;2&times;2</td></tr>
       </table>
+      <p><strong>רמז:</strong> קבעו את הגורם <em>הראשון</em> וסכמו על כל האפשרויות. הסכימה על
+      המחלקים היא לולאה במקורה &mdash; ולכן גם היא חייבת להפוך לרקורסיה נפרדת.</p>
       <ul class="rules">
-        <li><strong>על הפונקציה להיות רקורסיבית בלבד, ללא שימוש בלולאות.</strong></li>
-        <li><strong>אסור להשתמש בפונקציית מעטפת</strong> — <code>examT_q4</code> חייבת בעצמה להיות רקורסיבית.</li>
-        <li>ניתן להשתמש בפונקציות עזר, יש לממש את כולן, וגם הן חייבות להיות רקורסיביות בלבד.</li>
-        <li>אין להקצות זיכרון דינמי ואין להשתמש בפונקציות ספריה מתמטיות.</li>
+        <li><strong>על הפונקציה להיות רקורסיבית בלבד, ללא שימוש בלולאות</strong> &mdash; בכל הפונקציות שתכתבו.</li>
+        <li><strong>מותרת פונקציית מעטפת</strong> &mdash; <code>examT_q4</code> רשאית לקרוא לפונקציית עזר רקורסיבית.</li>
+        <li>אין להקצות זיכרון דינמי ואין להשתמש במשתנים סטטיים או גלובליים.</li>
         <li><strong>אין דרישות סיבוכיות בשאלה זו.</strong></li>
       </ul>
     </section>
@@ -919,129 +923,113 @@ textarea.paste{width:100%;height:130px;font-family:"JetBrains Mono",monospace;fo
           "name": "t01",
           "args": {
             "first": 12,
-            "second": 3
+            "second": 2
           },
-          "expect": "1"
+          "expect": "4"
         },
         {
           "name": "t02",
           "args": {
-            "first": 14,
-            "second": 3
-          },
-          "expect": "0"
-        },
-        {
-          "name": "t03",
-          "args": {
-            "first": 1,
+            "first": 12,
             "second": 1
           },
           "expect": "1"
         },
         {
+          "name": "t03",
+          "args": {
+            "first": 12,
+            "second": 3
+          },
+          "expect": "3"
+        },
+        {
           "name": "t04",
           "args": {
-            "first": 7,
-            "second": 7
+            "first": 8,
+            "second": 3
           },
           "expect": "1"
         },
         {
           "name": "t05",
           "args": {
-            "first": 7,
-            "second": 5
+            "first": 16,
+            "second": 4
           },
-          "expect": "0"
+          "expect": "1"
         },
         {
           "name": "t06",
           "args": {
-            "first": 100,
-            "second": 5
+            "first": 1,
+            "second": 0
           },
           "expect": "1"
         },
         {
           "name": "t07",
           "args": {
-            "first": 100,
-            "second": 3
+            "first": 1,
+            "second": 1
           },
           "expect": "0"
         },
         {
           "name": "t08",
           "args": {
-            "first": 2,
+            "first": 30,
             "second": 2
           },
-          "expect": "1"
+          "expect": "6"
         },
         {
           "name": "t09",
           "args": {
-            "first": 2,
-            "second": 1
+            "first": 30,
+            "second": 3
           },
-          "expect": "0"
+          "expect": "6"
         },
         {
           "name": "t10",
           "args": {
-            "first": 60,
-            "second": 5
+            "first": 7,
+            "second": 1
           },
           "expect": "1"
         },
         {
           "name": "t11",
           "args": {
-            "first": 60,
-            "second": 4
+            "first": 7,
+            "second": 2
           },
           "expect": "0"
         },
         {
           "name": "t12",
           "args": {
-            "first": 1024,
+            "first": 36,
             "second": 2
           },
-          "expect": "1"
+          "expect": "7"
         },
         {
           "name": "t13",
           "args": {
-            "first": 1023,
-            "second": 3
+            "first": 64,
+            "second": 6
           },
-          "expect": "0"
+          "expect": "1"
         },
         {
           "name": "t14",
           "args": {
-            "first": 81,
-            "second": 3
+            "first": 100,
+            "second": 2
           },
-          "expect": "1"
-        },
-        {
-          "name": "t15",
-          "args": {
-            "first": 97,
-            "second": 96
-          },
-          "expect": "0"
-        },
-        {
-          "name": "t16",
-          "args": {
-            "first": 97,
-            "second": 97
-          },
-          "expect": "1"
+          "expect": "7"
         }
       ]
     }
@@ -1804,19 +1792,24 @@ const SOLUTIONS = {
 }`
   },
   q4: {
-    archetype: "רקורסיה על שני פרמטרים: חלוקה חוזרת בגורם, אחרת הקטנת החסם",
+    archetype: "שתי רקורסיות: ירידה על המחלק המועמד, ורקורסיה על מספר הגורמים שנותרו",
     complexity: "אין דרישת סיבוכיות",
-    code: `int examT_q4(int n, int k) {
-    if (n == 1) {
-        return 1;
-    }
-    if (k <= 1) {
+    code: `int countFrom(int n, int k, int d) {
+    if (d > n) {
         return 0;
     }
-    if (n % k == 0) {
-        return examT_q4(n / k, k);
+    int here = 0;
+    if (n % d == 0) {
+        here = examT_q4(n / d, k - 1);
     }
-    return examT_q4(n, k - 1);
+    return here + countFrom(n, k, d + 1);
+}
+
+int examT_q4(int n, int k) {
+    if (k == 0) {
+        return (n == 1) ? 1 : 0;
+    }
+    return countFrom(n, k, 2);
 }`
   }
 };

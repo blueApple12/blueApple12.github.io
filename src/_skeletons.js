@@ -49,13 +49,7 @@ void printIDontKnow() {
     exit(0);
 }
 
-int examT_q3(char* s);
-
-//This is a helper function made for you.
-//You are not obligated to use it, and are allowed to change it.
-int is_vowel(char c) {
-    return c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u';
-}
+int examT_q3(char* s, char c);
 
 int main(void) {
     // uncomment next line if you don't know the answer
@@ -69,12 +63,18 @@ int main(void) {
         free(s);
         return 1;
     }
-    printf("%d\\n", examT_q3(s));
+    char c;
+    if (scanf(" %c", &c) != 1) {
+        free(s);
+        return 1;
+    }
+    printf("%d\\n", examT_q3(s, c));
+    printf("%s\\n", s);
     free(s);
     return 0;
 }
 
-int examT_q3(char* s) {
+int examT_q3(char* s, char c) {
     // write your code here
     return 0;
 }`,
@@ -88,31 +88,39 @@ void printIDontKnow() {
     exit(0);
 }
 
-int examT_q4(int* arr, int n);
+int examT_q4(char* a, char* b);
+
+//Do not change this function
+char* read_string(void) {
+    int len;
+    if (scanf("%d", &len) != 1) return NULL;
+    char* str = malloc((len + 1) * sizeof(char));
+    if (!str) return NULL;
+    if (scanf("%s", str) != 1) {
+        free(str);
+        return NULL;
+    }
+    return str;
+}
 
 int main(void) {
     // uncomment next line if you don't know the answer
     // printIDontKnow();
 
-    int n;
-    if (scanf("%d", &n) != 1) return 1;
-    int* arr = NULL;
-    if (n > 0) {
-        arr = malloc(n * sizeof(int));
-        if (!arr) return 1;
-        for (int i = 0; i < n; i++) {
-            if (scanf("%d", &arr[i]) != 1) {
-                free(arr);
-                return 1;
-            }
-        }
+    char* a = read_string();
+    if (!a) return 1;
+    char* b = read_string();
+    if (!b) {
+        free(a);
+        return 1;
     }
-    printf("%d\\n", examT_q4(arr, n));
-    free(arr);
+    printf("%d\\n", examT_q4(a, b));
+    free(a);
+    free(b);
     return 0;
 }
 
-int examT_q4(int* arr, int n) {
+int examT_q4(char* a, char* b) {
     // write your code here
     return 0;
 }`
